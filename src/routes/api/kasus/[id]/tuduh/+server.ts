@@ -1,0 +1,26 @@
+import { json } from '@sveltejs/kit';
+import { sesiBaru, tuduh } from '$lib/engine/permainan';
+import { penyimpanan } from '$lib/server/store';
+import { bacaBody, idDariParam, kasusTerbit, statistikPemain, tanganiGalat } from '$lib/server/layanan';
+import type { RequestHandler } from './$types';
+
+/** Validasi tuduhan di server. Solusi hanya ikut di respons kalau kasus selesai. */
+export const POST: RequestHandler = async ({ params, url, request, locals }) => {
+	const kasus = kasusTerbit(idDariParam(params.id), url);
+	const body = await bacaBody(request);
+	const kombinasi = { siapa: String(body.siapa ?? ''), pakai: String(body.pakai ?? ''), dimana: String(body.dimana ?? '') };
+
+	const store = penyimpanan();
+	const sesi = store.ambil(locals.pemainId, kasus.id) ?? sesiBaru(locals.pemainId, kasus, new Date());
+	try {
+		const r = tuduh(kasus, sesi, kombinasi, new Date());
+		store.simpan(r.sesi);
+		return json({
+			...r.hasil,
+			tuduhan: r.sesi.tuduhan,
+			statistik: r.hasil.selesai ? statistikPemain(locals.pemainId, url) : undefined
+		});
+	} catch (e) {
+		return tanganiGalat(e);
+	}
+};

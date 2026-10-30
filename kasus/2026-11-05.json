@@ -1,0 +1,57 @@
+{
+  "versi_skema": 1,
+  "id": 4,
+  "tanggal": "2026-11-05",
+  "judul": "Guci Kakek Tinggal Serpihan",
+  "jenis": "pecah_rusak",
+  "kesulitan": { "bintang": 2, "label": "Kamis" },
+  "jatah_periksa": 7,
+  "context_card": {
+    "cerita": "Guci biru peninggalan Kakek dipindah Nenek tiap minggu supaya \"semua ruangan kebagian\". Pagi ini Nenek menemukan serpihannya disembunyikan di ruang tamu. Guci itu pecah kemarin sore, dan pelakunya diam saja.",
+    "clue_awal": [
+      { "id": "A1", "teks": "Pelakunya bersepatu di bawah ukuran 42." },
+      { "id": "A2", "teks": "Sapu selalu ada di dapur. Kalau gucinya kena sapu, pasti pecahnya di dapur." }
+    ]
+  },
+  "pilihan": {
+    "siapa":  ["dimas", "sekar", "tono", "joko"],
+    "pakai":  ["bola", "sapu", "gagang_pel", "pintu_dibanting"],
+    "dimana": ["ruang_tamu", "dapur", "teras", "ruang_kerja"]
+  },
+  "pengakuan": [],
+  "state_ruangan": {
+    "ruang_tamu": { "tambah": [], "belang": "kursi", "waktu": "siang" }
+  },
+  "benda": {
+    "rt_kolong":  { "hasil": "clue", "id_clue": "E1", "teks": "Serpihan guci dibungkus koran di kolong sofa, bercampur serpih cat cokelat dari daun pintu yang terbanting keras." },
+    "rt_telepon": { "hasil": "clue", "id_clue": "E2", "teks": "Pesan Pak Tono di samping telepon: \"Pintu dapur dan pintu ruang tamu dilepas untuk dicat sejak siang.\"" },
+    "rt_tirai":   { "hasil": "clue", "id_clue": "E3", "teks": "Dari jendela terlihat pintu teras diganjal batu bata sejak kemarin. Pintunya tidak bisa ditutup, apalagi dibanting." },
+    "rt_meja":    { "hasil": "clue", "id_clue": "E4", "teks": "Catatan Mbok Sri di meja kopi: \"Pak Joko seharian di kebun, tidak masuk rumah sama sekali.\"" },
+    "rt_rak":     { "hasil": "clue", "id_clue": "E5", "teks": "Daftar tulisan tangan Nenek terselip di rak buku: \"Guci minggu ini: Ruang Kerja.\"" },
+    "rt_sofa":    { "hasil": "pendukung", "id_clue": "E6", "teks": "Sebuah buku farmasi tertinggal di sofa. Halaman \"Mengelola Emosi\" dilipat ujungnya." },
+    "rt_jam":     { "hasil": "kosong", "teks": "Jam dinding tepat waktu. Pak Tono mencocokkannya dengan jam tangannya setiap pagi." },
+    "rt_foto":    { "hasil": "kosong", "teks": "Di foto ini guci biru itu masih utuh, berdiri di samping Kakek. Kamu jadi ikut sedih." },
+    "rt_lukisan": { "hasil": "kosong", "teks": "Lukisan sawah dan gunung. Miringnya sedikit, tapi memang sudah begitu sejak dulu." },
+    "rt_lemari":  { "hasil": "kosong", "teks": "Lilin, korek api, dan setumpuk struk belanja Mbok Sri." },
+    "rt_keset":   { "hasil": "kosong", "teks": "Keset bertuliskan \"Selamat Datang\". Huruf S-nya sudah hampir hilang." },
+    "rt_kursi":   { "hasil": "kosong", "teks": "Si Belang tidur pulas di kursi. Ia jelas tidak tahu apa-apa, atau pura-pura." }
+  },
+  "teks_kosong_bawaan": "Tidak ada yang aneh di sini.",
+  "solusi": { "siapa": "sekar", "pakai": "pintu_dibanting", "dimana": "ruang_kerja" },
+  "logika": {
+    "A1": { "tipe": "atribut", "atribut": "sepatu", "nilai": 42, "op": "<" },
+    "A2": { "tipe": "jika_maka", "jika": { "pakai": "sapu" }, "maka": { "dimana": "dapur" } },
+    "E1": { "tipe": "fakta", "pakai": "pintu_dibanting" },
+    "E2": { "tipe": "jika_maka", "jika": { "pakai": "pintu_dibanting" }, "maka": [{ "bukan": { "dimana": "dapur" } }, { "bukan": { "dimana": "ruang_tamu" } }] },
+    "E3": { "tipe": "jika_maka", "jika": { "pakai": "pintu_dibanting" }, "maka": { "bukan": { "dimana": "teras" } } },
+    "E4": { "tipe": "jika_maka", "jika": { "siapa": "joko" }, "maka": { "dimana": "teras" } },
+    "E5": { "tipe": "fakta", "dimana": "ruang_kerja" }
+  },
+  "penjelasan": [
+    { "teks": "Pelakunya bersepatu di bawah 42: Sekar atau Pak Joko.", "bukti": ["A1"] },
+    { "teks": "Ada serpih cat pintu di antara serpihan: gucinya jatuh karena pintu dibanting.", "bukti": ["E1"] },
+    { "teks": "Menurut catatan Nenek, minggu ini guci ada di Ruang Kerja. Pintu dapur, ruang tamu, dan teras juga tidak bisa dibanting.", "bukti": ["E5", "E2", "E3"] },
+    { "teks": "Pak Joko tidak masuk rumah, jadi tidak mungkin di Ruang Kerja. Pelakunya Sekar.", "bukti": ["E4", "E5"] }
+  ],
+  "komentar_nenek": "Sekar, kesal sama Dimas boleh. Membanting pintu sampai guci Kakek jatuh, jangan."
+}

@@ -1,0 +1,38 @@
+{
+  "tersangka": [
+    { "id": "benny",  "nama": "Om Benny",  "peran": "Anak sulung", "usia": 52,
+      "atribut": { "tinggi": "tinggi", "tinggi_cm": 178, "tangan": "kidal", "sepatu": 43, "rambut": "Botak, kumis tebal", "kacamata": false, "kelamin": "L", "tinggal_di_rumah": true },
+      "ciri": ["merokok_kretek"], "kebiasaan": "Merokok kretek" },
+    { "id": "lia",    "nama": "Tante Lia", "peran": "Menantu, istri Om Benny", "usia": 48,
+      "atribut": { "tinggi": "pendek", "tinggi_cm": 158, "tangan": "kanan", "sepatu": 38, "rambut": "Sanggul tinggi", "kacamata": false, "kelamin": "P", "tinggal_di_rumah": true },
+      "ciri": ["lipstik_merah_bata", "parfum_melati"], "kebiasaan": "Lipstik merah bata, parfum melati" },
+    { "id": "hendra", "nama": "Om Hendra", "peran": "Anak bungsu", "usia": 45,
+      "atribut": { "tinggi": "tinggi", "tinggi_cm": 180, "tangan": "kanan", "sepatu": 44, "rambut": "Ikal beruban", "kacamata": true, "kelamin": "L", "tinggal_di_rumah": true },
+      "ciri": ["kopi_hitam", "pelupa"], "kebiasaan": "Minum kopi hitam, pelupa" },
+    { "id": "dimas",  "nama": "Dimas",     "peran": "Cucu, anak Om Benny & Tante Lia", "usia": 24,
+      "atribut": { "tinggi": "sedang", "tinggi_cm": 172, "tangan": "kidal", "sepatu": 42, "rambut": "Gondrong", "kacamata": false, "kelamin": "L", "tinggal_di_rumah": true },
+      "ciri": ["begadang_main_game", "ngemil_keripik"], "kebiasaan": "Begadang main game, ngemil keripik" },
+    { "id": "sekar",  "nama": "Sekar",     "peran": "Cucu, anak Om Hendra", "usia": 20,
+      "atribut": { "tinggi": "pendek", "tinggi_cm": 155, "tangan": "kanan", "sepatu": 37, "rambut": "Berjilbab", "kacamata": true, "kelamin": "P", "tinggal_di_rumah": true },
+      "ciri": ["bawa_buku", "alergi_kucing"], "kebiasaan": "Selalu bawa buku, alergi kucing" },
+    { "id": "sri",    "nama": "Mbok Sri",  "peran": "Asisten rumah tangga", "usia": 55,
+      "atribut": { "tinggi": "pendek", "tinggi_cm": 150, "tangan": "kanan", "sepatu": 36, "rambut": "Sanggul kecil", "kacamata": false, "kelamin": "P", "tinggal_di_rumah": true },
+      "ciri": ["sandal_jepit", "tangan_bau_bawang"], "kebiasaan": "Sandal jepit, tangan bau bawang" },
+    { "id": "tono",   "nama": "Pak Tono",  "peran": "Satpam merangkap sopir", "usia": 40,
+      "atribut": { "tinggi": "tinggi", "tinggi_cm": 176, "tangan": "kanan", "sepatu": 42, "rambut": "Cepak", "kacamata": false, "kelamin": "L", "tinggal_di_rumah": true },
+      "ciri": ["bawa_senter", "renteng_kunci"], "kebiasaan": "Membawa senter dan serenteng kunci" },
+    { "id": "joko",   "nama": "Pak Joko",  "peran": "Tukang kebun", "usia": 63,
+      "atribut": { "tinggi": "sedang", "tinggi_cm": 165, "tangan": "kanan", "sepatu": 41, "rambut": "Beruban, pakai caping", "kacamata": false, "kelamin": "L", "tinggal_di_rumah": false },
+      "ciri": ["sepatu_bot_berlumpur", "tanah_di_kuku"], "kebiasaan": "Sepatu bot berlumpur, tanah di kuku" },
+    { "id": "wati",   "nama": "Bu Wati",   "peran": "Tetangga sebelah", "usia": 60,
+      "atribut": { "tinggi": "pendek", "tinggi_cm": 157, "tangan": "kidal", "sepatu": 39, "rambut": "Rol rambut", "kacamata": true, "kelamin": "P", "tinggal_di_rumah": false },
+      "ciri": ["bawa_kipas", "suka_antar_kue"], "kebiasaan": "Membawa kipas, suka antar kue" },
+    { "id": "raka",   "nama": "Raka",      "peran": "Keponakan jauh yang sedang menginap", "usia": 28,
+      "atribut": { "tinggi": "sedang", "tinggi_cm": 170, "tangan": "kanan", "sepatu": 42, "rambut": "Klimis berpomade", "kacamata": false, "kelamin": "L", "tinggal_di_rumah": false },
+      "ciri": ["pegang_hp", "parfum_mahal"], "kebiasaan": "Selalu pegang HP, parfum mahal" }
+  ],
+  "tokoh_tetap": [
+    { "id": "nenek", "nama": "Nenek Sumarni", "peran": "Pemilik rumah dan pembawa kasus", "usia": 78 },
+    { "id": "belang", "nama": "Si Belang", "peran": "Kucing rumah" }
+  ]
+}

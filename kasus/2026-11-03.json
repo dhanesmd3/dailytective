@@ -1,0 +1,59 @@
+{
+  "versi_skema": 1,
+  "id": 2,
+  "tanggal": "2026-11-03",
+  "judul": "Kumis di Foto Keluarga",
+  "jenis": "kejahilan",
+  "kesulitan": { "bintang": 1, "label": "Selasa" },
+  "jatah_periksa": 6,
+  "context_card": {
+    "cerita": "Pagi ini semua orang di foto keluarga punya kumis tebal, termasuk Nenek. Fotonya pasti sempat diturunkan dan dicoret kemarin sore. Dimas langsung dituduh, tapi ia bersumpah kali ini bukan dia.",
+    "clue_awal": [
+      { "id": "A1", "teks": "Pelakunya bertangan kanan." },
+      { "id": "A2", "teks": "Spidol hanya ada di Ruang Kerja dan tidak boleh dibawa keluar. Kalau pakai spidol, pasti dicoret di sana." },
+      { "id": "A3", "teks": "Raka merekam konten di Ruang Kerja sepanjang sore dan tidak keluar sama sekali." }
+    ]
+  },
+  "pilihan": {
+    "siapa":  ["dimas", "sekar", "raka"],
+    "pakai":  ["spidol", "cat_air", "selotip"],
+    "dimana": ["ruang_tamu", "ruang_kerja", "teras"]
+  },
+  "pengakuan": [],
+  "state_ruangan": {
+    "ruang_tamu": { "tambah": ["kumis_foto"], "belang": "keset", "waktu": "siang" }
+  },
+  "benda": {
+    "rt_foto":    { "hasil": "clue", "id_clue": "C1", "teks": "Di balik bingkai foto terselip daun belimbing kering. Pohon belimbing hanya tumbuh di teras." },
+    "rt_meja":    { "hasil": "clue", "id_clue": "C2", "teks": "Gulungan selotip di meja kopi masih bersegel plastik. Belum pernah dibuka sama sekali." },
+    "rt_kursi":   { "hasil": "clue", "id_clue": "C3", "teks": "Ada kuas kecil di kursi mustard. Bulunya masih basah oleh cat air hitam." },
+    "rt_lukisan": { "hasil": "clue", "id_clue": "C4", "teks": "Di samping lukisan, paku foto keluarga longgar. Fotonya sempat diturunkan dan dibawa keluar dari ruang tamu." },
+    "rt_rak":     { "hasil": "clue", "id_clue": "C5", "teks": "Kamera Raka di rak buku berisi rekaman Ruang Kerja sepanjang sore. Foto keluarga tak sekali pun muncul." },
+    "rt_sofa":    { "hasil": "pendukung", "id_clue": "C6", "teks": "Terselip pembatas buku farmasi di sela bantal sofa. Ujungnya bernoda hitam." },
+    "rt_jam":     { "hasil": "kosong", "teks": "Jam dinding berdetak santai, seolah tidak terjadi apa-apa." },
+    "rt_keset":   { "hasil": "kosong", "teks": "Sandal berjajar rapi. Ada satu sandal kiri tanpa pasangan, seperti biasa." },
+    "rt_kolong":  { "hasil": "kosong", "teks": "Kolong sofa: dua tutup pulpen dan bulu Si Belang segenggam." },
+    "rt_telepon": { "hasil": "kosong", "teks": "Nada sambungnya normal. Tidak ada pesan yang tertinggal." },
+    "rt_tirai":   { "hasil": "kosong", "teks": "Tirainya wangi sabun. Mbok Sri baru mencucinya minggu lalu." },
+    "rt_lemari":  { "hasil": "kosong", "teks": "Isinya buku telepon, lilin, dan korek api untuk kalau mati lampu." }
+  },
+  "teks_kosong_bawaan": "Tidak ada yang aneh di sini.",
+  "solusi": { "siapa": "sekar", "pakai": "cat_air", "dimana": "teras" },
+  "logika": {
+    "A1": { "tipe": "atribut", "atribut": "tangan", "nilai": "kanan" },
+    "A2": { "tipe": "jika_maka", "jika": { "pakai": "spidol" }, "maka": { "dimana": "ruang_kerja" } },
+    "A3": { "tipe": "jika_maka", "jika": { "siapa": "raka" }, "maka": { "dimana": "ruang_kerja" } },
+    "C1": { "tipe": "fakta", "dimana": "teras" },
+    "C2": { "tipe": "bukan", "pakai": "selotip" },
+    "C3": { "tipe": "fakta", "pakai": "cat_air" },
+    "C4": { "tipe": "bukan", "dimana": "ruang_tamu" },
+    "C5": { "tipe": "bukan", "dimana": "ruang_kerja" }
+  },
+  "penjelasan": [
+    { "teks": "Pelakunya bertangan kanan, jadi Dimas memang tidak bersalah kali ini.", "bukti": ["A1"] },
+    { "teks": "Daun belimbing di balik bingkai: fotonya dicoret di teras.", "bukti": ["C1"] },
+    { "teks": "Raka tidak keluar dari Ruang Kerja, jadi bukan dia. Pelakunya Sekar.", "bukti": ["A3", "C1"] },
+    { "teks": "Kuas basah cat air di kursi mustard: kumisnya dilukis dengan cat air.", "bukti": ["C3"] }
+  ],
+  "komentar_nenek": "Sekar, Nenek tahu Dimas sering jahil. Tapi balasnya jangan ke foto keluarga, Nenek jadi ikut berkumis."
+}

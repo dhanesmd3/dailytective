@@ -1,0 +1,61 @@
+{
+  "versi_skema": 1,
+  "id": 1,
+  "tanggal": "2026-11-02",
+  "judul": "Toples Nastar yang Raib",
+  "jenis": "kehilangan",
+  "kesulitan": { "bintang": 1, "label": "Senin" },
+  "jatah_periksa": 6,
+  "context_card": {
+    "cerita": "Mbok Sri selesai mengepel ruang tamu pukul 19.00. Pukul 21.00 Nenek mendapati toples nastar untuk tamu besok hilang dari meja kopi. \"Hujan deras begini, pasti masih disembunyikan di ruang tamu,\" kata Nenek.",
+    "clue_awal": [
+      { "id": "A1", "teks": "Yang mengambil toples itu tidak kidal." },
+      { "id": "A2", "teks": "Sarung terlalu tebal untuk muat di rak buku atau lemari kecil. Kalau dibungkus sarung, toplesnya pasti di kolong sofa." },
+      { "id": "A3", "teks": "Mbok Sri tidak pernah membawa apa pun tanpa kantong kresek." }
+    ]
+  },
+  "pilihan": {
+    "siapa":  ["dimas", "sri", "raka"],
+    "pakai":  ["kantong_kresek", "sarung", "tas_belanja"],
+    "dimana": ["kolong_sofa", "rak_buku", "lemari_telepon"]
+  },
+  "pengakuan": [],
+  "state_ruangan": {
+    "ruang_tamu": { "tambah": ["jejak_sepatu", "bekas_toples"], "belang": "lantai", "waktu": "malam" }
+  },
+  "benda": {
+    "rt_lemari":  { "hasil": "clue", "id_clue": "B1", "teks": "Toples nastar ada di dalam lemari kecil, terselip di balik tumpukan buku telepon lama." },
+    "rt_kolong":  { "hasil": "clue", "id_clue": "B2", "teks": "Kolong sofa hanya berisi debu dan sebutir kelereng. Tidak ada bekas benda diseret." },
+    "rt_keset":   { "hasil": "clue", "id_clue": "B3", "teks": "Lantai baru dipel. Satu-satunya jejak baru: sepatu ukuran 42, dari pintu menuju meja kopi." },
+    "rt_sofa":    { "hasil": "clue", "id_clue": "B4", "teks": "Sarung Nenek terlipat di bawah bantal sofa, masih licin bekas setrika." },
+    "rt_kursi":   { "hasil": "clue", "id_clue": "B5", "teks": "Semua kantong kresek di rumah ada di kursi mustard, terlipat segitiga rapi. Tidak satu pun terpakai." },
+    "rt_rak":     { "hasil": "clue", "id_clue": "B6", "teks": "Buku-buku Om Hendra berdebu tebal. Tidak ada satu pun yang bergeser dari tempatnya." },
+    "rt_meja":    { "hasil": "pendukung", "id_clue": "B7", "teks": "Ada bekas lingkaran toples di meja kopi. Di dekatnya tercium wangi parfum yang mahal." },
+    "rt_tirai":   { "hasil": "clue", "id_clue": "B8", "teks": "Tas belanja batik Nenek tergantung di balik tirai. Bagian dalamnya penuh remah nastar." },
+    "rt_jam":     { "hasil": "kosong", "teks": "Jarumnya berdetak normal. Pukul 21.07, kalau kamu penasaran." },
+    "rt_lukisan": { "hasil": "kosong", "teks": "Di balik lukisan cuma ada cicak yang sama kagetnya denganmu." },
+    "rt_telepon": { "hasil": "kosong", "teks": "Telepon berdering sekali, lalu diam. Salah sambung, sepertinya." },
+    "rt_foto":    { "hasil": "kosong", "teks": "Foto Lebaran tahun lalu. Semua tersenyum, kecuali Om Benny yang kesilauan." }
+  },
+  "teks_kosong_bawaan": "Kamu memeriksanya dengan teliti, tapi tidak ada yang mencurigakan.",
+  "solusi": { "siapa": "raka", "pakai": "tas_belanja", "dimana": "lemari_telepon" },
+  "logika": {
+    "A1": { "tipe": "atribut_bukan", "atribut": "tangan", "nilai": "kidal" },
+    "A2": { "tipe": "jika_maka", "jika": { "pakai": "sarung" }, "maka": { "dimana": "kolong_sofa" } },
+    "A3": { "tipe": "jika_maka", "jika": { "siapa": "sri" }, "maka": { "pakai": "kantong_kresek" } },
+    "B1": { "tipe": "fakta", "dimana": "lemari_telepon" },
+    "B2": { "tipe": "bukan", "dimana": "kolong_sofa" },
+    "B3": { "tipe": "atribut", "atribut": "sepatu", "nilai": 42 },
+    "B4": { "tipe": "bukan", "pakai": "sarung" },
+    "B5": { "tipe": "bukan", "pakai": "kantong_kresek" },
+    "B6": { "tipe": "bukan", "dimana": "rak_buku" },
+    "B8": { "tipe": "fakta", "pakai": "tas_belanja" }
+  },
+  "penjelasan": [
+    { "teks": "Pelakunya tidak kidal, jadi bukan Dimas.", "bukti": ["A1"] },
+    { "teks": "Tas belanja Nenek di balik tirai penuh remah nastar: toplesnya dibawa dengan tas belanja.", "bukti": ["B8"] },
+    { "teks": "Mbok Sri selalu memakai kantong kresek, jadi bukan dia. Pelakunya Raka, dan jejak sepatu ukuran 42 cocok dengannya.", "bukti": ["A3", "B8", "B3"] },
+    { "teks": "Toples nastar ditemukan di lemari kecil bawah telepon.", "bukti": ["B1"] }
+  ],
+  "komentar_nenek": "Raka, Raka… kalau mau bikin konten makan nastar, minta saja. Jangan disembunyikan, nanti semutan."
+}

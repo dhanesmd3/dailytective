@@ -1,0 +1,59 @@
+{
+  "versi_skema": 1,
+  "id": 3,
+  "tanggal": "2026-11-04",
+  "judul": "Uang Arisan di Lemari Telepon",
+  "jenis": "pencurian",
+  "kesulitan": { "bintang": 2, "label": "Rabu" },
+  "jatah_periksa": 7,
+  "context_card": {
+    "cerita": "Pukul 20.00 Nenek masih menghitung uang arisan RT di lemari kecil bawah telepon. Pukul 21.30 lemari itu ternganga dan amplopnya kosong. Gerbang sudah dikunci Pak Tono, jadi uangnya pasti masih tersembunyi di ruang tamu.",
+    "clue_awal": [
+      { "id": "A1", "teks": "Pelakunya kidal." },
+      { "id": "A2", "teks": "Siapa pun yang memakai kartu ATM menyelipkan uangnya di balik lukisan." }
+    ]
+  },
+  "pilihan": {
+    "siapa":  ["benny", "lia", "raka", "wati"],
+    "pakai":  ["kunci_cadangan", "jepit_rambut", "obeng", "kartu_atm"],
+    "dimana": ["kolong_sofa", "balik_lukisan", "rak_buku", "balik_tirai"]
+  },
+  "pengakuan": [],
+  "state_ruangan": {
+    "ruang_tamu": { "tambah": ["lemari_terbuka", "amplop_kosong"], "belang": "sofa", "waktu": "malam" }
+  },
+  "benda": {
+    "rt_lemari":  { "hasil": "clue", "id_clue": "D1", "teks": "Engsel pintu lemari kecil dicopot. Keempat sekrupnya tergeletak di dalam, sementara kuncinya tetap utuh." },
+    "rt_rak":     { "hasil": "clue", "id_clue": "D2", "teks": "Di balik buku sejarah Om Hendra terselip gepokan uang yang diikat karet." },
+    "rt_keset":   { "hasil": "clue", "id_clue": "D3", "teks": "Keset depan basah. Hanya ada satu jejak baru di lantai: sepatu ukuran 43, menuju lemari telepon." },
+    "rt_telepon": { "hasil": "clue", "id_clue": "D4", "teks": "Buku tamu di samping telepon: \"Bu Wati pulang pukul 19.30.\" Ada tanda tangan Pak Tono di bawahnya." },
+    "rt_kolong":  { "hasil": "clue", "id_clue": "D5", "teks": "Di kolong sofa hanya ada debu dan remah kue lapis." },
+    "rt_lukisan": { "hasil": "clue", "id_clue": "D6", "teks": "Di balik lukisan hanya ada sarang laba-laba. Debu di bingkainya utuh, tidak tersentuh." },
+    "rt_tirai":   { "hasil": "clue", "id_clue": "D7", "teks": "Tirainya basah terkena tampias hujan. Tidak ada apa-apa di baliknya." },
+    "rt_kursi":   { "hasil": "pendukung", "id_clue": "D8", "teks": "Saputangan basah keringat tertinggal di sandaran kursi mustard. Baunya seperti kretek." },
+    "rt_jam":     { "hasil": "kosong", "teks": "Jam dinding menunjukkan 21.42. Detaknya terdengar lebih keras di tengah ketegangan." },
+    "rt_foto":    { "hasil": "kosong", "teks": "Di foto ini Om Benny masih berambut. Sudah lama sekali." },
+    "rt_sofa":    { "hasil": "kosong", "teks": "Bantal sofa empuk dan hangat. Si Belang baru saja pindah dari sini." },
+    "rt_meja":    { "hasil": "kosong", "teks": "Sepiring kue lapis tinggal separuh. Bukan urusanmu malam ini." }
+  },
+  "teks_kosong_bawaan": "Kamu memeriksanya dengan teliti, tapi tidak ada yang mencurigakan.",
+  "solusi": { "siapa": "benny", "pakai": "obeng", "dimana": "rak_buku" },
+  "logika": {
+    "A1": { "tipe": "atribut", "atribut": "tangan", "nilai": "kidal" },
+    "A2": { "tipe": "jika_maka", "jika": { "pakai": "kartu_atm" }, "maka": { "dimana": "balik_lukisan" } },
+    "D1": { "tipe": "fakta", "pakai": "obeng" },
+    "D2": { "tipe": "fakta", "dimana": "rak_buku" },
+    "D3": { "tipe": "atribut", "atribut": "sepatu", "nilai": 43 },
+    "D4": { "tipe": "bukan", "siapa": "wati" },
+    "D5": { "tipe": "bukan", "dimana": "kolong_sofa" },
+    "D6": { "tipe": "bukan", "dimana": "balik_lukisan" },
+    "D7": { "tipe": "bukan", "dimana": "balik_tirai" }
+  },
+  "penjelasan": [
+    { "teks": "Pelakunya kidal: Om Benny atau Bu Wati.", "bukti": ["A1"] },
+    { "teks": "Bu Wati sudah pulang pukul 19.30, sebelum uangnya hilang. Jejak sepatu ukuran 43 juga milik Om Benny.", "bukti": ["D4", "D3"] },
+    { "teks": "Sekrup engsel dicopot dan kuncinya utuh: lemarinya dibongkar pakai obeng.", "bukti": ["D1"] },
+    { "teks": "Gepokan uang terselip di balik buku di rak buku.", "bukti": ["D2"] }
+  ],
+  "komentar_nenek": "Benny, kalau usahamu sedang seret, bilang sama Ibu. Jangan bongkar lemari pakai obeng, engselnya mahal."
+}

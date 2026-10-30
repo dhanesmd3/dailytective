@@ -1,0 +1,15 @@
+{
+  "lokasi": [
+    { "id": "ruang_tamu",  "nama": "Ruang Tamu",    "jenis": "ruangan" },
+    { "id": "dapur",       "nama": "Dapur",         "jenis": "ruangan" },
+    { "id": "kamar_nenek", "nama": "Kamar Nenek",   "jenis": "ruangan" },
+    { "id": "ruang_kerja", "nama": "Ruang Kerja",   "jenis": "ruangan" },
+    { "id": "teras",       "nama": "Teras & Kebun", "jenis": "ruangan" },
+    { "id": "kolong_sofa",    "nama": "Kolong sofa",    "jenis": "titik", "ruangan": "ruang_tamu" },
+    { "id": "rak_buku",       "nama": "Rak buku",       "jenis": "titik", "ruangan": "ruang_tamu" },
+    { "id": "lemari_telepon", "nama": "Lemari telepon", "jenis": "titik", "ruangan": "ruang_tamu" },
+    { "id": "balik_lukisan",  "nama": "Balik lukisan",  "jenis": "titik", "ruangan": "ruang_tamu" },
+    { "id": "balik_tirai",    "nama": "Balik tirai",    "jenis": "titik", "ruangan": "ruang_tamu" },
+    { "id": "pos_jaga",       "nama": "Pos jaga",       "jenis": "titik", "ruangan": "teras" }
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "versi_skema": 1,
+  "id": 129,
+  "tanggal": "2026-11-02",
+  "judul": "Bolu Pandan yang Dicuil",
+  "jenis": "kejahilan",
+  "kesulitan": { "bintang": 1, "label": "Senin" },
+  "jatah_periksa": 10,
+  "context_card": {
+    "cerita": "Nenek membuat bolu pandan untuk arisan besok pagi. Pukul 22.00 ia mendapati sepotong besar sudah hilang. \"Siapa yang tega?\" tanyanya sambil memegang pisau kue.",
+    "clue_awal": [
+      { "id": "A1", "teks": "Yang mencuil bolu itu kidal." },
+      { "id": "A2", "teks": "Siapa pun yang memakai tangan kosong melakukannya di Dapur." },
+      { "id": "A3", "teks": "Dimas tidak keluar dari Ruang Kerja sejak pukul 20.00 sampai tengah malam." }
+    ]
+  },
+  "pilihan": {
+    "siapa":  ["dimas", "sri", "wati"],
+    "pakai":  ["sendok", "pisau_roti", "tangan_kosong"],
+    "dimana": ["dapur", "ruang_kerja", "teras"]
+  },
+  "pengakuan": [],
+  "state_ruangan": {
+    "teras":  { "tambah": ["piring_kecil_remah", "pisau_di_kursi", "rol_rambut_pink"] },
+    "dapur":  { "tambah": ["bolu_di_meja"] }
+  },
+  "benda": {
+    "tk_meja":     { "hasil": "clue",      "id_clue": "B1", "teks": "Remah bolu berceceran di meja teras, di sebelah piring kecil." },
+    "dp_rakpiring":{ "hasil": "clue",      "id_clue": "B2", "teks": "Semua sendok bersih dan lengkap. Tidak ada yang dipakai malam ini." },
+    "tk_kursi":    { "hasil": "clue",      "id_clue": "B3", "teks": "Ada pisau roti di dudukan kursi rotan. Krim pandan masih menempel." },
+    "tk_pot":      { "hasil": "pendukung", "id_clue": "B4", "teks": "Rol rambut merah muda tergeletak di samping pot." },
+    "rk_komputer": { "hasil": "pendukung", "id_clue": "B5", "teks": "Game masih menyala. Riwayatnya menunjukkan Dimas bermain tanpa jeda sejak 20.05." },
+    "dp_meja":     { "hasil": "clue",      "id_clue": "B6", "teks": "Bolunya di sini. Bekas potongannya rapi dan lurus, bukan dicuil tangan." },
+    "dp_wastafel": { "hasil": "clue",      "id_clue": "B7", "teks": "Wastafel kering dan lantai bersih. Tidak ada remah di dapur sama sekali." },
+    "rk_sampah":   { "hasil": "clue",      "id_clue": "B8", "teks": "Isinya bungkus keripik dan kertas coretan. Tidak ada remah bolu." },
+    "rt_kolong":   { "hasil": "kosong",    "teks": "Cuma satu kaus kaki yang entah milik siapa." },
+    "dp_kulkas":   { "hasil": "kosong",    "teks": "Penuh rantang. Si Belang menatapmu penuh harap." }
+  },
+  "teks_kosong_bawaan": "Kamu memeriksanya dengan teliti, tapi tidak ada yang mencurigakan.",
+  "solusi": { "siapa": "wati", "pakai": "pisau_roti", "dimana": "teras" },
+  "logika": {
+    "A1": { "tipe": "atribut", "atribut": "tangan", "nilai": "kidal" },
+    "A2": { "tipe": "jika_maka", "jika": { "pakai": "tangan_kosong" }, "maka": { "dimana": "dapur" } },
+    "A3": { "tipe": "jika_maka", "jika": { "siapa": "dimas" }, "maka": { "dimana": "ruang_kerja" } },
+    "B1": { "tipe": "fakta", "dimana": "teras" },
+    "B2": { "tipe": "bukan", "pakai": "sendok" },
+    "B3": { "tipe": "fakta", "pakai": "pisau_roti" },
+    "B6": { "tipe": "bukan", "pakai": "tangan_kosong" },
+    "B7": { "tipe": "bukan", "dimana": "dapur" },
+    "B8": { "tipe": "bukan", "dimana": "ruang_kerja" }
+  },
+  "penjelasan": [
+    { "teks": "Pelakunya kidal, jadi tinggal Dimas atau Bu Wati.", "bukti": ["A1"] },
+    { "teks": "Remah bolu ada di meja teras, jadi kejadiannya di Teras.", "bukti": ["B1"] },
+    { "teks": "Dimas tidak keluar dari Ruang Kerja, jadi bukan dia. Pelakunya Bu Wati.", "bukti": ["A3", "B1"] },
+    { "teks": "Pisau roti berkrim pandan ditemukan di kursi teras.", "bukti": ["B3"] }
+  ],
+  "komentar_nenek": "Wati, Wati… kalau mau, bilang saja. Nenek kan bikin dua loyang."
+}

@@ -1,0 +1,57 @@
+{
+  "versi_skema": 1,
+  "id": 5,
+  "tanggal": "2026-11-06",
+  "judul": "HP Raka Hilang Saat Live",
+  "jenis": "kehilangan",
+  "kesulitan": { "bintang": 2, "label": "Jumat" },
+  "jatah_periksa": 7,
+  "context_card": {
+    "cerita": "Raka sedang live di ruang tamu saat listrik padam sebentar pukul 20.00. Begitu lampu menyala, HP-nya hilang dari tripod dan sudah dibawa keluar dari ruang tamu. \"Ribuan penontonku!\" ratap Raka.",
+    "clue_awal": [
+      { "id": "A1", "teks": "Pelakunya bertangan kanan." },
+      { "id": "A2", "teks": "Pak Tono selalu membungkus barang temuan dengan kantong kresek, lalu menyimpannya di pos jaga." }
+    ]
+  },
+  "pilihan": {
+    "siapa":  ["hendra", "sri", "tono", "wati"],
+    "pakai":  ["sarung", "keranjang_cucian", "toples_kosong", "kantong_kresek"],
+    "dimana": ["kamar_nenek", "dapur", "pos_jaga", "ruang_kerja"]
+  },
+  "pengakuan": [],
+  "state_ruangan": {
+    "ruang_tamu": { "tambah": ["tripod_kosong"], "belang": "rak", "waktu": "malam" }
+  },
+  "benda": {
+    "rt_kursi":   { "hasil": "clue", "id_clue": "F1", "teks": "Laptop Raka di kursi mustard memutar ulang live-nya. Detik terakhir, dalam remang: HP dimasukkan ke toples kaca." },
+    "rt_meja":    { "hasil": "clue", "id_clue": "F2", "teks": "Tripod HP di meja kopi lengket. Bekas tangan yang mencabut HP itu berbau bawang merah." },
+    "rt_rak":     { "hasil": "clue", "id_clue": "F3", "teks": "Catatan Nenek di rak buku: \"Barang yang dipinjam Hendra selalu berakhir di meja Ruang Kerja.\"" },
+    "rt_lemari":  { "hasil": "clue", "id_clue": "F4", "teks": "Kunci gembok Ruang Kerja ada di lemari kecil ini. Ruang Kerja terkunci sejak magrib." },
+    "rt_telepon": { "hasil": "clue", "id_clue": "F5", "teks": "Raka menelepon HP-nya dari telepon rumah. Deringnya terdengar samar dari arah dapur." },
+    "rt_keset":   { "hasil": "pendukung", "id_clue": "F6", "teks": "Sepasang sandal jepit tipis tergeletak miring di depan rak sepatu, seperti ditinggal buru-buru." },
+    "rt_jam":     { "hasil": "kosong", "teks": "Jamnya sempat mati waktu listrik padam. Sekarang terlambat lima menit." },
+    "rt_foto":    { "hasil": "kosong", "teks": "Raka tidak ada di foto keluarga ini. Ia datang dua tahun setelahnya." },
+    "rt_lukisan": { "hasil": "kosong", "teks": "Lukisannya sedikit berdebu. Tidak ada apa-apa di baliknya." },
+    "rt_sofa":    { "hasil": "kosong", "teks": "Bantal sofa penyok bekas diduduki Raka berjam-jam." },
+    "rt_kolong":  { "hasil": "kosong", "teks": "Kolong sofa: kabel charger putus dan satu koin lima ratus." },
+    "rt_tirai":   { "hasil": "kosong", "teks": "Lampu ring Raka bersandar di balik tirai, padam dan sedih." }
+  },
+  "teks_kosong_bawaan": "Tidak ada yang aneh di sini.",
+  "solusi": { "siapa": "sri", "pakai": "toples_kosong", "dimana": "dapur" },
+  "logika": {
+    "A1": { "tipe": "atribut", "atribut": "tangan", "nilai": "kanan" },
+    "A2": { "tipe": "jika_maka", "jika": { "siapa": "tono" }, "maka": [{ "pakai": "kantong_kresek" }, { "dimana": "pos_jaga" }] },
+    "F1": { "tipe": "fakta", "pakai": "toples_kosong" },
+    "F2": { "tipe": "atribut", "atribut": "ciri", "nilai": "tangan_bau_bawang" },
+    "F3": { "tipe": "jika_maka", "jika": { "siapa": "hendra" }, "maka": { "dimana": "ruang_kerja" } },
+    "F4": { "tipe": "bukan", "dimana": "ruang_kerja" },
+    "F5": { "tipe": "fakta", "dimana": "dapur" }
+  },
+  "penjelasan": [
+    { "teks": "Pelakunya bertangan kanan, jadi bukan Bu Wati.", "bukti": ["A1"] },
+    { "teks": "Rekaman live menunjukkan HP dimasukkan ke toples kaca. Pak Tono selalu memakai kresek, jadi bukan dia.", "bukti": ["F1", "A2"] },
+    { "teks": "Dering HP terdengar dari arah dapur.", "bukti": ["F5"] },
+    { "teks": "Barang pinjaman Om Hendra selalu berakhir di Ruang Kerja, bukan di dapur. Pelakunya Mbok Sri, cocok dengan tangan berbau bawang.", "bukti": ["F3", "F5", "F2"] }
+  ],
+  "komentar_nenek": "Sri, Nenek paham kamu bosan direkam terus waktu masak. Tapi toples kerupuk itu bukan brankas."
+}
