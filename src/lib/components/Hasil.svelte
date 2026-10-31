@@ -2,7 +2,8 @@
 	import { teksShare, type BuktiDitemukan, type HasilAkhir, type KasusPublik, type StatistikPribadi } from '$lib/engine/permainan';
 	import type { Kategori, Tuduhan } from '$lib/engine/types';
 	import { formatDurasi } from '$lib/engine/waktu';
-	import { KATEGORI_LABEL } from '$lib/teks';
+	import { pakaiT, type KunciTeks } from '$lib/i18n';
+	import { labelKategori } from '$lib/teks';
 	import HitungMundur from './HitungMundur.svelte';
 	import Ikon from './Ikon.svelte';
 	import Potret from './Potret.svelte';
@@ -29,18 +30,19 @@
 		bukaStatistik: () => void;
 	} = $props();
 
+	const t = pakaiT();
 	const nama = (kat: Kategori, id: string) => kasus.pilihan[kat]?.find((p) => p.id === id)?.nama ?? id;
 	const ditemukan = $derived(new Map(diperiksa.filter((d) => d.hasil === 'clue').map((d) => [d.benda, d.nomor])));
 	const bagian = $derived(kasus.kategori.filter((k) => akhir.solusi[k]));
 
 	function labelBukti(idClue: string): { teks: string; ketemu: boolean } {
 		const awal = kasus.context_card.clue_awal.findIndex((c) => c.id === idClue);
-		if (awal >= 0) return { teks: `Clue awal ${awal + 1}`, ketemu: true };
+		if (awal >= 0) return { teks: t('hasil.clue_awal_n', { n: awal + 1 }), ketemu: true };
 		const p = kasus.pengakuan.find((x) => x.id === idClue);
-		if (p) return { teks: `Pengakuan ${nama('siapa', p.oleh)}`, ketemu: true };
+		if (p) return { teks: t('hasil.pengakuan_dari', { nama: nama('siapa', p.oleh) }), ketemu: true };
 		const b = akhir.semua_bukti[idClue]?.benda;
-		if (b && ditemukan.has(b)) return { teks: `Bukti #${ditemukan.get(b)}`, ketemu: true };
-		return { teks: `Tak ditemukan · ${b ? namaBenda(b) : idClue}`, ketemu: false };
+		if (b && ditemukan.has(b)) return { teks: t('tkp.bukti_n', { n: ditemukan.get(b) ?? '' }), ketemu: true };
+		return { teks: t('hasil.tak_ditemukan', { benda: b ? namaBenda(b) : idClue }), ketemu: false };
 	}
 
 	const terlewat = $derived(
@@ -54,21 +56,26 @@
 			bintang: kasus.kesulitan.bintang,
 			jatah: kasus.jatah_periksa,
 			periksa: diperiksa.map((d) => d.hasil === 'clue'),
-			tuduhanBenar: tuduhan.map((t) => t.benar === kasus.kategori.length),
+			tuduhanBenar: tuduhan.map((tu) => tu.benar === kasus.kategori.length),
 			maksTuduhan: kasus.maks_tuduhan,
 			menang: akhir.menang,
 			durasiDetik: akhir.durasi_detik,
 			streak: statistik.streak,
-			situs: typeof location === 'undefined' ? 'dailytective.com' : location.host
+			situs: typeof location === 'undefined' ? 'dailytective.com' : location.host,
+			label: {
+				periksa: (n) => (n === 1 ? t('share.periksa_satu') : t('share.periksa', { n })),
+				tebakan: (n) => t('share.tebakan', { n }),
+				ditutup: t('share.ditutup')
+			}
 		})
 	);
 
 	async function bagikan() {
 		try {
 			await navigator.clipboard.writeText(teks);
-			pesanSalin = 'Disalin! Tempel di grup, tapi jangan spoiler ya.';
+			pesanSalin = t('hasil.disalin');
 		} catch {
-			pesanSalin = 'Tidak bisa menyalin otomatis. Salin teks di atas secara manual.';
+			pesanSalin = t('hasil.gagal_salin');
 		}
 	}
 </script>
@@ -76,12 +83,12 @@
 <div class="hasil">
 	<div class="kiri">
 		<div class="status" class:menang={akhir.menang}>
-			<span class="stempel">{akhir.menang ? 'Terpecahkan' : 'Kasus ditutup'}</span>
-			<p class="gelar">{akhir.gelar}</p>
+			<span class="stempel">{akhir.menang ? t('hasil.terpecahkan') : t('hasil.ditutup')}</span>
+			<p class="gelar">{t(`gelar.${akhir.kode_gelar}` as KunciTeks)}</p>
 		</div>
 
 		<div class="jawaban kartu">
-			<h2>Jawabannya</h2>
+			<h2>{t('hasil.jawaban')}</h2>
 			<div class="tiga" style:grid-template-columns="repeat({bagian.length}, 1fr)">
 				{#each bagian as k (k)}
 					{@const id = akhir.solusi[k]!}
@@ -93,19 +100,19 @@
 						{:else}
 							<span class="lingkar"><Ikon {id} ukuran={64} /></span>
 						{/if}
-						<span class="label">{KATEGORI_LABEL[k]}</span>
+						<span class="label">{labelKategori(t, k)}</span>
 						<strong>{nama(k, id)}</strong>
 					</div>
 				{/each}
 			</div>
 			<blockquote>
-				<Potret id="nenek" ukuran={52} label="Nenek Sumarni" />
+				<Potret id="nenek" ukuran={52} />
 				<p>"{akhir.komentar_nenek}"</p>
 			</blockquote>
 		</div>
 
 		<div class="penjelasan kartu">
-			<h2>Alur logikanya</h2>
+			<h2>{t('hasil.alur')}</h2>
 			<ol>
 				{#each akhir.penjelasan as l, i (i)}
 					<li>
@@ -121,7 +128,7 @@
 			</ol>
 			{#if terlewat.length}
 				<details>
-					<summary>Bukti yang tidak kamu periksa ({terlewat.length})</summary>
+					<summary>{t('hasil.terlewat', { n: terlewat.length })}</summary>
 					<ul>
 						{#each terlewat as [id, v] (id)}
 							<li><strong>{namaBenda(v.benda!)}:</strong> {v.teks}</li>
@@ -134,11 +141,11 @@
 
 	<div class="kanan">
 		<div class="statistik kartu">
-			<h2>Kasus #{kasus.id}</h2>
+			<h2>{t('umum.kasus_no', { id: kasus.id })}</h2>
 			<dl>
-				<div><dt>Periksa</dt><dd>{diperiksa.length}<small>/{kasus.jatah_periksa}</small></dd></div>
-				<div><dt>Tebakan</dt><dd>{akhir.menang ? `ke-${tuduhan.length}` : 'gagal'}</dd></div>
-				<div><dt>Waktu</dt><dd>{formatDurasi(akhir.durasi_detik)}</dd></div>
+				<div><dt>{t('hasil.periksa')}</dt><dd>{diperiksa.length}<small>/{kasus.jatah_periksa}</small></dd></div>
+				<div><dt>{t('hasil.tebakan')}</dt><dd>{akhir.menang ? t('hasil.tebakan_ke', { n: tuduhan.length }) : t('hasil.gagal')}</dd></div>
+				<div><dt>{t('hasil.waktu')}</dt><dd>{formatDurasi(akhir.durasi_detik)}</dd></div>
 			</dl>
 			<div class="streak">
 				<svg viewBox="0 0 24 24" width="30" height="30" aria-hidden="true">
@@ -151,22 +158,22 @@
 					/>
 				</svg>
 				<div>
-					<strong>{statistik.streak}</strong> hari berturut-turut
-					<span class="redup-krem">Terpanjang: {statistik.streak_terpanjang}</span>
+					<strong>{statistik.streak}</strong> {t('hasil.berturut')}
+					<span class="redup-krem">{t('hasil.terpanjang', { n: statistik.streak_terpanjang })}</span>
 				</div>
 			</div>
-			<button class="tombol krem kecil" onclick={bukaStatistik}>Statistik lengkap</button>
+			<button class="tombol krem kecil" onclick={bukaStatistik}>{t('hasil.statistik_lengkap')}</button>
 		</div>
 
 		<div class="share kartu">
-			<h2>Bagikan</h2>
-			<pre aria-label="Teks yang akan dibagikan">{teks}</pre>
-			<button class="tombol" onclick={bagikan}>Salin hasil</button>
-			<p class="pesan" aria-live="polite">{pesanSalin || 'Jangan spoiler ya! Teks ini tidak membocorkan jawaban.'}</p>
+			<h2>{t('hasil.bagikan')}</h2>
+			<pre aria-label={t('hasil.teks_share_aria')}>{teks}</pre>
+			<button class="tombol" onclick={bagikan}>{t('hasil.salin')}</button>
+			<p class="pesan" aria-live="polite">{pesanSalin || t('hasil.jangan_spoiler')}</p>
 		</div>
 
 		<div class="berikut">
-			<span class="label">Kasus berikutnya</span>
+			<span class="label">{t('hasil.berikutnya')}</span>
 			<HitungMundur {berikutnya} {serverTime} />
 		</div>
 	</div>

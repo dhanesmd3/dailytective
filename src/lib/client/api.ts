@@ -2,6 +2,7 @@
 
 import type { BuktiDitemukan, HasilTuduh, StatistikPribadi } from '$lib/engine/permainan';
 import type { Kombinasi, Tuduhan } from '$lib/engine/types';
+import type { FungsiT, KunciTeks } from '$lib/i18n';
 import type { SesiTampil } from '$lib/server/layanan';
 
 export class GalatApi extends Error {
@@ -44,17 +45,17 @@ export const api = {
 	resetSesi: (id: number) => panggil<{ ok: true }>('DELETE', `/api/kasus/${id}/sesi`)
 };
 
-export const PESAN_GALAT: Record<string, string> = {
-	jatah_habis: 'Jatah periksa sudah habis. Saatnya menuduh!',
-	kasus_selesai: 'Kasus ini sudah selesai.',
-	tuduhan_habis: 'Kesempatan menuduh sudah habis.',
-	tuduhan_ganda: 'Kombinasi itu sudah pernah kamu tuduhkan.',
-	pilihan_tidak_valid: 'Pilihan tuduhan tidak valid.',
-	benda_tidak_dikenal: 'Benda itu tidak bisa diperiksa.',
-	terlalu_banyak: 'Pelan-pelan, Detektif. Coba lagi beberapa detik lagi.'
-};
+const KODE_GALAT = [
+	'jatah_habis',
+	'kasus_selesai',
+	'tuduhan_habis',
+	'tuduhan_ganda',
+	'pilihan_tidak_valid',
+	'benda_tidak_dikenal',
+	'terlalu_banyak'
+];
 
-export function pesanGalat(e: unknown): string {
-	if (e instanceof GalatApi) return PESAN_GALAT[e.kode] ?? 'Ada masalah. Coba lagi sebentar.';
-	return 'Butuh koneksi untuk menyelidiki. Coba lagi.';
+export function pesanGalat(t: FungsiT, e: unknown): string {
+	if (e instanceof GalatApi) return KODE_GALAT.includes(e.kode) ? t(`galat.${e.kode}` as KunciTeks) : t('galat.umum');
+	return t('galat.koneksi');
 }

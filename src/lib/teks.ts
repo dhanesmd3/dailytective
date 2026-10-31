@@ -1,38 +1,38 @@
-// Teks UI yang dipakai berulang. Dipisah dari komponen supaya mudah disunting dan diterjemahkan nanti.
+// Teks UI yang butuh sedikit logika (jenis kasus, feedback tuduhan, atribut). Teksnya sendiri ada di i18n/kamus.ts.
 
-export const JENIS: Record<string, { label: string; pakai: string; dimana: string }> = {
-	pencurian: { label: 'Pencurian', pakai: 'alat untuk mengambil atau membuka', dimana: 'tempat barang disembunyikan' },
-	kehilangan: { label: 'Kehilangan', pakai: 'wadah atau cara membawa', dimana: 'tempat barang akhirnya berada' },
-	sabotase: { label: 'Sabotase', pakai: 'bahan atau alat sabotase', dimana: 'tempat sabotase dilakukan' },
-	kejahilan: { label: 'Kejahilan', pakai: 'alat yang dipakai', dimana: 'tempat kejadian' },
-	pecah_rusak: { label: 'Pecah/rusak', pakai: 'benda penyebab', dimana: 'ruangan kejadian' },
-	pembunuhan: { label: 'Pembunuhan', pakai: 'senjata', dimana: 'lokasi' }
-};
+import type { Kategori } from '$lib/engine/types';
+import type { FungsiT, KunciTeks } from '$lib/i18n';
 
-/** Feedback tuduhan salah (GDD bagian 7). Hanya menyebut jumlah, tidak bagian mana. */
-export function umpanBalik(benar: number, dari: number): string {
-	const angka = ['Nol', 'Satu', 'Dua', 'Tiga'];
-	if (benar === 0) return 'Meleset semua. Tidak ada satu pun yang tepat.';
-	if (benar === dari - 1) return `Hampir! ${angka[benar]} bagian tepat.`;
-	return `${angka[benar]} bagian tepat, ${angka[dari - benar].toLowerCase()} lainnya salah.`;
+const JENIS = ['pencurian', 'kehilangan', 'sabotase', 'kejahilan', 'pecah_rusak', 'pembunuhan'] as const;
+
+export function labelJenis(t: FungsiT, jenis: string): { label: string; pakai: string; dimana: string } {
+	if (!(JENIS as readonly string[]).includes(jenis)) return { label: jenis, pakai: '', dimana: '' };
+	return {
+		label: t(`jenis.${jenis}` as KunciTeks),
+		pakai: t(`jenis.${jenis}.pakai` as KunciTeks),
+		dimana: t(`jenis.${jenis}.dimana` as KunciTeks)
+	};
 }
 
-export const KATEGORI_LABEL = { siapa: 'Siapa', pakai: 'Pakai apa', dimana: 'Di mana', kenapa: 'Kenapa' } as const;
+export function labelKategori(t: FungsiT, k: Kategori): string {
+	return t(`kat.${k}` as KunciTeks);
+}
 
-export const ONBOARDING = [
-	{ judul: 'Setiap hari ada satu kasus di rumah Nenek.', isi: 'Kasus baru terbit pukul 06.00 WIB. Semua pemain mendapat kasus yang sama.' },
-	{ judul: 'Periksa benda untuk menemukan bukti. Jatahmu terbatas!', isi: 'Memeriksa benda baru memakai satu jatah. Memeriksa ulang gratis. Pilih dengan cermat.' },
-	{ judul: 'Tebak Siapa, Pakai apa, dan Di mana. Kamu punya 3 kesempatan.', isi: 'Kalau salah, kamu diberi tahu berapa bagian yang tepat, tapi tidak bagian yang mana.' }
-];
+/** Feedback tuduhan salah (GDD bagian 7). Hanya menyebut jumlah, tidak bagian mana. */
+export function umpanBalik(t: FungsiT, benar: number, dari: number): string {
+	const angka = t.bahasa === 'en' ? ['Zero', 'One', 'Two', 'Three'] : ['Nol', 'Satu', 'Dua', 'Tiga'];
+	if (benar === 0) return t('tuduh.meleset');
+	if (benar === dari - 1) return t('tuduh.hampir', { n: angka[benar] });
+	return t('tuduh.sebagian', { n: angka[benar], m: angka[dari - benar].toLowerCase() });
+}
 
-export function labelAtribut(a: Record<string, unknown>): { label: string; nilai: string }[] {
-	const tinggi = { tinggi: 'Tinggi', sedang: 'Sedang', pendek: 'Pendek' } as Record<string, string>;
+export function labelAtribut(t: FungsiT, a: Record<string, unknown>): { label: string; nilai: string }[] {
 	return [
-		{ label: 'Tinggi', nilai: `${tinggi[String(a.tinggi)] ?? a.tinggi} (${a.tinggi_cm} cm)` },
-		{ label: 'Tangan', nilai: a.tangan === 'kidal' ? 'Kidal' : 'Kanan' },
-		{ label: 'Sepatu', nilai: String(a.sepatu) },
-		{ label: 'Rambut', nilai: String(a.rambut) },
-		{ label: 'Kacamata', nilai: a.kacamata ? 'Ya' : 'Tidak' },
-		{ label: 'Tinggal', nilai: a.tinggal_di_rumah ? 'Di rumah ini' : 'Dari luar' }
+		{ label: t('atr.tinggi'), nilai: `${t(`atr.tinggi.${a.tinggi}` as KunciTeks)} (${a.tinggi_cm} cm)` },
+		{ label: t('atr.tangan'), nilai: a.tangan === 'kidal' ? t('atr.kidal') : t('atr.kanan') },
+		{ label: t('atr.sepatu'), nilai: String(a.sepatu) },
+		{ label: t('atr.rambut'), nilai: String(a.rambut) },
+		{ label: t('atr.kacamata'), nilai: a.kacamata ? t('atr.ya') : t('atr.tidak') },
+		{ label: t('atr.tinggal'), nilai: a.tinggal_di_rumah ? t('atr.di_rumah') : t('atr.dari_luar') }
 	];
 }

@@ -6,7 +6,7 @@ import type { RequestHandler } from './$types';
 
 /** Validasi tuduhan di server. Solusi hanya ikut di respons kalau kasus selesai. */
 export const POST: RequestHandler = async ({ params, url, request, locals }) => {
-	const kasus = kasusTerbit(idDariParam(params.id), url);
+	const kasus = kasusTerbit(idDariParam(params.id), url, locals.bahasa);
 	const body = await bacaBody(request);
 	// Mesin yang memutuskan kategori mana yang dipakai kasus ini; field lain dibuang di sana.
 	const kombinasi = {

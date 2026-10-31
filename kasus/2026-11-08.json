@@ -63,5 +63,40 @@
     { "teks": "Kalung ditemukan di laci arsip Ruang Kerja, dibawa dengan kardus sepatu dari gudang.", "bukti": ["B4", "B5"] },
     { "teks": "Kartu ucapan ulang tahun: Sekar diam-diam mencuci kalung itu untuk kejutan.", "bukti": ["B6"] }
   ],
-  "komentar_nenek": "Sekar… Nenek hampir lapor Pak RT. Tapi kalungnya jadi kinclong. Terima kasih, Cu."
+  "komentar_nenek": "Sekar… Nenek hampir lapor Pak RT. Tapi kalungnya jadi kinclong. Terima kasih, Cu.",
+  "terjemahan": {
+    "en": {
+      "judul": "Grandma's Gold Necklace Disappears",
+      "cerita": "At 3:00 p.m. Grandma was still wearing her gold necklace for the savings-club photo. At 8:00 p.m., getting ready for a wedding reception, she found the necklace missing from her jewelry box. Someone took it, and they must have had a reason.",
+      "clue_awal": {
+        "A1": "The laundry basket only goes to the clothesline. If the necklace was carried in the laundry basket, it must have ended up on the Porch."
+      },
+      "benda": {
+        "kn_kotak": "The lid of the jewelry box is open. Pressed on its glass are the mark of an eyeglass lens and small fingerprints.",
+        "kn_sandal": "Next to Grandma's slippers are small footprints, about size 37 or 38, heading to the jewelry box.",
+        "rk_papan": "The schedule on the whiteboard: \"Hendra: history tutoring at school, 2:00–9:00 p.m.\" Today is checked off.",
+        "rk_arsip": "In the bottom drawer of the filing cabinet, wrapped in newspaper: Grandma's gold necklace! It's shining like new.",
+        "tk_gudang": "Someone used the shoebox from the shed: all that's left is a square mark in the dust, bits of tape, and a scrap of wrapping paper.",
+        "rt_telepon": "A note by the phone: \"Greeting card: Happy 79th birthday, Grandma! Your necklace has been cleaned.\"",
+        "dp_kalender": "Mbok Sri's writing on the calendar: \"In this house, only Uncle Benny is being chased by loan payments.\"",
+        "rt_foto": "A savings-club photo from last year: only Aunt Lia is gazing at Grandma's necklace with envy.",
+        "kn_lemari": "Grandma's kebaya for the wedding hangs in the wardrobe. In its pocket is a note: \"Don't be suspicious, Grandma. –S\"",
+        "kn_rias": "The dressing table is tidy. Grandma's powder smells of jasmine, just like Aunt Lia's perfume.",
+        "kn_kolong": "Under the bed: an old suitcase and Belang, who doesn't like being disturbed.",
+        "rk_brankas": "The safe is locked tight. The code is Grandpa's birthday, according to everyone.",
+        "dp_kulkas": "There's a small birthday cake on the very back shelf, covered up tight.",
+        "tk_jemuran": "The clothesline is empty. All the laundry was brought in before sunset.",
+        "rt_sofa": "The sofa cushions have been fluffed up neatly for the wedding guests.",
+        "tk_kotaksurat": "The mailbox holds a wedding invitation and a motorbike loan brochure."
+      },
+      "teks_kosong_bawaan": "You check it carefully, but nothing looks suspicious.",
+      "penjelasan": [
+        "An eyeglass lens mark on the jewelry box: the culprit is Uncle Hendra or Sekar.",
+        "Small footprints, size 37–38, and Uncle Hendra was tutoring until 9:00 p.m. The culprit is Sekar.",
+        "The necklace was found in the filing cabinet in the Study, carried there in the shoebox from the shed.",
+        "The birthday greeting card: Sekar secretly had the necklace cleaned as a surprise."
+      ],
+      "komentar_nenek": "Sekar… Grandma almost reported it to the neighborhood chief. But the necklace is sparkling now. Thank you, dear."
+    }
+  }
 }

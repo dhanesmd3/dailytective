@@ -6,6 +6,7 @@
 <script lang="ts">
 	import type { BuktiDitemukan, KasusPublik } from '$lib/engine/permainan';
 	import type { PosisiHotspot } from '$lib/engine/types';
+	import { pakaiT } from '$lib/i18n';
 	import Adegan from './ruang/Adegan.svelte';
 
 	let {
@@ -24,6 +25,7 @@
 		onperiksa: (benda: string) => void;
 	} = $props();
 
+	const t = pakaiT();
 	let ruangAktif = $state('ruang_tamu');
 	let modeDaftar = $state(false);
 	let denyut = $state<{ x: number; y: number; k: number } | null>(null);
@@ -55,7 +57,7 @@
 
 <div class="tkp">
 	<div class="atas">
-		<div class="chip-ruang" role="tablist" aria-label="Ruangan">
+		<div class="chip-ruang" role="tablist" aria-label={t('tkp.ruangan')}>
 			{#each kasus.ruangan as r (r.id)}
 				<button
 					class="chip"
@@ -63,23 +65,23 @@
 					role="tab"
 					aria-selected={r.id === ruangAktif}
 					disabled={!r.ilustrasi}
-					title={r.ilustrasi ? undefined : 'Belum tersedia'}
+					title={r.ilustrasi ? undefined : t('tkp.belum_tersedia')}
 					onclick={() => (ruangAktif = r.id)}
 				>
-					{r.nama}{#if !r.ilustrasi}<span class="segera">segera</span>{:else if hitungRuang[r.id]}<span class="hitung"
-							>{hitungRuang[r.id]}<span class="sr-only"> diperiksa</span></span
+					{r.nama}{#if !r.ilustrasi}<span class="segera">{t('tkp.segera')}</span>{:else if hitungRuang[r.id]}<span class="hitung"
+							>{hitungRuang[r.id]}<span class="sr-only"> {t('tkp.diperiksa')}</span></span
 						>{/if}
 				</button>
 			{/each}
 		</div>
 		<div class="jatah" aria-live="polite">
-			<span class="label">Jatah periksa</span>
+			<span class="label">{t('tkp.jatah')}</span>
 			<span class="token" aria-hidden="true">
 				{#each Array.from({ length: kasus.jatah_periksa }, (_, i) => i) as i (i)}
 					<span class="bulat" class:terpakai={i < kasus.jatah_periksa - sisaJatah}></span>
 				{/each}
 			</span>
-			<span><strong>{sisaJatah}</strong> tersisa</span>
+			<span><strong>{sisaJatah}</strong> {t('tkp.tersisa')}</span>
 		</div>
 	</div>
 
@@ -94,7 +96,7 @@
 				style:top="{b.posisi.y}%"
 				style:width="{b.posisi.w}%"
 				style:height="{b.posisi.h}%"
-				aria-label={h ? `${b.nama}: sudah diperiksa, ${h.hasil === 'clue' ? `bukti #${h.nomor}` : 'kosong'}` : `Periksa ${b.nama}`}
+				aria-label={h ? (h.hasil === 'clue' ? t('tkp.sudah_bukti', { nama: b.nama, n: h.nomor ?? '' }) : t('tkp.sudah_kosong', { nama: b.nama })) : t('tkp.periksa_benda', { nama: b.nama })}
 				disabled={sibuk !== null}
 				onclick={(e) => klik(e, b.id)}
 			>
@@ -112,21 +114,21 @@
 			{/key}
 		{/if}
 		{#if !bisaPeriksa}
-			<span class="pita">Jatah periksa habis. Kamu masih bisa membaca ulang bukti.</span>
+			<span class="pita">{t('tkp.habis_pita')}</span>
 		{/if}
 	</div>
 	</div>
 
 	<div class="bawah">
-		<div class="zoom" role="group" aria-label="Perbesar ruangan">
+		<div class="zoom" role="group" aria-label={t('tkp.perbesar')}>
 			{#each ZOOM as z (z)}
 				<button class:aktif={zoom === z} aria-pressed={zoom === z} onclick={() => (zoom = z)}>{z}×</button>
 			{/each}
 		</div>
 		<button class="tombol-teks" onclick={() => (modeDaftar = !modeDaftar)} aria-expanded={modeDaftar}>
-			{modeDaftar ? 'Sembunyikan daftar benda' : 'Tampilkan sebagai daftar'}
+			{modeDaftar ? t('tkp.sembunyi_daftar') : t('tkp.tampil_daftar')}
 		</button>
-		<span class="redup">Klik benda untuk memeriksa. Memeriksa ulang benda yang sama gratis.</span>
+		<span class="redup">{t('tkp.petunjuk')}</span>
 	</div>
 
 	{#if modeDaftar}
@@ -136,7 +138,7 @@
 				<li>
 					<button class="tombol krem kecil" disabled={sibuk !== null} onclick={() => onperiksa(b.id)}>
 						{b.nama}
-						{#if h}<span class="status">{h.hasil === 'clue' ? `Bukti #${h.nomor}` : 'kosong'}</span>{/if}
+						{#if h}<span class="status">{h.hasil === 'clue' ? t('tkp.bukti_n', { n: h.nomor ?? '' }) : t('tkp.kosong_kecil')}</span>{/if}
 					</button>
 				</li>
 			{/each}

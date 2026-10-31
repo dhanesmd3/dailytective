@@ -6,7 +6,8 @@
 	import type { Tanda } from '$lib/client/lokal';
 	import type { KasusPublik } from '$lib/engine/permainan';
 	import type { Kategori, Kombinasi, Tuduhan } from '$lib/engine/types';
-	import { KATEGORI_LABEL, umpanBalik } from '$lib/teks';
+	import { pakaiT } from '$lib/i18n';
+	import { labelKategori, umpanBalik } from '$lib/teks';
 	import Ikon from './Ikon.svelte';
 	import Potret from './Potret.svelte';
 
@@ -24,6 +25,7 @@
 		ontuduh: (k: Kombinasi) => void;
 	} = $props();
 
+	const t = pakaiT();
 	let pilihan = $state<Partial<Kombinasi>>({});
 	const dari = $derived(kasus.kategori.length);
 	const lengkap = $derived(kasus.kategori.every((k) => !!pilihan[k]));
@@ -45,15 +47,15 @@
 	{#key tuduhan.length}
 		{#if terakhir && terakhir.benar < dari}
 			<div class="umpan" role="alert">
-				<span class="stempel">{terakhir.benar} dari {dari}</span>
-				<p>{umpanBalik(terakhir.benar, dari)} {sisa > 0 ? `Sisa ${sisa} kesempatan.` : ''}</p>
+				<span class="stempel">{t('tuduh.x_dari_y', { benar: terakhir.benar, dari })}</span>
+				<p>{umpanBalik(t, terakhir.benar, dari)} {sisa > 0 ? t('tuduh.sisa', { n: sisa }) : ''}</p>
 			</div>
 		{/if}
 	{/key}
 
 	{#each kasus.kategori as k (k)}
 		<fieldset>
-			<legend class="label">{KATEGORI_LABEL[k]}</legend>
+			<legend class="label">{labelKategori(t, k)}</legend>
 			<div class="baris">
 				{#each kasus.pilihan[k] ?? [] as p (p.id)}
 					{@const dipilih = pilihan[k] === p.id}
@@ -77,22 +79,22 @@
 
 	<div class="aksi">
 		<p class="ringkas" aria-live="polite">{ringkas}</p>
-		{#if ganda}<p class="peringatan">Kombinasi ini sudah pernah kamu tuduhkan.</p>{/if}
+		{#if ganda}<p class="peringatan">{t('tuduh.ganda')}</p>{/if}
 		<button class="tombol merah tuduh" disabled={!lengkap || ganda || sibuk || sisa <= 0} onclick={kirim}>
-			Tuduh
+			{t('tuduh.tombol')}
 		</button>
-		<span class="redup">Sisa kesempatan: {sisa} dari {kasus.maks_tuduhan}</span>
+		<span class="redup">{t('tuduh.sisa_dari', { sisa, maks: kasus.maks_tuduhan })}</span>
 	</div>
 
 	{#if tuduhan.length}
 		<div class="riwayat">
-			<h3 class="label">Tuduhan sebelumnya</h3>
+			<h3 class="label">{t('tuduh.sebelumnya')}</h3>
 			<ol>
-				{#each tuduhan as t, i (i)}
+				{#each tuduhan as tu, i (i)}
 					<li>
 						<span>{i + 1}.</span>
-						<span class="kombinasi">{kasus.kategori.map((k) => nama(k, t[k])).join(' · ')}</span>
-						<span class="skor" class:benar={t.benar === dari}>{t.benar} dari {dari} benar</span>
+						<span class="kombinasi">{kasus.kategori.map((k) => nama(k, tu[k])).join(' · ')}</span>
+						<span class="skor" class:benar={tu.benar === dari}>{t('tuduh.x_dari_y_benar', { benar: tu.benar, dari })}</span>
 					</li>
 				{/each}
 			</ol>

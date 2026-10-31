@@ -1,5 +1,6 @@
 import { error, json } from '@sveltejs/kit';
 import { penyimpanan } from '$lib/server/store';
+import { kasusDalam } from '$lib/engine/terjemahan';
 import { katalog, pratinjau } from '$lib/server/layanan';
 import type { RequestHandler } from './$types';
 
@@ -12,7 +13,7 @@ export const GET: RequestHandler = ({ locals }) => {
 		.map((k) => ({
 			id: k.id,
 			tanggal: k.tanggal,
-			judul: k.judul,
+			judul: kasusDalam(k, locals.bahasa).judul,
 			bintang: k.kesulitan.bintang,
 			status: store.ambil(locals.pemainId, k.id)?.status ?? null
 		}));

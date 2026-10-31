@@ -1,14 +1,16 @@
 <script lang="ts">
 	import type { BuktiDitemukan } from '$lib/engine/permainan';
+	import { pakaiT } from '$lib/i18n';
 
 	let { bukti, nama, tutup }: { bukti: BuktiDitemukan; nama: string; tutup: () => void } = $props();
+	const t = pakaiT();
 </script>
 
 <div class="kartu-bukti" class:kosong={bukti.hasil === 'kosong'} role="status">
 	<div class="kepala">
-		<span class="label">{bukti.hasil === 'clue' ? `Bukti #${bukti.nomor}` : 'Kosong'}</span>
+		<span class="label">{bukti.hasil === 'clue' ? t('tkp.bukti_n', { n: bukti.nomor ?? '' }) : t('tkp.kosong')}</span>
 		<span class="nama">{nama}</span>
-		<button class="tutup" onclick={tutup} aria-label="Tutup kartu">
+		<button class="tutup" onclick={tutup} aria-label={t('tkp.tutup_kartu')}>
 			<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"
 				><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="3" stroke-linecap="round" /></svg
 			>

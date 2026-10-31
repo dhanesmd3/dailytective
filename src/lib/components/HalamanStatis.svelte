@@ -1,23 +1,25 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
+	import { pakaiT } from '$lib/i18n';
 	import Logo from './Logo.svelte';
 
 	let { judul, children }: { judul: string; children: Snippet } = $props();
+	const t = pakaiT();
 </script>
 
 <svelte:head><title>{judul} · Dailytective</title></svelte:head>
 
 <main>
-	<a href="/" class="kembali" aria-label="Kembali ke beranda"><Logo ukuran={24} /></a>
+	<a href="/" class="kembali" aria-label={t('beranda.kembali')}><Logo ukuran={24} /></a>
 	<article class="kartu">
 		<h1>{judul}</h1>
 		{@render children()}
 	</article>
-	<nav aria-label="Halaman lain">
-		<a href="/cara-main">Cara main</a>
-		<a href="/statistik">Statistik</a>
-		<a href="/tentang">Tentang</a>
-		<a href="/privasi">Privasi</a>
+	<nav aria-label={t('nav.lain')}>
+		<a href="/cara-main">{t('nav.cara_main')}</a>
+		<a href="/statistik">{t('nav.statistik')}</a>
+		<a href="/tentang">{t('nav.tentang')}</a>
+		<a href="/privasi">{t('nav.privasi')}</a>
 	</nav>
 </main>
 

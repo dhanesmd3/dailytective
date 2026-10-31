@@ -1,31 +1,33 @@
 <script lang="ts">
 	import HalamanStatis from '$lib/components/HalamanStatis.svelte';
+	import { pakaiT } from '$lib/i18n';
 
 	let { data } = $props();
+	const t = pakaiT();
 	const st = $derived(data.statistik);
 	const baris = $derived([
-		{ label: 'Tebakan 1', nilai: st.distribusi[1] },
-		{ label: 'Tebakan 2', nilai: st.distribusi[2] },
-		{ label: 'Tebakan 3', nilai: st.distribusi[3] },
-		{ label: 'Gagal', nilai: st.distribusi.gagal }
+		{ label: t('stat.tebakan_n', { n: 1 }), nilai: st.distribusi[1], gagal: false },
+		{ label: t('stat.tebakan_n', { n: 2 }), nilai: st.distribusi[2], gagal: false },
+		{ label: t('stat.tebakan_n', { n: 3 }), nilai: st.distribusi[3], gagal: false },
+		{ label: t('stat.gagal'), nilai: st.distribusi.gagal, gagal: true }
 	]);
 	const maks = $derived(Math.max(1, ...baris.map((b) => b.nilai)));
 </script>
 
-<HalamanStatis judul="Statistik kamu">
+<HalamanStatis judul={t('stat.judul')}>
 	<dl>
-		<div><dt>Dimainkan</dt><dd>{st.dimainkan}</dd></div>
-		<div><dt>Terpecahkan</dt><dd>{st.persen_menang}%</dd></div>
-		<div><dt>Streak</dt><dd>{st.streak}</dd></div>
-		<div><dt>Terpanjang</dt><dd>{st.streak_terpanjang}</dd></div>
-		<div><dt>Rata-rata periksa</dt><dd>{st.rata_periksa}</dd></div>
+		<div><dt>{t('stat.dimainkan')}</dt><dd>{st.dimainkan}</dd></div>
+		<div><dt>{t('stat.terpecahkan')}</dt><dd>{st.persen_menang}%</dd></div>
+		<div><dt>{t('stat.streak')}</dt><dd>{st.streak}</dd></div>
+		<div><dt>{t('stat.terpanjang')}</dt><dd>{st.streak_terpanjang}</dd></div>
+		<div><dt>{t('stat.rata_periksa')}</dt><dd>{st.rata_periksa}</dd></div>
 	</dl>
-	<h2>Distribusi tebakan</h2>
+	<h2>{t('stat.distribusi')}</h2>
 	<ul class="batang">
 		{#each baris as b (b.label)}
 			<li>
 				<span>{b.label}</span>
-				<span class="isi" class:gagal={b.label === 'Gagal'} style:width="{Math.max(6, (b.nilai / maks) * 100)}%">{b.nilai}</span>
+				<span class="isi" class:gagal={b.gagal} style:width="{Math.max(6, (b.nilai / maks) * 100)}%">{b.nilai}</span>
 			</li>
 		{/each}
 	</ul>

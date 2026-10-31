@@ -30,9 +30,21 @@ Variabel lingkungan: lihat [.env.example](.env.example). Di luar `npm run dev`, 
 1. `npm run buat-draf -- <tanggal> <jenis> [seed]` membuat draf yang sudah lolos solver, sesuai jadwal mingguan
    (Jumat–Sabtu dengan pengakuan, Minggu dengan motif dan jatah 12).
 2. Tulis ulang semua teks `[DRAF]`: cerita, bukti (tulis yang *terlihat*), teks kosong, penjelasan, komentar Nenek.
-3. Pindahkan ke `kasus/`, jalankan `npm run cek-kasus`. Validator menolak file yang masih berisi `[DRAF]`.
-4. Buka PR. CI ([.github/workflows/ci.yml](.github/workflows/ci.yml)) menjalankan type check, test, validator + solver, dan build.
-5. Playtest lewat mode pratinjau.
+3. Tambahkan blok `"terjemahan": { "en": { ... } }` (judul, cerita, clue_awal, pengakuan, benda, teks_kosong_bawaan,
+   penjelasan, komentar_nenek). Kasus tetap bisa terbit tanpa terjemahan lengkap; teks yang kurang tampil dalam bahasa
+   Indonesia dan `cek-kasus` memberi peringatan.
+4. Pindahkan ke `kasus/`, jalankan `npm run cek-kasus`. Validator menolak file yang masih berisi `[DRAF]`.
+5. Buka PR. CI ([.github/workflows/ci.yml](.github/workflows/ci.yml)) menjalankan type check, test, validator + solver, dan build.
+6. Playtest lewat mode pratinjau, dalam kedua bahasa.
+
+## Dua bahasa (Indonesia & English)
+
+- Bahasa dipilih lewat tombol ID/EN di beranda atau Pengaturan, disimpan di cookie `dt_bahasa`.
+  Pengunjung baru mengikuti bahasa browser (Indonesia/Melayu → `id`, lainnya → `en`).
+- Teks UI: [src/lib/i18n/kamus.ts](src/lib/i18n/kamus.ts). TypeScript memastikan kunci `en` sama dengan `id`.
+- Nama tokoh, barang, lokasi, motif, dan benda: field `en` / `nama_en` di `data/`.
+- Isi kasus: blok `terjemahan.en` di setiap file kasus. Server mengirim teks sesuai bahasa pemain;
+  logika, solusi, dan sesi tidak berubah, jadi pemain bisa ganti bahasa di tengah kasus.
 
 ## Struktur
 

@@ -57,5 +57,38 @@
     { "teks": "Mbok Sri selalu memakai kantong kresek, jadi bukan dia. Pelakunya Raka, dan jejak sepatu ukuran 42 cocok dengannya.", "bukti": ["A3", "B8", "B3"] },
     { "teks": "Toples nastar ditemukan di lemari kecil bawah telepon.", "bukti": ["B1"] }
   ],
-  "komentar_nenek": "Raka, Raka… kalau mau bikin konten makan nastar, minta saja. Jangan disembunyikan, nanti semutan."
+  "komentar_nenek": "Raka, Raka… kalau mau bikin konten makan nastar, minta saja. Jangan disembunyikan, nanti semutan.",
+  "terjemahan": {
+    "en": {
+      "judul": "The Missing Jar of Pineapple Tarts",
+      "cerita": "Mbok Sri finished mopping the living room at 7:00 p.m. At 9:00 p.m., Grandma found that the jar of pineapple tarts for tomorrow's guests was gone from the coffee table. \"With rain this heavy, it must still be hidden in the living room,\" said Grandma.",
+      "clue_awal": {
+        "A1": "Whoever took the jar is not left-handed.",
+        "A2": "A sarong is too thick to fit on the bookshelf or in the small cabinet. If the jar was wrapped in a sarong, it must be under the sofa.",
+        "A3": "Mbok Sri never carries anything without a plastic bag."
+      },
+      "benda": {
+        "rt_lemari": "The jar of tarts is inside the small cabinet, tucked behind a pile of old phone books.",
+        "rt_kolong": "Under the sofa there's only dust and a single marble. No sign of anything being dragged.",
+        "rt_keset": "The floor was just mopped. The only fresh footprints: size 42 shoes, from the door to the coffee table.",
+        "rt_sofa": "Grandma's sarong is folded under the sofa cushions, still crisp from the iron.",
+        "rt_kursi": "Every plastic bag in the house is on the mustard armchair, folded into neat triangles. Not one has been used.",
+        "rt_rak": "Uncle Hendra's books are thick with dust. Not a single one has moved.",
+        "rt_meja": "There's a round jar mark on the coffee table. Nearby hangs the scent of expensive perfume.",
+        "rt_tirai": "Grandma's batik shopping bag is hanging behind the curtain. The inside is full of tart crumbs.",
+        "rt_jam": "It's ticking normally. 9:07 p.m., if you're curious.",
+        "rt_lukisan": "Behind the painting there's only a gecko, just as startled as you are.",
+        "rt_telepon": "The phone rings once, then goes quiet. Wrong number, probably.",
+        "rt_foto": "Last year's Eid photo. Everyone is smiling, except Uncle Benny, who's squinting into the sun."
+      },
+      "teks_kosong_bawaan": "You check it carefully, but nothing looks suspicious.",
+      "penjelasan": [
+        "The culprit isn't left-handed, so it's not Dimas.",
+        "Grandma's shopping bag behind the curtain is full of tart crumbs: the jar was carried in the shopping bag.",
+        "Mbok Sri always uses a plastic bag, so it wasn't her. The culprit is Raka, and the size 42 footprints match him.",
+        "The jar of tarts was found in the small cabinet under the phone."
+      ],
+      "komentar_nenek": "Raka, Raka… if you want to film yourself eating tarts, just ask. Don't hide them, or the ants will get them."
+    }
+  }
 }

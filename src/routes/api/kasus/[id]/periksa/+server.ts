@@ -6,7 +6,7 @@ import type { RequestHandler } from './$types';
 
 /** Membuka isi SATU benda. Isi benda lain tidak pernah dikirim. */
 export const POST: RequestHandler = async ({ params, url, request, locals }) => {
-	const kasus = kasusTerbit(idDariParam(params.id), url);
+	const kasus = kasusTerbit(idDariParam(params.id), url, locals.bahasa);
 	const { benda } = await bacaBody(request);
 	if (typeof benda !== 'string') error(400, 'benda wajib diisi');
 

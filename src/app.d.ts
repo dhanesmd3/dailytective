@@ -3,6 +3,7 @@ declare global {
 	namespace App {
 		interface Locals {
 			pemainId: string;
+			bahasa: import('$lib/i18n/kamus').Bahasa;
 		}
 	}
 }

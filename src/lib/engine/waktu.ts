@@ -30,13 +30,19 @@ export function indeksHari(tanggal: string): number {
 	return new Date(Date.UTC(y, m - 1, d)).getUTCDay();
 }
 
-export function namaHari(tanggal: string): string {
-	return NAMA_HARI[indeksHari(tanggal)];
+const NAMA_HARI_EN = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+const NAMA_BULAN_EN = [
+	'January', 'February', 'March', 'April', 'May', 'June',
+	'July', 'August', 'September', 'October', 'November', 'December'
+];
+
+export function namaHari(tanggal: string, bahasa: 'id' | 'en' = 'id'): string {
+	return (bahasa === 'en' ? NAMA_HARI_EN : NAMA_HARI)[indeksHari(tanggal)];
 }
 
-export function formatTanggal(tanggal: string): string {
+export function formatTanggal(tanggal: string, bahasa: 'id' | 'en' = 'id'): string {
 	const [y, m, d] = tanggal.split('-').map(Number);
-	return `${d} ${NAMA_BULAN[m - 1]} ${y}`;
+	return bahasa === 'en' ? `${NAMA_BULAN_EN[m - 1]} ${d}, ${y}` : `${d} ${NAMA_BULAN[m - 1]} ${y}`;
 }
 
 export function apakahTanggalValid(tanggal: string): boolean {

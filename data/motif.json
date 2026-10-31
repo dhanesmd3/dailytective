@@ -1,14 +1,14 @@
 {
   "motif": [
-    { "id": "utang",          "nama": "Utang" },
-    { "id": "iri",            "nama": "Iri hati" },
-    { "id": "warisan",        "nama": "Warisan" },
-    { "id": "iseng",          "nama": "Iseng" },
-    { "id": "salah_paham",    "nama": "Salah paham" },
-    { "id": "balas_dendam",   "nama": "Balas dendam" },
-    { "id": "cari_perhatian", "nama": "Cari perhatian" },
-    { "id": "konten_viral",   "nama": "Konten viral" },
-    { "id": "kejutan",        "nama": "Menyiapkan kejutan" },
-    { "id": "melindungi",     "nama": "Melindungi seseorang" }
+    {"id": "utang", "nama": "Utang", "nama_en": "Debt"},
+    {"id": "iri", "nama": "Iri hati", "nama_en": "Jealousy"},
+    {"id": "warisan", "nama": "Warisan", "nama_en": "Inheritance"},
+    {"id": "iseng", "nama": "Iseng", "nama_en": "Just for fun"},
+    {"id": "salah_paham", "nama": "Salah paham", "nama_en": "Misunderstanding"},
+    {"id": "balas_dendam", "nama": "Balas dendam", "nama_en": "Revenge"},
+    {"id": "cari_perhatian", "nama": "Cari perhatian", "nama_en": "Wanting attention"},
+    {"id": "konten_viral", "nama": "Konten viral", "nama_en": "Viral content"},
+    {"id": "kejutan", "nama": "Menyiapkan kejutan", "nama_en": "Planning a surprise"},
+    {"id": "melindungi", "nama": "Melindungi seseorang", "nama_en": "Protecting someone"}
   ]
 }

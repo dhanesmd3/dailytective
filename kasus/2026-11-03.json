@@ -55,5 +55,38 @@
     { "teks": "Raka tidak keluar dari Ruang Kerja, jadi bukan dia. Pelakunya Sekar.", "bukti": ["A3", "C1"] },
     { "teks": "Kuas basah cat air di kursi mustard: kumisnya dilukis dengan cat air.", "bukti": ["C3"] }
   ],
-  "komentar_nenek": "Sekar, Nenek tahu Dimas sering jahil. Tapi balasnya jangan ke foto keluarga, Nenek jadi ikut berkumis."
+  "komentar_nenek": "Sekar, Nenek tahu Dimas sering jahil. Tapi balasnya jangan ke foto keluarga, Nenek jadi ikut berkumis.",
+  "terjemahan": {
+    "en": {
+      "judul": "Mustaches on the Family Photo",
+      "cerita": "This morning everyone in the family photo has a thick mustache, Grandma included. The photo must have been taken down and drawn on yesterday afternoon. Everyone blamed Dimas right away, but he swears it wasn't him this time.",
+      "clue_awal": {
+        "A1": "The culprit is right-handed.",
+        "A2": "The only markers are in the Study, and they're not allowed out. If a marker was used, it was done there.",
+        "A3": "Raka was filming content in the Study all afternoon and never left."
+      },
+      "benda": {
+        "rt_foto": "A dry starfruit leaf is tucked behind the photo frame. Starfruit only grows on the porch.",
+        "rt_meja": "The roll of tape on the coffee table is still sealed in plastic. It's never been opened.",
+        "rt_kursi": "There's a small brush on the mustard armchair. Its bristles are still wet with black watercolor.",
+        "rt_lukisan": "Next to the painting, the nail for the family photo is loose. The photo was taken down and carried out of the living room.",
+        "rt_rak": "Raka's camera on the bookshelf holds footage of the Study all afternoon. The family photo never appears once.",
+        "rt_sofa": "A pharmacy bookmark is wedged between the sofa cushions. Its tip is stained black.",
+        "rt_jam": "The wall clock ticks along calmly, as if nothing happened.",
+        "rt_keset": "The sandals are lined up neatly. There's one left sandal without a partner, as usual.",
+        "rt_kolong": "Under the sofa: two pen caps and a handful of Belang's fur.",
+        "rt_telepon": "The dial tone is normal. No messages left.",
+        "rt_tirai": "The curtains smell of soap. Mbok Sri washed them just last week.",
+        "rt_lemari": "Inside: phone books, candles, and matches for when the power goes out."
+      },
+      "teks_kosong_bawaan": "Nothing unusual here.",
+      "penjelasan": [
+        "The culprit is right-handed, so Dimas really is innocent this time.",
+        "A starfruit leaf behind the frame: the photo was drawn on at the porch.",
+        "Raka never left the Study, so it wasn't him. The culprit is Sekar.",
+        "A brush wet with watercolor on the armchair: the mustaches were painted with watercolor."
+      ],
+      "komentar_nenek": "Sekar, Grandma knows Dimas pranks you a lot. But don't get back at him through the family photo. Now Grandma has a mustache too."
+    }
+  }
 }

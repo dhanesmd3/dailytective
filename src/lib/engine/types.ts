@@ -101,6 +101,20 @@ export interface KasusFile {
 	logika: Record<string, Logika>;
 	penjelasan: Penjelasan[];
 	komentar_nenek: string;
+	/** Terjemahan teks kasus, per kode bahasa. Yang tidak diterjemahkan memakai teks Indonesia. */
+	terjemahan?: Partial<Record<'en', TerjemahanKasus>>;
+}
+
+export interface TerjemahanKasus {
+	judul?: string;
+	cerita?: string;
+	clue_awal?: Record<string, string>;
+	pengakuan?: Record<string, string>;
+	benda?: Record<string, string>;
+	teks_kosong_bawaan?: string;
+	/** Urutan sama dengan `penjelasan` di kasus. */
+	penjelasan?: string[];
+	komentar_nenek?: string;
 }
 
 // --- Data dunia (folder data/) ---
@@ -124,22 +138,26 @@ export interface Karakter {
 	atribut: AtributKarakter;
 	ciri: string[];
 	kebiasaan: string;
+	en?: { nama: string; peran: string; rambut: string; kebiasaan: string };
 }
 
 export interface Barang {
 	id: string;
 	nama: string;
+	nama_en?: string;
 	kelompok: string;
 }
 
 export interface Motif {
 	id: string;
 	nama: string;
+	nama_en?: string;
 }
 
 export interface Lokasi {
 	id: string;
 	nama: string;
+	nama_en?: string;
 	jenis: 'ruangan' | 'titik';
 	ruangan?: string;
 }
@@ -154,12 +172,14 @@ export interface PosisiHotspot {
 export interface BendaRuangan {
 	id: string;
 	nama: string;
+	nama_en?: string;
 	posisi?: PosisiHotspot;
 }
 
 export interface Ruangan {
 	id: string;
 	nama: string;
+	nama_en?: string;
 	ilustrasi: boolean;
 	benda: BendaRuangan[];
 }

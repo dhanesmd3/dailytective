@@ -53,5 +53,37 @@
     { "teks": "Menurut catatan Nenek, minggu ini guci ada di Ruang Kerja. Pintu dapur, ruang tamu, dan teras juga tidak bisa dibanting.", "bukti": ["E5", "E2", "E3"] },
     { "teks": "Pak Joko tidak masuk rumah, jadi tidak mungkin di Ruang Kerja. Pelakunya Sekar.", "bukti": ["E4", "E5"] }
   ],
-  "komentar_nenek": "Sekar, kesal sama Dimas boleh. Membanting pintu sampai guci Kakek jatuh, jangan."
+  "komentar_nenek": "Sekar, kesal sama Dimas boleh. Membanting pintu sampai guci Kakek jatuh, jangan.",
+  "terjemahan": {
+    "en": {
+      "judul": "Grandpa's Vase in Pieces",
+      "cerita": "Grandma moves Grandpa's old blue vase to a different room every week so that \"every room gets a turn.\" This morning she found its pieces hidden in the living room. The vase broke yesterday afternoon, and the culprit kept quiet.",
+      "clue_awal": {
+        "A1": "The culprit wears shoes smaller than size 42.",
+        "A2": "The broom always stays in the kitchen. If the vase was hit by the broom, it must have broken in the Kitchen."
+      },
+      "benda": {
+        "rt_kolong": "Pieces of the vase are wrapped in newspaper under the sofa, mixed with brown paint chips from a door that was slammed hard.",
+        "rt_telepon": "Mr. Tono's note by the phone: \"The kitchen door and the living room door were taken off for painting this afternoon.\"",
+        "rt_tirai": "From the window you can see the porch door propped open with a brick since yesterday. It can't be closed, let alone slammed.",
+        "rt_meja": "Mbok Sri's note on the coffee table: \"Mr. Joko was in the garden all day and never came inside.\"",
+        "rt_rak": "A handwritten list from Grandma is tucked into the bookshelf: \"Vase this week: Study.\"",
+        "rt_sofa": "A pharmacy textbook was left on the sofa. The page \"Managing Your Emotions\" has its corner folded.",
+        "rt_jam": "The wall clock is right on time. Mr. Tono checks it against his watch every morning.",
+        "rt_foto": "In this photo the blue vase is still whole, standing next to Grandpa. It makes you a little sad.",
+        "rt_lukisan": "A painting of rice fields and a mountain. It's slightly crooked, but it's always been like that.",
+        "rt_lemari": "Candles, matches, and a pile of Mbok Sri's shopping receipts.",
+        "rt_keset": "The doormat says \"Selamat Datang\" (Welcome). The S has almost worn away.",
+        "rt_kursi": "Belang is fast asleep on the armchair. Clearly knows nothing, or is pretending."
+      },
+      "teks_kosong_bawaan": "Nothing unusual here.",
+      "penjelasan": [
+        "The culprit wears shoes under size 42: Sekar or Mr. Joko.",
+        "There are door paint chips among the pieces: the vase fell because a door was slammed.",
+        "According to Grandma's list, the vase was in the Study this week. The kitchen, living room, and porch doors couldn't be slammed anyway.",
+        "Mr. Joko never came inside, so it couldn't have been him in the Study. The culprit is Sekar."
+      ],
+      "komentar_nenek": "Sekar, you can be annoyed with Dimas. Slamming the door until Grandpa's vase falls, no."
+    }
+  }
 }

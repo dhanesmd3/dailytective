@@ -1,8 +1,11 @@
 <script lang="ts">
+	import { pakaiT } from '$lib/i18n';
+
 	let { jumlah, warna = 'var(--mustard)' }: { jumlah: number; warna?: string } = $props();
+	const t = pakaiT();
 </script>
 
-<span class="bintang" aria-label="Kesulitan {jumlah} dari 3 bintang" role="img">
+<span class="bintang" aria-label={t('umum.bintang_aria', { n: jumlah })} role="img">
 	{#each [1, 2, 3] as i (i)}
 		<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
 			<path

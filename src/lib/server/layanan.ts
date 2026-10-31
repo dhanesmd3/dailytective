@@ -13,7 +13,9 @@ import {
 	semuaBendaIds,
 	type GalatMain
 } from '$lib/engine/permainan';
+import { duniaDalam, kasusDalam } from '$lib/engine/terjemahan';
 import type { DataDunia, KasusFile, Sesi } from '$lib/engine/types';
+import type { Bahasa } from '$lib/i18n/kamus';
 import { apakahTanggalValid, rilisBerikutnya, tanggalKasusAktif } from '$lib/engine/waktu';
 import { muatDunia, muatSemuaKasus } from './data';
 import { penyimpanan } from './store';
@@ -23,6 +25,8 @@ export const pratinjau = dev || env.DT_PRATINJAU === '1';
 
 interface Katalog {
 	dunia: DataDunia;
+	/** Data dunia yang sudah diterjemahkan, per bahasa. */
+	duniaPer: Record<Bahasa, DataDunia>;
 	bendaDikenal: Set<string>;
 	perTanggal: Map<string, KasusFile>;
 	perId: Map<number, KasusFile>;
@@ -37,6 +41,7 @@ export function katalog(): Katalog {
 	const semua = muatSemuaKasus().map((k) => k.kasus);
 	cache = {
 		dunia,
+		duniaPer: { id: dunia, en: duniaDalam(dunia, 'en') },
 		bendaDikenal: semuaBendaIds(dunia),
 		perTanggal: new Map(semua.map((k) => [k.tanggal, k])),
 		perId: new Map(semua.map((k) => [k.id, k]))
@@ -52,11 +57,14 @@ export function hariIni(url: URL, sekarang = new Date()): string {
 	return tanggalKasusAktif(sekarang);
 }
 
-/** Kasus berdasarkan id; kasus yang belum terbit diperlakukan seperti tidak ada. */
-export function kasusTerbit(id: number, url: URL): KasusFile {
+/**
+ * Kasus berdasarkan id, dalam bahasa pemain; kasus yang belum terbit diperlakukan seperti tidak ada.
+ * Terjemahan hanya mengubah teks, jadi logika, solusi, dan id tetap sama.
+ */
+export function kasusTerbit(id: number, url: URL, bahasa: Bahasa = 'id'): KasusFile {
 	const kasus = katalog().perId.get(id);
 	if (!kasus || kasus.tanggal > hariIni(url)) error(404, 'Kasus tidak ditemukan');
-	return kasus;
+	return kasusDalam(kasus, bahasa);
 }
 
 export function statistikPemain(pemainId: string, url: URL) {
@@ -76,9 +84,10 @@ export function sesiTampil(kasus: KasusFile, sesi: Sesi) {
 	};
 }
 
-export function responsKasus(kasus: KasusFile, sesi: Sesi | null) {
+/**  harus sudah dalam bahasa pemain (lihat kasusTerbit/kasusDalam). */
+export function responsKasus(kasus: KasusFile, sesi: Sesi | null, bahasa: Bahasa) {
 	return {
-		kasus: kasusPublik(kasus, katalog().dunia),
+		kasus: kasusPublik(kasus, katalog().duniaPer[bahasa]),
 		sesi: sesi ? sesiTampil(kasus, sesi) : null
 	};
 }
@@ -94,12 +103,13 @@ export function infoWaktu(url: URL) {
 }
 
 /** Isi lengkap "kasus hari ini" untuk satu pemain: dipakai GET /api/kasus/hari-ini dan load halaman. */
-export function dataHariIni(url: URL, pemainId: string) {
-	const kasus = katalog().perTanggal.get(hariIni(url));
+export function dataHariIni(url: URL, pemainId: string, bahasa: Bahasa) {
+	const asli = katalog().perTanggal.get(hariIni(url));
+	const kasus = asli ? kasusDalam(asli, bahasa) : null;
 	const sesi = kasus ? penyimpanan().ambil(pemainId, kasus.id) : null;
 	return {
 		...infoWaktu(url),
-		...(kasus ? responsKasus(kasus, sesi) : { kasus: null, sesi: null }),
+		...(kasus ? responsKasus(kasus, sesi, bahasa) : { kasus: null, sesi: null }),
 		statistik: statistikPemain(pemainId, url)
 	};
 }

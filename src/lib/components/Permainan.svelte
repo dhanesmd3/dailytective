@@ -11,7 +11,8 @@
 	import type { Kombinasi, StatusSesi, Tuduhan } from '$lib/engine/types';
 	import { namaHari } from '$lib/engine/waktu';
 	import type { DataHariIni } from '$lib/server/layanan';
-	import { JENIS } from '$lib/teks';
+	import { pakaiT } from '$lib/i18n';
+	import { labelJenis } from '$lib/teks';
 	import Bintang from './Bintang.svelte';
 	import BukuCatatan from './BukuCatatan.svelte';
 	import ContextCard from './ContextCard.svelte';
@@ -27,7 +28,9 @@
 
 	let { data, kasus: kasusProp }: { data: DataHariIni; kasus: KasusPublik } = $props();
 
-	// Komponen ini di-{#key} per tanggal, jadi cukup memakai nilai awal dari server;
+	const t = pakaiT();
+
+	// Komponen ini di-{#key} per tanggal dan bahasa, jadi cukup memakai nilai awal dari server;
 	// setelah itu state diperbarui dari respons API.
 	const kasus = untrack(() => kasusProp);
 	const awal = untrack(() => data.sesi);
@@ -52,7 +55,7 @@
 	const q = page.url.search;
 	const namaBendaPeta = new Map(kasus.ruangan.flatMap((r) => r.benda.map((b) => [b.id, b.nama] as const)));
 	const namaBenda = (id: string) => namaBendaPeta.get(id) ?? id;
-	const jenis = JENIS[kasus.jenis]?.label ?? kasus.jenis;
+	const jenis = labelJenis(t, kasus.jenis).label;
 
 	let siap = $state(false);
 	onMount(() => {
@@ -90,7 +93,7 @@
 			status = 'berjalan';
 			modal = null;
 		} catch (e) {
-			tampilkanPesan(pesanGalat(e));
+			tampilkanPesan(pesanGalat(t, e));
 		} finally {
 			sibukMulai = false;
 		}
@@ -104,7 +107,7 @@
 		}
 		if (status !== null && status !== 'berjalan') return;
 		if (sisaJatah <= 0) {
-			tampilkanPesan('Jatah periksa sudah habis. Saatnya menuduh!');
+			tampilkanPesan(t('galat.jatah_habis'));
 			return;
 		}
 		sibukBenda = benda;
@@ -118,7 +121,7 @@
 			status ??= 'berjalan';
 		} catch (e) {
 			if (e instanceof GalatApi && e.kode === 'jatah_habis') sisaJatah = 0;
-			tampilkanPesan(pesanGalat(e));
+			tampilkanPesan(pesanGalat(t, e));
 		} finally {
 			sibukBenda = null;
 		}
@@ -139,14 +142,14 @@
 				window.scrollTo({ top: 0 });
 			}
 		} catch (e) {
-			tampilkanPesan(pesanGalat(e));
+			tampilkanPesan(pesanGalat(t, e));
 		} finally {
 			sibukTuduh = false;
 		}
 	}
 
 	async function resetSesi() {
-		if (!confirm('Hapus progres kasus ini dan mulai ulang? (hanya mode pratinjau)')) return;
+		if (!confirm(t('main.ulangi_konfirmasi'))) return;
 		await api.resetSesi(kasus.id);
 		location.reload();
 	}
@@ -154,23 +157,23 @@
 
 <div class="halaman">
 	<header>
-		<a href="/{q}" class="beranda" aria-label="Beranda Dailytective"><Logo ukuran={22} /></a>
+		<a href="/{q}" class="beranda" aria-label={t('umum.beranda_aria')}><Logo ukuran={22} /></a>
 		<div class="meta">
-			<span class="nomor">Kasus #{kasus.id}</span>
-			<span>{namaHari(kasus.tanggal)}</span>
+			<span class="nomor">{t('umum.kasus_no', { id: kasus.id })}</span>
+			<span>{namaHari(kasus.tanggal, t.bahasa)}</span>
 			<Bintang jumlah={kasus.kesulitan.bintang} />
 			<span class="redup">{jenis}</span>
 			<strong class="judul">{kasus.judul}</strong>
 		</div>
 		<nav>
 			{#if data.pratinjau}
-				<span class="pratinjau" title="Mode pratinjau lokal">Pratinjau {kasus.tanggal}</span>
-				<button class="tombol-teks" onclick={resetSesi}>Ulangi</button>
+				<span class="pratinjau" title={t('main.pratinjau_ket')}>{t('main.pratinjau', { tanggal: kasus.tanggal })}</span>
+				<button class="tombol-teks" onclick={resetSesi}>{t('main.ulangi')}</button>
 			{/if}
-			<button class="tombol-teks" onclick={() => (modal = 'context')}>Context card</button>
-			<button class="tombol-teks" onclick={() => (modal = 'onboarding')}>Cara main</button>
-			<button class="tombol-teks" onclick={() => (modal = 'statistik')}>Statistik</button>
-			<button class="tombol-teks" onclick={() => (modal = 'pengaturan')}>Pengaturan</button>
+			<button class="tombol-teks" onclick={() => (modal = 'context')}>{t('buku.context')}</button>
+			<button class="tombol-teks" onclick={() => (modal = 'onboarding')}>{t('main.cara_main')}</button>
+			<button class="tombol-teks" onclick={() => (modal = 'statistik')}>{t('main.statistik')}</button>
+			<button class="tombol-teks" onclick={() => (modal = 'pengaturan')}>{t('main.pengaturan')}</button>
 		</nav>
 	</header>
 
@@ -191,9 +194,9 @@
 	{:else}
 		<main class="dua-kolom">
 			<section class="panggung-utama">
-				<div class="tab-tahap" role="tablist" aria-label="Tahap">
+				<div class="tab-tahap" role="tablist" aria-label={t('main.tahap')}>
 					<button role="tab" aria-selected={tampilan === 'tkp'} class:aktif={tampilan === 'tkp'} onclick={() => (tampilan = 'tkp')}>
-						TKP <span class="angka">{kasus.jatah_periksa - sisaJatah}/{kasus.jatah_periksa} periksa</span>
+						{t('main.tkp')} <span class="angka">{t('main.n_periksa', { a: kasus.jatah_periksa - sisaJatah, b: kasus.jatah_periksa })}</span>
 					</button>
 					<button
 						role="tab"
@@ -204,7 +207,7 @@
 							buktiAktif = null;
 						}}
 					>
-						Papan tuduhan <span class="angka">{tuduhan.length}/{kasus.maks_tuduhan} tuduhan</span>
+						{t('main.papan')} <span class="angka">{t('main.n_tuduhan', { a: tuduhan.length, b: kasus.maks_tuduhan })}</span>
 					</button>
 				</div>
 
@@ -217,8 +220,8 @@
 					{/if}
 					{#if sisaJatah === 0}
 						<div class="ajak">
-							<p>Jatah periksa habis. Bukti sudah cukup?</p>
-							<button class="tombol merah" onclick={() => (tampilan = 'tuduhan')}>Ke papan tuduhan</button>
+							<p>{t('main.habis')}</p>
+							<button class="tombol merah" onclick={() => (tampilan = 'tuduhan')}>{t('main.ke_papan')}</button>
 						</div>
 					{/if}
 				{:else}
@@ -227,13 +230,13 @@
 			</section>
 
 			<div class="lembar" class:terbuka={lembarTerbuka} id="buku-catatan">
-				<button class="tutup-lembar" onclick={() => (lembarTerbuka = false)} aria-label="Tutup Buku Catatan">
+				<button class="tutup-lembar" onclick={() => (lembarTerbuka = false)} aria-label={t('main.tutup_buku')}>
 					<span aria-hidden="true"></span>
 				</button>
 				<BukuCatatan {kasus} {diperiksa} bind:coret {namaBenda} bukaContext={() => (modal = 'context')} />
 			</div>
 			{#if lembarTerbuka}
-				<button class="tirai-lembar" aria-label="Tutup Buku Catatan" onclick={() => (lembarTerbuka = false)}></button>
+				<button class="tirai-lembar" aria-label={t('main.tutup_buku')} onclick={() => (lembarTerbuka = false)}></button>
 			{/if}
 			<button
 				class="tombol buka-lembar"
@@ -241,7 +244,7 @@
 				aria-controls="buku-catatan"
 				onclick={() => (lembarTerbuka = !lembarTerbuka)}
 			>
-				Buku Catatan <span class="jumlah">{diperiksa.filter((d) => d.hasil === 'clue').length}</span>
+				{t('buku.judul')} <span class="jumlah">{diperiksa.filter((d) => d.hasil === 'clue').length}</span>
 			</button>
 		</main>
 	{/if}

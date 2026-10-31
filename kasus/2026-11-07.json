@@ -73,5 +73,47 @@
     { "teks": "Garam, kecap, dan cabai bubuk tidak tersentuh. Gula hanya bisa dipakai di dapur. Yang tersisa: cuka.", "bukti": ["B2", "B3", "B4", "A1"] },
     { "teks": "Cuka di teras hanya cocok dengan satu pembohong: Bu Wati, yang mengaku tidak ke teras.", "bukti": ["P1", "B1"] }
   ],
-  "komentar_nenek": "Wati, kalau mau menang lomba, masak yang enak. Jangan rendang Nenek yang dikasih cuka."
+  "komentar_nenek": "Wati, kalau mau menang lomba, masak yang enak. Jangan rendang Nenek yang dikasih cuka.",
+  "terjemahan": {
+    "en": {
+      "judul": "The Contest Rendang Turns Sour",
+      "cerita": "Grandma cooked rendang for tomorrow's neighborhood cooking contest, and at 5:00 p.m. the pot was moved out of the kitchen to cool. At 9:00 p.m. the rendang suddenly tasted sour! One of the suspects is lying.",
+      "clue_awal": {
+        "A1": "Sugar is only kept in the kitchen. If sugar was used, the sabotage must have happened in the Kitchen."
+      },
+      "pengakuan": {
+        "P1": "I didn't go to the porch at all tonight.",
+        "P2": "I didn't touch the salt. My nails were just painted.",
+        "P3": "I didn't take any sugar. My coffee was bitter tonight.",
+        "P4": "I didn't touch the soy sauce bottle, I swear on my followers.",
+        "P5": "I didn't go into Mother's bedroom tonight."
+      },
+      "benda": {
+        "tk_meja": "There's a round pot mark on the porch table. The rendang pot cooled here from 5:00 p.m. until Grandma took it in.",
+        "dp_laci": "In the spice drawer, the packet of salt is still taped shut. It hasn't been opened at all.",
+        "dp_kulkas": "The soy sauce bottle in the fridge door is still sealed. The other one ran out last week.",
+        "rk_meja": "Every chili powder sachet from the meatball vendor is still on the desk, untouched. Not one has been opened.",
+        "kn_ranjang": "The sheets and the bedroom floor are clean. No smell of rendang at all; the pot never came in here.",
+        "dp_kompor": "The stove has been cold since the afternoon. The rendang pot clearly didn't come back to the kitchen before 9:00 p.m.",
+        "rt_meja": "The coffee table is covered with plates of cake for the savings-club guests. The rendang pot never stopped by the living room.",
+        "rk_papan": "Written on the board: \"Neighborhood meeting 6:00–9:00 p.m.\" The Study was full of men, and there was no pot here.",
+        "tk_kursi": "A folding fan with a floral pattern was left on the rattan chair. It smells like vinegar.",
+        "tk_sampah": "The porch bin is full of starfruit leaves. A lot of starfruit leaves.",
+        "tk_kandang": "Mr. Joko's chickens stare at you. They won't talk.",
+        "dp_toples": "The cracker jar is full. There's folded money at the bottom, but that's Mbok Sri's business.",
+        "dp_wastafel": "The sink is clean. The dish sponge is as thin as a family secret.",
+        "kn_weker": "The alarm clock is set for 4:00 a.m. Grandma wants to hit the market before the contest.",
+        "rk_komputer": "The screen shows the neighborhood meeting slides: \"Independence Day Contest Budget\". Boring, but clean.",
+        "rt_foto": "A photo of Grandma holding last year's rendang trophy. Her smile is full of confidence."
+      },
+      "teks_kosong_bawaan": "You check it carefully, but nothing looks suspicious.",
+      "penjelasan": [
+        "The liar is always the culprit. So if someone is the culprit, their statement must be false: Mrs. Wati was on the porch, Aunt Lia used salt, Dimas used sugar, Raka used soy sauce, Uncle Benny was in Grandma's bedroom.",
+        "The rendang pot was cooling on the porch table: the sabotage happened on the Porch.",
+        "The salt, soy sauce, and chili powder were untouched. Sugar could only be used in the kitchen. What's left: vinegar.",
+        "Vinegar on the porch fits only one liar: Mrs. Wati, who claimed she never went to the porch."
+      ],
+      "komentar_nenek": "Wati, if you want to win the contest, cook something tasty. Don't add vinegar to Grandma's rendang."
+    }
+  }
 }

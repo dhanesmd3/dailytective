@@ -6,7 +6,7 @@ import type { RequestHandler } from './$types';
 
 /** Memulai sesi (waktu main dihitung dari sini). Aman dipanggil berulang. */
 export const POST: RequestHandler = ({ params, url, locals }) => {
-	const kasus = kasusTerbit(idDariParam(params.id), url);
+	const kasus = kasusTerbit(idDariParam(params.id), url, locals.bahasa);
 	const store = penyimpanan();
 	let sesi = store.ambil(locals.pemainId, kasus.id);
 	if (!sesi) {

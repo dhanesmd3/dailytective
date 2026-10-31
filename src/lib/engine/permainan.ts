@@ -146,6 +146,7 @@ export interface HasilAkhir {
 	penjelasan: Penjelasan[];
 	komentar_nenek: string;
 	gelar: string;
+	kode_gelar: KodeGelar;
 	/** Semua clue di kasus ini, termasuk yang tidak ditemukan, untuk penjelasan di layar hasil. */
 	semua_bukti: Record<string, { benda: string | null; teks: string }>;
 	durasi_detik: number;
@@ -211,6 +212,7 @@ export function hasilAkhir(kasus: KasusFile, sesi: Sesi): HasilAkhir {
 		penjelasan: kasus.penjelasan,
 		komentar_nenek: kasus.komentar_nenek,
 		gelar: gelar(menang, sesi.tuduhan.length, sesi.periksa.length),
+		kode_gelar: kodeGelar(menang, sesi.tuduhan.length, sesi.periksa.length),
 		semua_bukti,
 		durasi_detik: durasiDetik(sesi)
 	};
@@ -221,12 +223,27 @@ export function durasiDetik(sesi: Sesi): number {
 	return Math.max(0, Math.round((Date.parse(sesi.selesai_at) - Date.parse(sesi.mulai_at)) / 1000));
 }
 
-/** Gelar (GDD bagian 9). */
+export type KodeGelar = 'legendaris' | 'ulung' | 'tekun' | 'beruntung' | 'ditutup';
+
+/** Gelar (GDD bagian 9) sebagai kode; UI menerjemahkannya lewat kamus `gelar.<kode>`. */
+export function kodeGelar(menang: boolean, tebakanKe: number, jumlahPeriksa: number): KodeGelar {
+	if (!menang) return 'ditutup';
+	if (tebakanKe === 1) return jumlahPeriksa <= 5 ? 'legendaris' : 'ulung';
+	if (tebakanKe === 2) return 'tekun';
+	return 'beruntung';
+}
+
+const NAMA_GELAR: Record<KodeGelar, string> = {
+	legendaris: 'Detektif Legendaris',
+	ulung: 'Detektif Ulung',
+	tekun: 'Detektif Tekun',
+	beruntung: 'Detektif Beruntung',
+	ditutup: 'Kasus Ditutup'
+};
+
+/** Nama gelar dalam bahasa Indonesia (dipakai alat bantu dan test). */
 export function gelar(menang: boolean, tebakanKe: number, jumlahPeriksa: number): string {
-	if (!menang) return 'Kasus Ditutup';
-	if (tebakanKe === 1) return jumlahPeriksa <= 5 ? 'Detektif Legendaris' : 'Detektif Ulung';
-	if (tebakanKe === 2) return 'Detektif Tekun';
-	return 'Detektif Beruntung';
+	return NAMA_GELAR[kodeGelar(menang, tebakanKe, jumlahPeriksa)];
 }
 
 // --- Statistik pribadi (GDD bagian 11) ---
@@ -297,19 +314,26 @@ export function teksShare(p: {
 	durasiDetik: number;
 	streak: number;
 	situs: string;
+	/** Label dalam bahasa pemain. Bawaan: bahasa Indonesia. */
+	label?: { periksa: (n: number) => string; tebakan: (n: number) => string; ditutup: string };
 }): string {
+	const label = p.label ?? {
+		periksa: (n: number) => `${n} periksa`,
+		tebakan: (n: number) => `tebakan ke-${n}`,
+		ditutup: 'kasus ditutup'
+	};
 	const bintang = '★'.repeat(p.bintang) + '☆'.repeat(3 - p.bintang);
 	const kotak =
 		p.periksa.map((b) => (b ? '🟨' : '⬛')).join('') + '⬜'.repeat(Math.max(0, p.jatah - p.periksa.length));
 	const tuduhan =
 		p.tuduhanBenar.map((b) => (b ? '🟩' : '🟥')).join('') +
 		'⬜'.repeat(Math.max(0, p.maksTuduhan - p.tuduhanBenar.length));
-	const ket = p.menang ? `tebakan ke-${p.tuduhanBenar.length}` : 'kasus ditutup';
+	const ket = p.menang ? label.tebakan(p.tuduhanBenar.length) : label.ditutup;
 	const m = Math.floor(p.durasiDetik / 60);
 	const s = String(p.durasiDetik % 60).padStart(2, '0');
 	return [
 		`Dailytective #${p.id} 🔎 ${bintang}`,
-		`${kotak}  ${p.periksa.length} periksa`,
+		`${kotak}  ${label.periksa(p.periksa.length)}`,
 		`${tuduhan}  ${ket}`,
 		`⏱ ${m}:${s} · 🔥 ${p.streak}`,
 		p.situs

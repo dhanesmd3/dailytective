@@ -11,10 +11,12 @@
 	import PengaturanModal from '$lib/components/PengaturanModal.svelte';
 	import StatistikModal from '$lib/components/StatistikModal.svelte';
 	import { formatTanggal, namaHari } from '$lib/engine/waktu';
-	import { JENIS } from '$lib/teks';
+	import { gantiBahasa, pakaiT, type KunciTeks } from '$lib/i18n';
+	import { labelJenis } from '$lib/teks';
 
 	let { data } = $props();
 
+	const t = pakaiT();
 	let modal = $state<null | 'onboarding' | 'statistik' | 'pengaturan'>(null);
 	let daftarPratinjau = $state<Awaited<ReturnType<typeof api.pratinjau>>['kasus']>([]);
 
@@ -36,13 +38,20 @@
 </script>
 
 <svelte:head>
-	<title>Dailytective · Satu kasus detektif setiap hari</title>
+	<title>{t('beranda.judul_tab')}</title>
 </svelte:head>
 
 <main>
 	<header>
-		<Logo ukuran={40} />
-		<p class="tagline">Satu kasus detektif setiap hari dari rumah Nenek.</p>
+		<div class="atas">
+			<Logo ukuran={40} />
+			<div class="bahasa" role="group" aria-label="{t('atur.bahasa')} · Language">
+				{#each [['id', 'ID'], ['en', 'EN']] as const as [kode, label] (kode)}
+					<button aria-pressed={t.bahasa === kode} lang={kode} onclick={() => gantiBahasa(kode)}>{label}</button>
+				{/each}
+			</div>
+		</div>
+		<p class="tagline">{t('umum.tagline')}</p>
 	</header>
 
 	<div class="papan">
@@ -50,86 +59,84 @@
 			{@const k = data.kasus}
 			<article class="kasus kartu">
 				<p class="meta">
-					Kasus #{k.id} · {namaHari(k.tanggal)}, {formatTanggal(k.tanggal)} · <Bintang jumlah={k.kesulitan.bintang} warna="var(--tinta)" />
+					{t('umum.kasus_no', { id: k.id })} · {namaHari(k.tanggal, t.bahasa)}, {formatTanggal(k.tanggal, t.bahasa)} · <Bintang jumlah={k.kesulitan.bintang} warna="var(--tinta)" />
 				</p>
 				<h1>{k.judul}</h1>
-				<p class="jenis">{JENIS[k.jenis]?.label ?? k.jenis}</p>
-				<div class="tersangka" aria-label="Tersangka">
+				<p class="jenis">{labelJenis(t, k.jenis).label}</p>
+				<div class="tersangka" aria-label={t('beranda.tersangka')}>
 					{#each k.pilihan.siapa as s (s.id)}
 						<Potret id={s.id} ukuran={54} label={s.nama} />
 					{/each}
 				</div>
 				{#if !sesi}
-					<p>Nenek menunggumu. Kamu punya {k.jatah_periksa} jatah periksa dan {k.maks_tuduhan} kesempatan menuduh.</p>
-					<a class="tombol merah besar" href="/kasus{q}">Buka kasus</a>
+					<p>{t('beranda.menunggu', { jatah: k.jatah_periksa, maks: k.maks_tuduhan })}</p>
+					<a class="tombol merah besar" href="/kasus{q}">{t('beranda.buka')}</a>
 				{:else if sesi.status === 'berjalan'}
-					<p>Penyelidikan berjalan: {sesi.periksa.length} benda diperiksa, {sesi.tuduhan.length} tuduhan.</p>
-					<a class="tombol merah besar" href="/kasus{q}">Lanjutkan</a>
+					<p>{t('beranda.berjalan', { p: sesi.periksa.length, t: sesi.tuduhan.length })}</p>
+					<a class="tombol merah besar" href="/kasus{q}">{t('beranda.lanjutkan')}</a>
 				{:else}
 					<p class="selesai" class:menang={sesi.status === 'menang'}>
-						<span class="stempel">{sesi.status === 'menang' ? 'Terpecahkan' : 'Kasus ditutup'}</span>
-						{sesi.akhir?.gelar}
+						<span class="stempel">{sesi.status === 'menang' ? t('hasil.terpecahkan') : t('hasil.ditutup')}</span>
+						{sesi.akhir ? t(`gelar.${sesi.akhir.kode_gelar}` as KunciTeks) : ''}
 					</p>
-					<a class="tombol besar" href="/kasus{q}">Lihat hasil</a>
+					<a class="tombol besar" href="/kasus{q}">{t('beranda.lihat_hasil')}</a>
 				{/if}
 			</article>
 		{:else}
 			<article class="kasus kartu">
-				<h1>Belum ada kasus hari ini</h1>
-				<p>Rumah Nenek sedang tenang. Kembali lagi saat kasus berikutnya terbit.</p>
+				<h1>{t('beranda.belum_ada')}</h1>
+				<p>{t('beranda.tenang')}</p>
 			</article>
 		{/if}
 
 		<aside class="samping">
 			<div class="kotak">
-				<span class="label redup">Kasus berikutnya</span>
+				<span class="label redup">{t('beranda.berikutnya')}</span>
 				<p class="besar"><HitungMundur berikutnya={data.berikutnya} serverTime={data.server_time} /></p>
-				<p class="redup kecil">Terbit setiap hari pukul 06.00 WIB</p>
+				<p class="redup kecil">{t('beranda.jadwal')}</p>
 			</div>
 			<div class="kotak">
-				<span class="label redup">Streak</span>
-				<p class="besar">{st.streak} <span class="kecil redup">hari · terpanjang {st.streak_terpanjang}</span></p>
-				<p class="redup kecil">{st.dimainkan} dimainkan · {st.persen_menang}% terpecahkan</p>
+				<span class="label redup">{t('beranda.streak')}</span>
+				<p class="besar">{st.streak} <span class="kecil redup">{t('beranda.streak_ket', { n: st.streak_terpanjang })}</span></p>
+				<p class="redup kecil">{t('beranda.ringkas', { d: st.dimainkan, p: st.persen_menang })}</p>
 			</div>
 			<div class="tombol-baris">
-				<button class="tombol-teks" onclick={() => (modal = 'statistik')}>Statistik</button>
-				<button class="tombol-teks" onclick={() => (modal = 'onboarding')}>Cara main</button>
-				<button class="tombol-teks" onclick={() => (modal = 'pengaturan')}>Pengaturan</button>
+				<button class="tombol-teks" onclick={() => (modal = 'statistik')}>{t('main.statistik')}</button>
+				<button class="tombol-teks" onclick={() => (modal = 'onboarding')}>{t('main.cara_main')}</button>
+				<button class="tombol-teks" onclick={() => (modal = 'pengaturan')}>{t('main.pengaturan')}</button>
 			</div>
 		</aside>
 	</div>
 
-	<section class="pemeran" aria-label="Para pemeran">
-		<span class="label redup">Penghuni dan tamu rumah Nenek</span>
+	<section class="pemeran" aria-label={t('beranda.pemeran')}>
+		<span class="label redup">{t('beranda.pemeran')}</span>
 		<div class="deret">
-			{#each TOKOH as t (t)}
-				<Potret id={t} ukuran={44} />
+			{#each TOKOH as tokoh (tokoh)}
+				<Potret id={tokoh} ukuran={44} />
 			{/each}
 		</div>
 	</section>
 
 	<footer>
-		<a href="/cara-main">Cara main</a>
-		<a href="/statistik">Statistik</a>
-		<a href="/tentang">Tentang</a>
-		<a href="/privasi">Privasi</a>
+		<a href="/cara-main">{t('nav.cara_main')}</a>
+		<a href="/statistik">{t('nav.statistik')}</a>
+		<a href="/tentang">{t('nav.tentang')}</a>
+		<a href="/privasi">{t('nav.privasi')}</a>
 	</footer>
 
 	{#if data.pratinjau}
 		<section class="pratinjau">
-			<h2>Mode pratinjau</h2>
-			<p class="redup kecil">
-				Hanya muncul saat <code>npm run dev</code> atau <code>DT_PRATINJAU=1</code>. Hari ini menurut server: {data.hari_ini}.
-			</p>
+			<h2>{t('beranda.pratinjau')}</h2>
+			<p class="redup kecil">{t('beranda.pratinjau_ket', { tanggal: data.hari_ini })}</p>
 			<ul>
 				{#each daftarPratinjau as p (p.id)}
 					<li class:aktif={p.tanggal === data.hari_ini}>
-						<span class="tgl">{p.tanggal} · {namaHari(p.tanggal)}</span>
+						<span class="tgl">{p.tanggal} · {namaHari(p.tanggal, t.bahasa)}</span>
 						<span class="jdl">#{p.id} {p.judul}</span>
 						<Bintang jumlah={p.bintang} />
-						<span class="st">{p.status ?? 'belum main'}</span>
-						<a href="/?tanggal={p.tanggal}">beranda</a>
-						<a href="/kasus?tanggal={p.tanggal}">main</a>
+						<span class="st">{p.status ?? t('beranda.belum_main')}</span>
+						<a href="/?tanggal={p.tanggal}">{t('beranda.beranda')}</a>
+						<a href="/kasus?tanggal={p.tanggal}">{t('beranda.main')}</a>
 					</li>
 				{/each}
 			</ul>
@@ -156,6 +163,33 @@
 	header {
 		display: grid;
 		gap: 8px;
+	}
+	.atas {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		gap: 12px;
+		flex-wrap: wrap;
+	}
+	.bahasa {
+		display: inline-flex;
+		border: 2px solid var(--krem-redup);
+		border-radius: 999px;
+		overflow: hidden;
+	}
+	.bahasa button {
+		background: transparent;
+		border: none;
+		color: var(--krem);
+		font-weight: 700;
+		font-size: 13px;
+		padding: 6px 12px;
+		min-height: 34px;
+		cursor: pointer;
+	}
+	.bahasa button[aria-pressed='true'] {
+		background: var(--krem);
+		color: var(--tinta);
 	}
 	.tagline {
 		color: var(--krem-redup);
@@ -306,10 +340,5 @@
 		font-size: 12px;
 		color: var(--krem-redup);
 		width: 80px;
-	}
-	code {
-		background: rgba(244, 231, 201, 0.1);
-		padding: 1px 5px;
-		border-radius: 4px;
 	}
 </style>

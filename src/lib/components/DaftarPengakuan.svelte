@@ -1,14 +1,16 @@
 <!-- Pengakuan tersangka di hari berbohong (GDD bagian 10). Tepat satu bohong, dan pembohongnya pelaku. -->
 <script lang="ts">
 	import type { KasusPublik } from '$lib/engine/permainan';
+	import { pakaiT } from '$lib/i18n';
 	import Potret from './Potret.svelte';
 
 	let { kasus, kecil = false }: { kasus: KasusPublik; kecil?: boolean } = $props();
+	const t = pakaiT();
 	const nama = (id: string) => kasus.pilihan.siapa.find((s) => s.id === id)?.nama ?? id;
 </script>
 
 <div class="pengakuan" class:kecil>
-	<p class="peringatan">Salah satu tersangka berbohong, dan pembohongnya adalah pelaku.</p>
+	<p class="peringatan">{t('cc.pembohong')}</p>
 	<ul>
 		{#each kasus.pengakuan as p (p.oleh)}
 			<li>

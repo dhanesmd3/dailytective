@@ -1,6 +1,7 @@
 import { dev } from '$app/environment';
 import { env } from '$env/dynamic/private';
 import { error, json, type Handle } from '@sveltejs/kit';
+import { apakahBahasa, bahasaDariHeader, COOKIE_BAHASA } from '$lib/i18n';
 import { PembatasLaju } from '$lib/server/ratelimit';
 import { bacaToken, buatToken } from '$lib/server/token';
 
@@ -47,5 +48,12 @@ export const handle: Handle = async ({ event, resolve }) => {
 		});
 	}
 	event.locals.pemainId = id;
-	return resolve(event);
+
+	const pilihan = event.cookies.get(COOKIE_BAHASA);
+	const bahasa = apakahBahasa(pilihan) ? pilihan : bahasaDariHeader(event.request.headers.get('accept-language'));
+	event.locals.bahasa = bahasa;
+
+	return resolve(event, {
+		transformPageChunk: ({ html }) => html.replace('<html lang="id">', `<html lang="${bahasa}">`)
+	});
 };

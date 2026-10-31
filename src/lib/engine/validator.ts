@@ -1,6 +1,7 @@
 // Validator skema kasus (dokumen 04, bagian 3.4). Galat = wajib diperbaiki; peringatan = perlu dicek penulis.
 
 import { PENANDA_DRAF } from './generator';
+import { terjemahanKurang } from './terjemahan';
 import type { DataDunia, KasusFile, Kategori, Kondisi, Logika } from './types';
 import { KATEGORI } from './types';
 import { apakahTanggalValid, indeksHari, namaHari } from './waktu';
@@ -163,6 +164,12 @@ export function validasiKasus(kasus: KasusFile, dunia: DataDunia): HasilValidasi
 		const jatah = hari === 0 ? 12 : 10;
 		if (kasus.jatah_periksa !== jatah) peringatan.push(`jatah periksa ${kasus.jatah_periksa}, jadwal ${namaHari(kasus.tanggal)} memakai ${jatah}`);
 	}
+	// Terjemahan bahasa Inggris (kasus tetap bisa terbit; teks yang kurang tampil dalam bahasa Indonesia)
+	const kurang = terjemahanKurang(kasus, 'en');
+	if (kurang.length) peringatan.push(`terjemahan en belum lengkap: ${kurang.slice(0, 6).join(', ')}${kurang.length > 6 ? ', …' : ''}`);
+	for (const id of Object.keys(kasus.terjemahan?.en?.benda ?? {}))
+		if (!kasus.benda?.[id]) galat.push(`terjemahan en: benda "${id}" tidak ada di kasus`);
+
 	// Draf dari generator tidak boleh terbit sebelum ditulis ulang
 	const semuaTeks = JSON.stringify([kasus.judul, kasus.context_card, kasus.benda, kasus.pengakuan, kasus.penjelasan, kasus.komentar_nenek]);
 	if (semuaTeks.includes(PENANDA_DRAF)) galat.push(`masih ada teks ${PENANDA_DRAF} dari generator; tulis ulang sebelum terbit`);

@@ -1,15 +1,18 @@
 <script lang="ts">
-	import { ONBOARDING } from '$lib/teks';
+	import { pakaiT, type KunciTeks } from '$lib/i18n';
 	import Ikon from './Ikon.svelte';
 	import Modal from './Modal.svelte';
 	import Potret from './Potret.svelte';
 
 	let { selesai }: { selesai: () => void } = $props();
+	const t = pakaiT();
+	const JUMLAH = 3;
 	let langkah = $state(0);
-	const isi = $derived(ONBOARDING[langkah]);
+	const judul = $derived(t(`ob.${langkah + 1}.judul` as KunciTeks));
+	const isi = $derived(t(`ob.${langkah + 1}.isi` as KunciTeks));
 </script>
 
-<Modal judul="Cara main" tutup={selesai} lebar={520}>
+<Modal judul={t('ob.judul')} tutup={selesai} labelTutup={t('umum.tutup')} lebar={520}>
 	<div class="gambar" aria-hidden="true">
 		{#if langkah === 0}
 			<Potret id="nenek" ukuran={110} />
@@ -31,19 +34,22 @@
 			</div>
 		{/if}
 	</div>
-	<p class="nomor">Langkah {langkah + 1} dari {ONBOARDING.length}</p>
-	<h3>{isi.judul}</h3>
-	<p class="isi">{isi.isi}</p>
-	<div class="aksi">
-		{#if langkah > 0}
-			<button class="tombol krem kecil" onclick={() => langkah--}>Kembali</button>
-		{/if}
-		{#if langkah < ONBOARDING.length - 1}
-			<button class="tombol" onclick={() => langkah++}>Lanjut</button>
-		{:else}
-			<button class="tombol merah" onclick={selesai}>Langsung ke kasus hari ini</button>
-		{/if}
-	</div>
+	<p class="nomor">{t('ob.langkah', { n: langkah + 1, m: JUMLAH })}</p>
+	<h3>{judul}</h3>
+	<p class="isi">{isi}</p>
+
+	{#snippet kaki()}
+		<div class="aksi">
+			{#if langkah > 0}
+				<button class="tombol krem kecil" onclick={() => langkah--}>{t('umum.kembali')}</button>
+			{/if}
+			{#if langkah < JUMLAH - 1}
+				<button class="tombol" onclick={() => langkah++}>{t('umum.lanjut')}</button>
+			{:else}
+				<button class="tombol merah" onclick={selesai}>{t('ob.mulai')}</button>
+			{/if}
+		</div>
+	{/snippet}
 </Modal>
 
 <style>
@@ -88,7 +94,6 @@
 		display: flex;
 		justify-content: flex-end;
 		gap: 10px;
-		margin-top: 18px;
 	}
 	@keyframes goyang {
 		50% {

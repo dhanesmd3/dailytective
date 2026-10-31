@@ -55,5 +55,37 @@
     { "teks": "Sekrup engsel dicopot dan kuncinya utuh: lemarinya dibongkar pakai obeng.", "bukti": ["D1"] },
     { "teks": "Gepokan uang terselip di balik buku di rak buku.", "bukti": ["D2"] }
   ],
-  "komentar_nenek": "Benny, kalau usahamu sedang seret, bilang sama Ibu. Jangan bongkar lemari pakai obeng, engselnya mahal."
+  "komentar_nenek": "Benny, kalau usahamu sedang seret, bilang sama Ibu. Jangan bongkar lemari pakai obeng, engselnya mahal.",
+  "terjemahan": {
+    "en": {
+      "judul": "The Savings-Club Money in the Phone Cabinet",
+      "cerita": "At 8:00 p.m. Grandma was still counting the neighborhood savings-club money in the small cabinet under the phone. At 9:30 p.m. the cabinet was wide open and the envelope was empty. Mr. Tono had already locked the gate, so the money must still be hidden in the living room.",
+      "clue_awal": {
+        "A1": "The culprit is left-handed.",
+        "A2": "Whoever used an ATM card slipped the money behind the painting."
+      },
+      "benda": {
+        "rt_lemari": "The hinges of the small cabinet door have been removed. All four screws are lying inside, while the lock is untouched.",
+        "rt_rak": "A wad of cash tied with a rubber band is tucked behind Uncle Hendra's history book.",
+        "rt_keset": "The front doormat is wet. There's only one fresh set of footprints on the floor: size 43 shoes, heading to the phone cabinet.",
+        "rt_telepon": "The guest book next to the phone: \"Mrs. Wati went home at 7:30 p.m.\" Mr. Tono signed below it.",
+        "rt_kolong": "Under the sofa there's only dust and crumbs of layered cake.",
+        "rt_lukisan": "Behind the painting there's only a spider web. The dust on the frame is undisturbed.",
+        "rt_tirai": "The curtains are wet from the rain blowing in. There's nothing behind them.",
+        "rt_kursi": "A sweat-soaked handkerchief is left on the back of the mustard armchair. It smells like clove cigarettes.",
+        "rt_jam": "The wall clock says 9:42 p.m. Its ticking sounds louder in all this tension.",
+        "rt_foto": "In this photo Uncle Benny still has hair. That was a long time ago.",
+        "rt_sofa": "The sofa cushions are soft and warm. Belang just moved off them.",
+        "rt_meja": "A plate of layered cake, half gone. Not your concern tonight."
+      },
+      "teks_kosong_bawaan": "You check it carefully, but nothing looks suspicious.",
+      "penjelasan": [
+        "The culprit is left-handed: Uncle Benny or Mrs. Wati.",
+        "Mrs. Wati went home at 7:30 p.m., before the money disappeared. The size 43 footprints also belong to Uncle Benny.",
+        "The hinge screws were removed and the lock is intact: the cabinet was taken apart with a screwdriver.",
+        "The wad of cash was tucked behind a book on the bookshelf."
+      ],
+      "komentar_nenek": "Benny, if your business is struggling, tell your mother. Don't take the cabinet apart with a screwdriver; those hinges are expensive."
+    }
+  }
 }

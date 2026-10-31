@@ -63,5 +63,44 @@
     { "teks": "Barang pinjaman Om Hendra selalu berakhir di Ruang Kerja, bukan di dapur. Pelakunya Mbok Sri, cocok dengan tangan berbau bawang.", "bukti": ["F3", "F5", "F2"] },
     { "teks": "Mbok Sri mengaku tidak membawa apa-apa ke dapur, padahal dering HP terdengar dari sana. Dialah yang berbohong.", "bukti": ["P2", "F5"] }
   ],
-  "komentar_nenek": "Sri, Nenek paham kamu bosan direkam terus waktu masak. Tapi toples kerupuk itu bukan brankas."
+  "komentar_nenek": "Sri, Nenek paham kamu bosan direkam terus waktu masak. Tapi toples kerupuk itu bukan brankas.",
+  "terjemahan": {
+    "en": {
+      "judul": "Raka's Phone Vanishes Mid-Livestream",
+      "cerita": "Raka was livestreaming in the living room when the power went out briefly at 8:00 p.m. When the lights came back, his phone was gone from the tripod and had already been carried out of the living room. One of the suspects is lying.",
+      "clue_awal": {
+        "A1": "The culprit is right-handed.",
+        "A2": "Mr. Tono always wraps found items in a plastic bag, then keeps them at the guard post."
+      },
+      "pengakuan": {
+        "P1": "I didn't touch any jar tonight.",
+        "P2": "I didn't take anything to the kitchen since sunset.",
+        "P3": "There were no found items at the guard post tonight.",
+        "P4": "I'd already gone home before the power went out."
+      },
+      "benda": {
+        "rt_kursi": "Raka's laptop on the mustard armchair is replaying his stream. The last second, in the dim light: the phone being put into a glass jar.",
+        "rt_meja": "The phone tripod on the coffee table is sticky. The hand that pulled the phone off it smelled of onions.",
+        "rt_rak": "Grandma's note on the bookshelf: \"Anything Hendra borrows always ends up on the Study desk.\"",
+        "rt_lemari": "The key to the Study padlock is in this small cabinet. The Study has been locked since sunset.",
+        "rt_telepon": "Raka calls his phone from the house phone. The ringing is faintly heard from the direction of the kitchen.",
+        "rt_keset": "A pair of thin flip-flops lies crooked in front of the shoe rack, as if left in a hurry.",
+        "rt_jam": "The clock stopped when the power went out. Now it's five minutes slow.",
+        "rt_foto": "Raka isn't in this family photo. He arrived two years later.",
+        "rt_lukisan": "The painting is a little dusty. There's nothing behind it.",
+        "rt_sofa": "The sofa cushions are flattened from Raka sitting on them for hours.",
+        "rt_kolong": "Under the sofa: a broken charging cable and a 500-rupiah coin.",
+        "rt_tirai": "Raka's ring light leans behind the curtain, switched off and sad."
+      },
+      "teks_kosong_bawaan": "Nothing unusual here.",
+      "penjelasan": [
+        "The culprit is right-handed, so it's not Mrs. Wati.",
+        "The stream shows the phone being put into a glass jar. Mr. Tono always uses a plastic bag, so it wasn't him.",
+        "The phone was heard ringing from the kitchen.",
+        "Things Uncle Hendra borrows always end up in the Study, not the kitchen. The culprit is Mbok Sri, which matches the hand that smelled of onions.",
+        "Mbok Sri said she didn't take anything to the kitchen, yet the phone was ringing in there. She's the one who lied."
+      ],
+      "komentar_nenek": "Sri, Grandma understands you're tired of being filmed while you cook. But the cracker jar is not a safe."
+    }
+  }
 }
