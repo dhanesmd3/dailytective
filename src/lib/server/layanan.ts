@@ -17,7 +17,7 @@ import { duniaDalam, kasusDalam } from '$lib/engine/terjemahan';
 import type { DataDunia, KasusFile, Sesi } from '$lib/engine/types';
 import type { Bahasa } from '$lib/i18n/kamus';
 import { apakahTanggalValid, rilisBerikutnya, tanggalKasusAktif } from '$lib/engine/waktu';
-import { muatDunia, muatSemuaKasus } from './data';
+import { duniaBundel, kasusBundel } from './bundel';
 import { penyimpanan } from './store';
 
 /** Mode pratinjau: boleh melompat tanggal lewat ?tanggal= dan mengulang sesi. Otomatis aktif saat dev. */
@@ -34,11 +34,11 @@ interface Katalog {
 
 let cache: Katalog | null = null;
 
-/** Saat dev, kasus dibaca ulang setiap permintaan supaya penulis bisa mengedit JSON tanpa restart. */
+/** Saat dev, Vite memuat ulang modul ini kalau JSON kasus berubah, jadi cache ikut tersusun ulang. */
 export function katalog(): Katalog {
-	if (cache && !dev) return cache;
-	const dunia = muatDunia();
-	const semua = muatSemuaKasus().map((k) => k.kasus);
+	if (cache) return cache;
+	const dunia = duniaBundel();
+	const semua = kasusBundel();
 	cache = {
 		dunia,
 		duniaPer: { id: dunia, en: duniaDalam(dunia, 'en') },
@@ -67,9 +67,9 @@ export function kasusTerbit(id: number, url: URL, bahasa: Bahasa = 'id'): KasusF
 	return kasusDalam(kasus, bahasa);
 }
 
-export function statistikPemain(pemainId: string, url: URL) {
+export async function statistikPemain(pemainId: string, url: URL) {
 	const tanggal = [...katalog().perTanggal.keys()];
-	return hitungStatistik(penyimpanan().milikPemain(pemainId), tanggal, hariIni(url));
+	return hitungStatistik(await penyimpanan().milikPemain(pemainId), tanggal, hariIni(url));
 }
 
 /** Progres pemain dalam bentuk yang aman dikirim: hanya isi benda yang sudah ia periksa. */
@@ -103,18 +103,21 @@ export function infoWaktu(url: URL) {
 }
 
 /** Isi lengkap "kasus hari ini" untuk satu pemain: dipakai GET /api/kasus/hari-ini dan load halaman. */
-export function dataHariIni(url: URL, pemainId: string, bahasa: Bahasa) {
+export async function dataHariIni(url: URL, pemainId: string, bahasa: Bahasa) {
 	const asli = katalog().perTanggal.get(hariIni(url));
 	const kasus = asli ? kasusDalam(asli, bahasa) : null;
-	const sesi = kasus ? penyimpanan().ambil(pemainId, kasus.id) : null;
+	const [sesi, statistik] = await Promise.all([
+		kasus ? penyimpanan().ambil(pemainId, kasus.id) : null,
+		statistikPemain(pemainId, url)
+	]);
 	return {
 		...infoWaktu(url),
 		...(kasus ? responsKasus(kasus, sesi, bahasa) : { kasus: null, sesi: null }),
-		statistik: statistikPemain(pemainId, url)
+		statistik
 	};
 }
 
-export type DataHariIni = ReturnType<typeof dataHariIni>;
+export type DataHariIni = Awaited<ReturnType<typeof dataHariIni>>;
 export type SesiTampil = ReturnType<typeof sesiTampil>;
 
 const STATUS_GALAT: Record<GalatMain, number> = {

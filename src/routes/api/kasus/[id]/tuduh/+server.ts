@@ -17,14 +17,14 @@ export const POST: RequestHandler = async ({ params, url, request, locals }) => 
 	};
 
 	const store = penyimpanan();
-	const sesi = store.ambil(locals.pemainId, kasus.id) ?? sesiBaru(locals.pemainId, kasus, new Date());
+	const sesi = (await store.ambil(locals.pemainId, kasus.id)) ?? sesiBaru(locals.pemainId, kasus, new Date());
 	try {
 		const r = tuduh(kasus, sesi, kombinasi, new Date());
-		store.simpan(r.sesi);
+		await store.simpan(r.sesi);
 		return json({
 			...r.hasil,
 			tuduhan: r.sesi.tuduhan,
-			statistik: r.hasil.selesai ? statistikPemain(locals.pemainId, url) : undefined
+			statistik: r.hasil.selesai ? await statistikPemain(locals.pemainId, url) : undefined
 		});
 	} catch (e) {
 		return tanganiGalat(e);

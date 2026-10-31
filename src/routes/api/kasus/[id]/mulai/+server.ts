@@ -5,13 +5,13 @@ import { idDariParam, kasusTerbit, sesiTampil } from '$lib/server/layanan';
 import type { RequestHandler } from './$types';
 
 /** Memulai sesi (waktu main dihitung dari sini). Aman dipanggil berulang. */
-export const POST: RequestHandler = ({ params, url, locals }) => {
+export const POST: RequestHandler = async ({ params, url, locals }) => {
 	const kasus = kasusTerbit(idDariParam(params.id), url, locals.bahasa);
 	const store = penyimpanan();
-	let sesi = store.ambil(locals.pemainId, kasus.id);
+	let sesi = await store.ambil(locals.pemainId, kasus.id);
 	if (!sesi) {
 		sesi = sesiBaru(locals.pemainId, kasus, new Date());
-		store.simpan(sesi);
+		await store.simpan(sesi);
 	}
 	return json({ sesi: sesiTampil(kasus, sesi) });
 };

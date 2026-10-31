@@ -21,9 +21,26 @@ bisa dipakai untuk melompat tanggal. Tombol **Ulangi** di halaman kasus menghapu
 | `npm run cek-kasus -- 2026-11-07` | Cek satu kasus, lengkap dengan jalur bukti minimal dan sebaran ruangan |
 | `npm run buat-draf -- 2026-11-14 pencurian 7` | Generator: draf kasus yang lolos solver ke `draf/`, teksnya bertanda `[DRAF]` |
 | `npm run check` | Type check (svelte-check) |
-| `npm run build && npm start` | Build produksi (adapter-node) |
+| `npm run build && npm start` | Build produksi lokal (adapter-node) |
 
 Variabel lingkungan: lihat [.env.example](.env.example). Di luar `npm run dev`, server **menolak jalan** tanpa `DT_SECRET` (≥ 32 karakter).
+
+## Deploy ke Vercel
+
+Build di Vercel otomatis memakai `@sveltejs/adapter-vercel` (region Singapura, `sin1`); di tempat lain tetap adapter-node.
+Karena serverless tidak punya disk yang bertahan, sesi pemain disimpan di **Upstash Redis**.
+
+1. **Add New → Project**, impor repo ini. Framework terdeteksi sebagai SvelteKit; pengaturan build biarkan bawaan.
+2. Sebelum klik Deploy, isi **Environment Variables**: `DT_SECRET` (buat dengan perintah di `.env.example`).
+   Jangan isi `DT_PRATINJAU` atau `DT_TANGGAL` di produksi.
+3. Setelah project jadi: tab **Storage → Create Database → Upstash (Redis)**, region **Singapore**, plan Free,
+   lalu sambungkan ke project. Vercel mengisi `KV_REST_API_URL` dan `KV_REST_API_TOKEN` sendiri.
+4. **Deployments → Redeploy** supaya variabel barunya terbaca.
+5. Domain: **Settings → Domains**, tambahkan misalnya `dailytective.dhanesworo.site`, lalu buat record DNS yang
+   diminta Vercel (subdomain: `CNAME` ke alamat yang ditampilkan Vercel) di panel tempat domain dibeli.
+
+Tanpa Redis, server di Vercel sengaja menolak permintaan dengan galat yang jelas, bukan diam-diam kehilangan progres.
+Rate limit masih di memori per instance: di Vercel perlindungannya lebih longgar, cukup untuk playtest.
 
 ## Alur penulis kasus
 
@@ -73,7 +90,8 @@ src/routes/            beranda, kasus, statistik, cara-main, tentang, privasi, a
   karena pengakuan pelaku dipaksa salah. Tingkat kesulitannya datang dari mencari bukti di 60 benda. Target perlu dikalibrasi saat beta.
 - Kasus #1–#5 dibuat saat prototipe dengan semua clue di Ruang Tamu; `cek-kasus` memberi catatan "disarankan minimal 3 ruangan".
 - Ilustrasi ruangan, potret, dan ikon masih vektor sementara buatan kode, menunggu aset ilustrator.
-- Penyimpanan sesi masih file `.data/sesi.json`; rate limit masih di memori. Keduanya cukup untuk satu instance server.
+- Sesi pemain: Upstash Redis kalau `KV_REST_API_*` diisi (Vercel), selain itu file `.data/sesi.json` (lokal, satu instance).
+- Data dunia dan kasus dimasukkan ke bundle server saat build ([bundel.ts](src/lib/server/bundel.ts)); tidak pernah ke bundle klien.
 
 ## Belum ada
 

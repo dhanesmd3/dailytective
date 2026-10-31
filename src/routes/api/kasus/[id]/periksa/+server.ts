@@ -11,10 +11,10 @@ export const POST: RequestHandler = async ({ params, url, request, locals }) => 
 	if (typeof benda !== 'string') error(400, 'benda wajib diisi');
 
 	const store = penyimpanan();
-	const sesi = store.ambil(locals.pemainId, kasus.id) ?? sesiBaru(locals.pemainId, kasus, new Date());
+	const sesi = (await store.ambil(locals.pemainId, kasus.id)) ?? sesiBaru(locals.pemainId, kasus, new Date());
 	try {
 		const r = periksa(kasus, sesi, benda, katalog().bendaDikenal);
-		store.simpan(r.sesi);
+		await store.simpan(r.sesi);
 		return json({ ...r.bukti, sisa_jatah: r.sisa_jatah });
 	} catch (e) {
 		return tanganiGalat(e);
