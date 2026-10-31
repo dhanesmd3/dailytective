@@ -73,7 +73,7 @@ describe('tuduh', () => {
 	it('memberi jumlah benar tanpa solusi sebelum selesai, dan solusi saat menang', () => {
 		const s = sesiBaru('p1', kasus, t0);
 		const r1 = tuduh(kasus, s, salah, t0);
-		expect(r1.hasil).toEqual({ benar: 1, tuduhan_ke: 1, selesai: false, akhir: undefined });
+		expect(r1.hasil).toEqual({ benar: 1, dari: 3, tuduhan_ke: 1, selesai: false, akhir: undefined });
 		const r2 = tuduh(kasus, r1.sesi, benar, new Date(t0.getTime() + 402_000));
 		expect(r2.hasil.selesai).toBe(true);
 		expect(r2.hasil.akhir?.menang).toBe(true);
@@ -87,6 +87,23 @@ describe('tuduh', () => {
 		const s = tuduh(kasus, sesiBaru('p1', kasus, t0), salah, t0).sesi;
 		expect(kodeGalat(() => tuduh(kasus, s, salah, t0))).toBe('tuduhan_ganda');
 		expect(kodeGalat(() => tuduh(kasus, s, { ...salah, siapa: 'benny' }, t0))).toBe('pilihan_tidak_valid');
+	});
+
+	it('dengan motif, menang hanya kalau 4 dari 4 tepat dan field asing dibuang', () => {
+		const km = {
+			...kasus,
+			pilihan: { ...kasus.pilihan, kenapa: ['iseng', 'iri', 'utang'] },
+			solusi: { ...kasus.solusi, kenapa: 'iseng' }
+		} as KasusFile;
+		const s = sesiBaru('p1', km, t0);
+		const r1 = tuduh(km, s, { ...benar, kenapa: 'iri' }, t0);
+		expect(r1.hasil).toMatchObject({ benar: 3, dari: 4, selesai: false });
+		expect(kodeGalat(() => tuduh(km, r1.sesi, benar, t0))).toBe('pilihan_tidak_valid');
+		const r2 = tuduh(km, r1.sesi, { ...benar, kenapa: 'iseng' }, t0);
+		expect(r2.hasil.akhir?.menang).toBe(true);
+		// tuduhan 3 kategori tidak boleh membawa kenapa liar
+		const r3 = tuduh(kasus, sesiBaru('p1', kasus, t0), { ...benar, kenapa: 'x' }, t0);
+		expect(r3.sesi.tuduhan[0]).toEqual({ ...benar, benar: 3 });
 	});
 
 	it('kalah setelah 3 tuduhan salah', () => {

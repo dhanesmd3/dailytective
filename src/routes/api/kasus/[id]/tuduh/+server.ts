@@ -8,7 +8,13 @@ import type { RequestHandler } from './$types';
 export const POST: RequestHandler = async ({ params, url, request, locals }) => {
 	const kasus = kasusTerbit(idDariParam(params.id), url);
 	const body = await bacaBody(request);
-	const kombinasi = { siapa: String(body.siapa ?? ''), pakai: String(body.pakai ?? ''), dimana: String(body.dimana ?? '') };
+	// Mesin yang memutuskan kategori mana yang dipakai kasus ini; field lain dibuang di sana.
+	const kombinasi = {
+		siapa: String(body.siapa ?? ''),
+		pakai: String(body.pakai ?? ''),
+		dimana: String(body.dimana ?? ''),
+		...(body.kenapa !== undefined ? { kenapa: String(body.kenapa) } : {})
+	};
 
 	const store = penyimpanan();
 	const sesi = store.ambil(locals.pemainId, kasus.id) ?? sesiBaru(locals.pemainId, kasus, new Date());

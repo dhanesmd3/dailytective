@@ -1,9 +1,8 @@
 // Aturan main (dokumen 02). Fungsi murni: menerima kasus + sesi, mengembalikan sesi baru dan respons.
 // Server memanggil fungsi ini lalu menyimpan sesinya.
 
-import { hitungBenar, samaKombinasi } from './solver';
-import type { DataDunia, KasusFile, Kombinasi, Penjelasan, Sesi, StateRuangan, Tuduhan } from './types';
-import { KATEGORI } from './types';
+import { hitungBenar, kategoriDari, samaKombinasi } from './solver';
+import type { DataDunia, KasusFile, Kategori, Kombinasi, Penjelasan, Sesi, StateRuangan, Tuduhan } from './types';
 
 export const MAKS_TUDUHAN = 3;
 
@@ -13,6 +12,7 @@ export interface PilihanTampil {
 	siapa: { id: string; nama: string; peran: string; atribut: Record<string, unknown>; kebiasaan: string }[];
 	pakai: { id: string; nama: string }[];
 	dimana: { id: string; nama: string }[];
+	kenapa?: { id: string; nama: string }[];
 }
 
 export interface KasusPublik {
@@ -23,8 +23,12 @@ export interface KasusPublik {
 	kesulitan: { bintang: number; label: string };
 	jatah_periksa: number;
 	maks_tuduhan: number;
+	/** Kategori tuduhan kasus ini: 3, atau 4 kalau ada motif. */
+	kategori: Kategori[];
 	context_card: KasusFile['context_card'];
 	pilihan: PilihanTampil;
+	/** Pernyataan tersangka di hari berbohong. Teks saja; logikanya tetap di server. */
+	pengakuan: { id: string; oleh: string; teks: string }[];
 	state_ruangan: Record<string, StateRuangan>;
 	ruangan: { id: string; nama: string; ilustrasi: boolean; benda: { id: string; nama: string; posisi?: unknown }[] }[];
 }
@@ -34,6 +38,7 @@ export function kasusPublik(kasus: KasusFile, dunia: DataDunia): KasusPublik {
 	const kar = new Map(dunia.karakter.map((k) => [k.id, k]));
 	const bar = new Map(dunia.barang.map((b) => [b.id, b]));
 	const lok = new Map(dunia.lokasi.map((l) => [l.id, l]));
+	const mot = new Map(dunia.motif.map((m) => [m.id, m]));
 	return {
 		id: kasus.id,
 		tanggal: kasus.tanggal,
@@ -42,14 +47,17 @@ export function kasusPublik(kasus: KasusFile, dunia: DataDunia): KasusPublik {
 		kesulitan: kasus.kesulitan,
 		jatah_periksa: kasus.jatah_periksa,
 		maks_tuduhan: MAKS_TUDUHAN,
+		kategori: kategoriDari(kasus.pilihan),
 		context_card: kasus.context_card,
+		pengakuan: (kasus.pengakuan ?? []).map((p) => ({ id: p.id, oleh: p.oleh, teks: p.teks })),
 		pilihan: {
 			siapa: kasus.pilihan.siapa.map((id) => {
 				const k = kar.get(id)!;
 				return { id, nama: k.nama, peran: k.peran, atribut: { ...k.atribut }, kebiasaan: k.kebiasaan };
 			}),
 			pakai: kasus.pilihan.pakai.map((id) => ({ id, nama: bar.get(id)!.nama })),
-			dimana: kasus.pilihan.dimana.map((id) => ({ id, nama: lok.get(id)!.nama }))
+			dimana: kasus.pilihan.dimana.map((id) => ({ id, nama: lok.get(id)!.nama })),
+			kenapa: kasus.pilihan.kenapa?.map((id) => ({ id, nama: mot.get(id)!.nama }))
 		},
 		state_ruangan: kasus.state_ruangan,
 		ruangan: dunia.ruangan.map((r) => ({ id: r.id, nama: r.nama, ilustrasi: r.ilustrasi, benda: r.benda }))
@@ -145,6 +153,8 @@ export interface HasilAkhir {
 
 export interface HasilTuduh {
 	benar: number;
+	/** Jumlah kategori (3, atau 4 dengan motif). */
+	dari: number;
 	tuduhan_ke: number;
 	selesai: boolean;
 	akhir?: HasilAkhir;
@@ -153,14 +163,20 @@ export interface HasilTuduh {
 export function tuduh(kasus: KasusFile, sesi: Sesi, k: Kombinasi, sekarang: Date): { sesi: Sesi; hasil: HasilTuduh } {
 	if (sesi.status !== 'berjalan') throw new GalatPermainan('kasus_selesai');
 	if (sesi.tuduhan.length >= MAKS_TUDUHAN) throw new GalatPermainan('tuduhan_habis');
-	for (const kat of KATEGORI)
-		if (typeof k[kat] !== 'string' || !kasus.pilihan[kat].includes(k[kat])) throw new GalatPermainan('pilihan_tidak_valid');
-	if (sesi.tuduhan.some((t) => samaKombinasi(t, k))) throw new GalatPermainan('tuduhan_ganda');
+	const kategori = kategoriDari(kasus.pilihan);
+	const bersih: Partial<Kombinasi> = {};
+	for (const kat of kategori) {
+		const nilai = k[kat];
+		if (typeof nilai !== 'string' || !kasus.pilihan[kat]!.includes(nilai)) throw new GalatPermainan('pilihan_tidak_valid');
+		bersih[kat] = nilai;
+	}
+	const kombinasi = bersih as Kombinasi;
+	if (sesi.tuduhan.some((t) => samaKombinasi(t, kombinasi))) throw new GalatPermainan('tuduhan_ganda');
 
-	const benar = hitungBenar(k, kasus.solusi);
-	const tuduhan: Tuduhan = { siapa: k.siapa, pakai: k.pakai, dimana: k.dimana, benar };
+	const benar = hitungBenar(kombinasi, kasus.solusi);
+	const tuduhan: Tuduhan = { ...kombinasi, benar };
 	const daftar = [...sesi.tuduhan, tuduhan];
-	const menang = benar === 3;
+	const menang = benar === kategori.length;
 	const selesai = menang || daftar.length >= MAKS_TUDUHAN;
 	const baru: Sesi = {
 		...sesi,
@@ -170,7 +186,13 @@ export function tuduh(kasus: KasusFile, sesi: Sesi, k: Kombinasi, sekarang: Date
 	};
 	return {
 		sesi: baru,
-		hasil: { benar, tuduhan_ke: daftar.length, selesai, akhir: selesai ? hasilAkhir(kasus, baru) : undefined }
+		hasil: {
+			benar,
+			dari: kategori.length,
+			tuduhan_ke: daftar.length,
+			selesai,
+			akhir: selesai ? hasilAkhir(kasus, baru) : undefined
+		}
 	};
 }
 
@@ -179,6 +201,7 @@ export function hasilAkhir(kasus: KasusFile, sesi: Sesi): HasilAkhir {
 	if (sesi.status === 'berjalan') throw new Error('Sesi belum selesai');
 	const semua_bukti: HasilAkhir['semua_bukti'] = {};
 	for (const c of kasus.context_card.clue_awal) semua_bukti[c.id] = { benda: null, teks: c.teks };
+	for (const p of kasus.pengakuan ?? []) semua_bukti[p.id] = { benda: null, teks: p.teks };
 	for (const [benda, isi] of Object.entries(kasus.benda))
 		if (isi.id_clue) semua_bukti[isi.id_clue] = { benda, teks: isi.teks };
 	const menang = sesi.status === 'menang';

@@ -1,0 +1,77 @@
+{
+  "versi_skema": 1,
+  "id": 6,
+  "tanggal": "2026-11-07",
+  "judul": "Rendang Lomba yang Mendadak Asam",
+  "jenis": "sabotase",
+  "kesulitan": { "bintang": 3, "label": "Sabtu" },
+  "jatah_periksa": 10,
+  "context_card": {
+    "cerita": "Nenek memasak rendang untuk lomba masak RT besok, lalu pukul 17.00 pancinya dipindah keluar dapur supaya cepat dingin. Pukul 21.00 rendangnya mendadak asam! Salah satu tersangka berbohong.",
+    "clue_awal": [
+      { "id": "A1", "teks": "Gula hanya ada di dapur. Kalau pakai gula, sabotasenya pasti dilakukan di Dapur." }
+    ]
+  },
+  "pilihan": {
+    "siapa":  ["wati", "lia", "dimas", "raka", "benny"],
+    "pakai":  ["garam", "gula", "cabai_bubuk", "kecap", "cuka"],
+    "dimana": ["dapur", "ruang_tamu", "kamar_nenek", "ruang_kerja", "teras"]
+  },
+  "pengakuan": [
+    { "id": "P1", "oleh": "wati",  "teks": "Aku tidak ke teras sama sekali malam ini." },
+    { "id": "P2", "oleh": "lia",   "teks": "Aku tidak menyentuh garam. Kukuku baru dicat." },
+    { "id": "P3", "oleh": "dimas", "teks": "Aku tidak mengambil gula. Kopiku malam ini pahit." },
+    { "id": "P4", "oleh": "raka",  "teks": "Aku tidak menyentuh botol kecap, sumpah demi followers." },
+    { "id": "P5", "oleh": "benny", "teks": "Aku tidak masuk kamar Ibu malam ini." }
+  ],
+  "state_ruangan": {
+    "teras": { "tambah": [], "belang": "lantai", "waktu": "malam" },
+    "dapur": { "tambah": [], "belang": "kulkas", "waktu": "malam" },
+    "ruang_tamu": { "tambah": [], "waktu": "malam" },
+    "kamar_nenek": { "tambah": [], "waktu": "malam" },
+    "ruang_kerja": { "tambah": ["kertas_berserakan"], "waktu": "malam" }
+  },
+  "benda": {
+    "tk_meja":     { "hasil": "clue", "id_clue": "B1", "teks": "Ada bekas lingkaran panci di meja teras. Panci rendang didinginkan di sini sejak 17.00 sampai diambil Nenek." },
+    "dp_laci":     { "hasil": "clue", "id_clue": "B2", "teks": "Di laci bumbu, bungkus garam masih rapat dilakban. Belum dibuka sama sekali." },
+    "dp_kulkas":   { "hasil": "clue", "id_clue": "B3", "teks": "Botol kecap di pintu kulkas masih tersegel plastik. Kecap yang lain sudah habis sejak minggu lalu." },
+    "rk_meja":     { "hasil": "clue", "id_clue": "B4", "teks": "Semua sachet cabai bubuk dari tukang bakso masih utuh di meja kerja. Tidak ada satu pun yang terbuka." },
+    "kn_ranjang":  { "hasil": "clue", "id_clue": "B5", "teks": "Seprai dan lantai kamar bersih. Tidak ada bau rendang sama sekali; panci tidak pernah masuk ke sini." },
+    "dp_kompor":   { "hasil": "clue", "id_clue": "B6", "teks": "Kompor sudah dingin sejak sore. Panci rendang jelas tidak kembali ke dapur sebelum 21.00." },
+    "rt_meja":     { "hasil": "clue", "id_clue": "B7", "teks": "Meja kopi penuh piring kue tamu arisan. Panci rendang tak pernah mampir ke ruang tamu." },
+    "rk_papan":    { "hasil": "clue", "id_clue": "B8", "teks": "Tulisan di papan: \"Rapat RT 18.00–21.00.\" Ruang Kerja penuh bapak-bapak, tidak ada panci di sini." },
+    "tk_kursi":    { "hasil": "pendukung", "id_clue": "B9", "teks": "Kipas lipat bermotif bunga tertinggal di kursi rotan. Baunya seperti cuka." },
+    "tk_sampah":   { "hasil": "kosong", "teks": "Bak sampah teras berisi daun belimbing. Banyak sekali daun belimbing." },
+    "tk_kandang":  { "hasil": "kosong", "teks": "Ayam-ayam Pak Joko menatapmu. Mereka tidak akan bicara." },
+    "dp_toples":   { "hasil": "kosong", "teks": "Toples kerupuk penuh. Ada uang lipatan di dasarnya, tapi itu urusan Mbok Sri." },
+    "dp_wastafel": { "hasil": "kosong", "teks": "Wastafel bersih. Spons cuci piring sudah setipis rahasia keluarga." },
+    "kn_weker":    { "hasil": "kosong", "teks": "Jam weker disetel pukul 04.00. Nenek mau ke pasar sebelum lomba." },
+    "rk_komputer": { "hasil": "kosong", "teks": "Layar menampilkan slide rapat RT: \"Anggaran Lomba 17-an\". Membosankan, tapi bersih." },
+    "rt_foto":     { "hasil": "kosong", "teks": "Foto Nenek memegang piala lomba rendang tahun lalu. Senyumnya penuh percaya diri." }
+  },
+  "teks_kosong_bawaan": "Kamu memeriksanya dengan teliti, tapi tidak ada yang mencurigakan.",
+  "solusi": { "siapa": "wati", "pakai": "cuka", "dimana": "teras" },
+  "logika": {
+    "A1": { "tipe": "jika_maka", "jika": { "pakai": "gula" }, "maka": { "dimana": "dapur" } },
+    "P1": { "tipe": "jika_maka", "jika": { "siapa": "wati" }, "maka": { "bukan": { "dimana": "teras" } } },
+    "P2": { "tipe": "jika_maka", "jika": { "siapa": "lia" }, "maka": { "bukan": { "pakai": "garam" } } },
+    "P3": { "tipe": "jika_maka", "jika": { "siapa": "dimas" }, "maka": { "bukan": { "pakai": "gula" } } },
+    "P4": { "tipe": "jika_maka", "jika": { "siapa": "raka" }, "maka": { "bukan": { "pakai": "kecap" } } },
+    "P5": { "tipe": "jika_maka", "jika": { "siapa": "benny" }, "maka": { "bukan": { "dimana": "kamar_nenek" } } },
+    "B1": { "tipe": "fakta", "dimana": "teras" },
+    "B2": { "tipe": "bukan", "pakai": "garam" },
+    "B3": { "tipe": "bukan", "pakai": "kecap" },
+    "B4": { "tipe": "bukan", "pakai": "cabai_bubuk" },
+    "B5": { "tipe": "bukan", "dimana": "kamar_nenek" },
+    "B6": { "tipe": "bukan", "dimana": "dapur" },
+    "B7": { "tipe": "bukan", "dimana": "ruang_tamu" },
+    "B8": { "tipe": "bukan", "dimana": "ruang_kerja" }
+  },
+  "penjelasan": [
+    { "teks": "Pembohongnya selalu pelaku. Jadi kalau seseorang pelakunya, pengakuannya pasti salah: Bu Wati di teras, Tante Lia pakai garam, Dimas pakai gula, Raka pakai kecap, Om Benny di kamar Nenek.", "bukti": ["P1", "P2", "P3", "P4", "P5"] },
+    { "teks": "Panci rendang didinginkan di meja teras: sabotasenya terjadi di Teras.", "bukti": ["B1"] },
+    { "teks": "Garam, kecap, dan cabai bubuk tidak tersentuh. Gula hanya bisa dipakai di dapur. Yang tersisa: cuka.", "bukti": ["B2", "B3", "B4", "A1"] },
+    { "teks": "Cuka di teras hanya cocok dengan satu pembohong: Bu Wati, yang mengaku tidak ke teras.", "bukti": ["P1", "B1"] }
+  ],
+  "komentar_nenek": "Wati, kalau mau menang lomba, masak yang enak. Jangan rendang Nenek yang dikasih cuka."
+}

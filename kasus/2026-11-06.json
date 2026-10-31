@@ -5,9 +5,9 @@
   "judul": "HP Raka Hilang Saat Live",
   "jenis": "kehilangan",
   "kesulitan": { "bintang": 2, "label": "Jumat" },
-  "jatah_periksa": 7,
+  "jatah_periksa": 10,
   "context_card": {
-    "cerita": "Raka sedang live di ruang tamu saat listrik padam sebentar pukul 20.00. Begitu lampu menyala, HP-nya hilang dari tripod dan sudah dibawa keluar dari ruang tamu. \"Ribuan penontonku!\" ratap Raka.",
+    "cerita": "Raka sedang live di ruang tamu saat listrik padam sebentar pukul 20.00. Begitu lampu menyala, HP-nya hilang dari tripod dan sudah dibawa keluar dari ruang tamu. Salah satu tersangka berbohong.",
     "clue_awal": [
       { "id": "A1", "teks": "Pelakunya bertangan kanan." },
       { "id": "A2", "teks": "Pak Tono selalu membungkus barang temuan dengan kantong kresek, lalu menyimpannya di pos jaga." }
@@ -18,7 +18,12 @@
     "pakai":  ["sarung", "keranjang_cucian", "toples_kosong", "kantong_kresek"],
     "dimana": ["kamar_nenek", "dapur", "pos_jaga", "ruang_kerja"]
   },
-  "pengakuan": [],
+  "pengakuan": [
+    { "id": "P1", "oleh": "hendra", "teks": "Aku tidak menyentuh toples apa pun malam ini." },
+    { "id": "P2", "oleh": "sri",    "teks": "Aku tidak membawa apa-apa ke dapur sejak magrib." },
+    { "id": "P3", "oleh": "tono",   "teks": "Malam ini tidak ada barang temuan di pos jaga." },
+    { "id": "P4", "oleh": "wati",   "teks": "Aku sudah pulang sebelum listrik padam." }
+  ],
   "state_ruangan": {
     "ruang_tamu": { "tambah": ["tripod_kosong"], "belang": "rak", "waktu": "malam" }
   },
@@ -41,6 +46,10 @@
   "logika": {
     "A1": { "tipe": "atribut", "atribut": "tangan", "nilai": "kanan" },
     "A2": { "tipe": "jika_maka", "jika": { "siapa": "tono" }, "maka": [{ "pakai": "kantong_kresek" }, { "dimana": "pos_jaga" }] },
+    "P1": { "tipe": "jika_maka", "jika": { "siapa": "hendra" }, "maka": { "bukan": { "pakai": "toples_kosong" } } },
+    "P2": { "tipe": "jika_maka", "jika": { "siapa": "sri" }, "maka": { "bukan": { "dimana": "dapur" } } },
+    "P3": { "tipe": "bukan", "dimana": "pos_jaga" },
+    "P4": { "tipe": "bukan", "siapa": "wati" },
     "F1": { "tipe": "fakta", "pakai": "toples_kosong" },
     "F2": { "tipe": "atribut", "atribut": "ciri", "nilai": "tangan_bau_bawang" },
     "F3": { "tipe": "jika_maka", "jika": { "siapa": "hendra" }, "maka": { "dimana": "ruang_kerja" } },
@@ -51,7 +60,8 @@
     { "teks": "Pelakunya bertangan kanan, jadi bukan Bu Wati.", "bukti": ["A1"] },
     { "teks": "Rekaman live menunjukkan HP dimasukkan ke toples kaca. Pak Tono selalu memakai kresek, jadi bukan dia.", "bukti": ["F1", "A2"] },
     { "teks": "Dering HP terdengar dari arah dapur.", "bukti": ["F5"] },
-    { "teks": "Barang pinjaman Om Hendra selalu berakhir di Ruang Kerja, bukan di dapur. Pelakunya Mbok Sri, cocok dengan tangan berbau bawang.", "bukti": ["F3", "F5", "F2"] }
+    { "teks": "Barang pinjaman Om Hendra selalu berakhir di Ruang Kerja, bukan di dapur. Pelakunya Mbok Sri, cocok dengan tangan berbau bawang.", "bukti": ["F3", "F5", "F2"] },
+    { "teks": "Mbok Sri mengaku tidak membawa apa-apa ke dapur, padahal dering HP terdengar dari sana. Dialah yang berbohong.", "bukti": ["P2", "F5"] }
   ],
   "komentar_nenek": "Sri, Nenek paham kamu bosan direkam terus waktu masak. Tapi toples kerupuk itu bukan brankas."
 }

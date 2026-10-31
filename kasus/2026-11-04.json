@@ -5,7 +5,7 @@
   "judul": "Uang Arisan di Lemari Telepon",
   "jenis": "pencurian",
   "kesulitan": { "bintang": 2, "label": "Rabu" },
-  "jatah_periksa": 7,
+  "jatah_periksa": 10,
   "context_card": {
     "cerita": "Pukul 20.00 Nenek masih menghitung uang arisan RT di lemari kecil bawah telepon. Pukul 21.30 lemari itu ternganga dan amplopnya kosong. Gerbang sudah dikunci Pak Tono, jadi uangnya pasti masih tersembunyi di ruang tamu.",
     "clue_awal": [

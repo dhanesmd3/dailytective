@@ -29,12 +29,15 @@
 		bukaStatistik: () => void;
 	} = $props();
 
-	const nama = (kat: Kategori, id: string) => kasus.pilihan[kat].find((p) => p.id === id)?.nama ?? id;
+	const nama = (kat: Kategori, id: string) => kasus.pilihan[kat]?.find((p) => p.id === id)?.nama ?? id;
 	const ditemukan = $derived(new Map(diperiksa.filter((d) => d.hasil === 'clue').map((d) => [d.benda, d.nomor])));
+	const bagian = $derived(kasus.kategori.filter((k) => akhir.solusi[k]));
 
 	function labelBukti(idClue: string): { teks: string; ketemu: boolean } {
 		const awal = kasus.context_card.clue_awal.findIndex((c) => c.id === idClue);
 		if (awal >= 0) return { teks: `Clue awal ${awal + 1}`, ketemu: true };
+		const p = kasus.pengakuan.find((x) => x.id === idClue);
+		if (p) return { teks: `Pengakuan ${nama('siapa', p.oleh)}`, ketemu: true };
 		const b = akhir.semua_bukti[idClue]?.benda;
 		if (b && ditemukan.has(b)) return { teks: `Bukti #${ditemukan.get(b)}`, ketemu: true };
 		return { teks: `Tak ditemukan · ${b ? namaBenda(b) : idClue}`, ketemu: false };
@@ -51,7 +54,7 @@
 			bintang: kasus.kesulitan.bintang,
 			jatah: kasus.jatah_periksa,
 			periksa: diperiksa.map((d) => d.hasil === 'clue'),
-			tuduhanBenar: tuduhan.map((t) => t.benar === 3),
+			tuduhanBenar: tuduhan.map((t) => t.benar === kasus.kategori.length),
 			maksTuduhan: kasus.maks_tuduhan,
 			menang: akhir.menang,
 			durasiDetik: akhir.durasi_detik,
@@ -79,22 +82,21 @@
 
 		<div class="jawaban kartu">
 			<h2>Jawabannya</h2>
-			<div class="tiga">
-				<div class="bagian">
-					<Potret id={akhir.solusi.siapa} ukuran={96} ekspresi="tertangkap" />
-					<span class="label">{KATEGORI_LABEL.siapa}</span>
-					<strong>{nama('siapa', akhir.solusi.siapa)}</strong>
-				</div>
-				<div class="bagian">
-					<span class="lingkar"><Ikon id={akhir.solusi.pakai} ukuran={64} /></span>
-					<span class="label">{KATEGORI_LABEL.pakai}</span>
-					<strong>{nama('pakai', akhir.solusi.pakai)}</strong>
-				</div>
-				<div class="bagian">
-					<span class="lingkar"><Ikon id={akhir.solusi.dimana} ukuran={64} /></span>
-					<span class="label">{KATEGORI_LABEL.dimana}</span>
-					<strong>{nama('dimana', akhir.solusi.dimana)}</strong>
-				</div>
+			<div class="tiga" style:grid-template-columns="repeat({bagian.length}, 1fr)">
+				{#each bagian as k (k)}
+					{@const id = akhir.solusi[k]!}
+					<div class="bagian">
+						{#if k === 'siapa'}
+							<Potret {id} ukuran={96} ekspresi="tertangkap" />
+						{:else if k === 'kenapa'}
+							<span class="lingkar tanya">?</span>
+						{:else}
+							<span class="lingkar"><Ikon {id} ukuran={64} /></span>
+						{/if}
+						<span class="label">{KATEGORI_LABEL[k]}</span>
+						<strong>{nama(k, id)}</strong>
+					</div>
+				{/each}
 			</div>
 			<blockquote>
 				<Potret id="nenek" ukuran={52} label="Nenek Sumarni" />
@@ -239,6 +241,16 @@
 		background: #fff8e6;
 		border: 3px solid var(--tinta);
 		border-radius: 50%;
+	}
+	.tanya {
+		font-family: var(--font-judul);
+		font-size: 44px;
+		background: var(--mustard);
+	}
+	@media (max-width: 520px) {
+		.tiga {
+			grid-template-columns: repeat(2, 1fr) !important;
+		}
 	}
 	blockquote {
 		display: flex;

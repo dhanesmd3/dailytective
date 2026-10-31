@@ -29,6 +29,23 @@
 			<rect x="14" y="8" width="20" height="7" rx="2" fill={R} />
 			<path d="M12 15 L36 15 L36 38 Q36 42 32 42 L16 42 Q12 42 12 38 Z" fill="#DDEEF0" />
 			<path d="M17 21 v14" stroke="#fff" stroke-width="2.4" />
+		{:else if id === 'garam' || id === 'gula' || id === 'micin'}
+			<path d="M16 16 h16 l2 26 h-20 Z" fill="#fff" />
+			<path d="M14 10 h20 v6 h-20 Z" fill={id === 'gula' ? M : id === 'garam' ? B : R} />
+			<g fill={T} stroke="none"><circle cx="20" cy="13" r="1.2" /><circle cx="24" cy="13" r="1.2" /><circle cx="28" cy="13" r="1.2" /></g>
+			<path d="M19 28 h10" stroke={id === 'gula' ? M : id === 'garam' ? B : R} stroke-width="4" />
+		{:else if id === 'cabai_bubuk'}
+			<path d="M14 18 h20 v22 q0 4 -4 4 h-12 q-4 0 -4 -4 Z" fill={R} />
+			<rect x="14" y="10" width="20" height="8" rx="2" fill={T} />
+			<path d="M20 30 q4 -8 10 -4 q-2 8 -10 4 Z" fill={M} stroke-width="1.8" />
+		{:else if id === 'kecap' || id === 'cuka'}
+			<path d="M20 6 h8 v8 l6 8 v20 q0 2 -2 2 h-16 q-2 0 -2 -2 v-20 l6 -8 Z" fill={id === 'kecap' ? '#3A2616' : '#EAF2E3'} />
+			<rect x="19" y="4" width="10" height="5" rx="1" fill={R} stroke-width="2" />
+			<rect x="16" y="26" width="16" height="10" fill={id === 'kecap' ? M : H} stroke-width="1.8" />
+		{:else if id === 'kardus'}
+			<path d="M8 18 L24 12 L40 18 V38 L24 44 L8 38 Z" fill="#C9A66B" />
+			<path d="M8 18 L24 24 L40 18 M24 24 V44" />
+			<path d="M16 15 L32 21" stroke={R} stroke-width="3" />
 		{:else if id === 'keranjang_cucian'}
 			<path d="M8 16 L40 16 L36 42 L12 42 Z" fill={M} />
 			<path d="M10 24 h28 M11 32 h26 M18 16 l-1 26 M30 16 l1 26" stroke-width="1.8" />

@@ -50,7 +50,8 @@ export const PESAN_GALAT: Record<string, string> = {
 	tuduhan_habis: 'Kesempatan menuduh sudah habis.',
 	tuduhan_ganda: 'Kombinasi itu sudah pernah kamu tuduhkan.',
 	pilihan_tidak_valid: 'Pilihan tuduhan tidak valid.',
-	benda_tidak_dikenal: 'Benda itu tidak bisa diperiksa.'
+	benda_tidak_dikenal: 'Benda itu tidak bisa diperiksa.',
+	terlalu_banyak: 'Pelan-pelan, Detektif. Coba lagi beberapa detik lagi.'
 };
 
 export function pesanGalat(e: unknown): string {

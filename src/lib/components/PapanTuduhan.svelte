@@ -6,7 +6,7 @@
 	import type { Tanda } from '$lib/client/lokal';
 	import type { KasusPublik } from '$lib/engine/permainan';
 	import type { Kategori, Kombinasi, Tuduhan } from '$lib/engine/types';
-	import { KATEGORI_LABEL, UMPAN_BALIK } from '$lib/teks';
+	import { KATEGORI_LABEL, umpanBalik } from '$lib/teks';
 	import Ikon from './Ikon.svelte';
 	import Potret from './Potret.svelte';
 
@@ -25,17 +25,15 @@
 	} = $props();
 
 	let pilihan = $state<Partial<Kombinasi>>({});
-	const lengkap = $derived(!!(pilihan.siapa && pilihan.pakai && pilihan.dimana));
-	const ganda = $derived(
-		lengkap && tuduhan.some((t) => t.siapa === pilihan.siapa && t.pakai === pilihan.pakai && t.dimana === pilihan.dimana)
-	);
+	const dari = $derived(kasus.kategori.length);
+	const lengkap = $derived(kasus.kategori.every((k) => !!pilihan[k]));
+	const ganda = $derived(lengkap && tuduhan.some((t) => kasus.kategori.every((k) => t[k] === pilihan[k])));
 	const sisa = $derived(kasus.maks_tuduhan - tuduhan.length);
 	const terakhir = $derived(tuduhan.at(-1));
 
-	const nama = (kat: Kategori, id: string) => kasus.pilihan[kat].find((p) => p.id === id)?.nama ?? id;
-	const ringkas = $derived(
-		(['siapa', 'pakai', 'dimana'] as Kategori[]).map((k) => (pilihan[k] ? nama(k, pilihan[k]!) : '…')).join(' · ')
-	);
+	const nama = (kat: Kategori, id: string | undefined) =>
+		(id && kasus.pilihan[kat]?.find((p) => p.id === id)?.nama) ?? id ?? '…';
+	const ringkas = $derived(kasus.kategori.map((k) => (pilihan[k] ? nama(k, pilihan[k]) : '…')).join(' · '));
 
 	function kirim() {
 		if (!lengkap || ganda || sibuk) return;
@@ -45,26 +43,27 @@
 
 <div class="papan">
 	{#key tuduhan.length}
-		{#if terakhir && terakhir.benar < 3}
+		{#if terakhir && terakhir.benar < dari}
 			<div class="umpan" role="alert">
-				<span class="stempel">{terakhir.benar} dari 3</span>
-				<p>{UMPAN_BALIK[terakhir.benar]} {sisa > 0 ? `Sisa ${sisa} kesempatan.` : ''}</p>
+				<span class="stempel">{terakhir.benar} dari {dari}</span>
+				<p>{umpanBalik(terakhir.benar, dari)} {sisa > 0 ? `Sisa ${sisa} kesempatan.` : ''}</p>
 			</div>
 		{/if}
 	{/key}
 
-	{#each Object.entries(KATEGORI_LABEL) as [kat, label] (kat)}
-		{@const k = kat as Kategori}
+	{#each kasus.kategori as k (k)}
 		<fieldset>
-			<legend class="label">{label}</legend>
+			<legend class="label">{KATEGORI_LABEL[k]}</legend>
 			<div class="baris">
-				{#each kasus.pilihan[k] as p (p.id)}
+				{#each kasus.pilihan[k] ?? [] as p (p.id)}
 					{@const dipilih = pilihan[k] === p.id}
 					<label class="kartu-pilihan" class:dipilih class:redup={coret[`${k}:${p.id}`] === 'x'}>
 						<input type="radio" name={k} value={p.id} bind:group={pilihan[k]} class="sr-only" />
 						<span class="gambar">
 							{#if k === 'siapa'}
 								<Potret id={p.id} ukuran={68} ekspresi={dipilih ? 'gugup' : 'normal'} />
+							{:else if k === 'kenapa'}
+								<span class="motif" aria-hidden="true">?</span>
 							{:else}
 								<Ikon id={p.id} ukuran={52} />
 							{/if}
@@ -92,8 +91,8 @@
 				{#each tuduhan as t, i (i)}
 					<li>
 						<span>{i + 1}.</span>
-						<span class="kombinasi">{nama('siapa', t.siapa)} · {nama('pakai', t.pakai)} · {nama('dimana', t.dimana)}</span>
-						<span class="skor" class:benar={t.benar === 3}>{t.benar} dari 3 benar</span>
+						<span class="kombinasi">{kasus.kategori.map((k) => nama(k, t[k])).join(' · ')}</span>
+						<span class="skor" class:benar={t.benar === dari}>{t.benar} dari {dari} benar</span>
 					</li>
 				{/each}
 			</ol>
@@ -156,6 +155,31 @@
 		height: 68px;
 		display: grid;
 		place-items: center;
+	}
+	.motif {
+		width: 52px;
+		height: 52px;
+		display: grid;
+		place-items: center;
+		border: 2.5px solid var(--tinta);
+		border-radius: 50%;
+		background: var(--mustard);
+		font-family: var(--font-judul);
+		font-size: 28px;
+	}
+	/* di layar sempit tiap baris kartu bisa digeser ke samping */
+	@media (max-width: 640px) {
+		.baris {
+			flex-wrap: nowrap;
+			overflow-x: auto;
+			padding: 6px 2px 10px;
+			scroll-snap-type: x mandatory;
+		}
+		.kartu-pilihan {
+			flex: 0 0 112px;
+			width: 112px;
+			scroll-snap-align: start;
+		}
 	}
 	.nama {
 		font-weight: 700;

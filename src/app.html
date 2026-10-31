@@ -12,6 +12,16 @@
 			href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Work+Sans:wght@400;500;600;700&display=swap"
 			rel="stylesheet"
 		/>
+		<link rel="manifest" href="%sveltekit.assets%/manifest.webmanifest" />
+		<link rel="apple-touch-icon" href="%sveltekit.assets%/ikon-180.png" />
+		<script>
+			// Terapkan pengaturan tampilan sebelum halaman digambar (lihat src/lib/client/pengaturan.svelte.ts)
+			try {
+				var p = JSON.parse(localStorage.getItem('dt_pengaturan') || '{}');
+				if (p.kontrasTinggi) document.documentElement.setAttribute('data-kontras-tinggi', '');
+				if (p.kurangiAnimasi) document.documentElement.setAttribute('data-kurangi-animasi', '');
+			} catch (e) {}
+		</script>
 		<title>Dailytective</title>
 		%sveltekit.head%
 	</head>

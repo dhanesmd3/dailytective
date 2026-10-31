@@ -7,6 +7,7 @@
 	import type { BuktiDitemukan, KasusPublik } from '$lib/engine/permainan';
 	import type { Kategori } from '$lib/engine/types';
 	import { KATEGORI_LABEL, labelAtribut } from '$lib/teks';
+	import DaftarPengakuan from './DaftarPengakuan.svelte';
 	import Ikon from './Ikon.svelte';
 	import Potret from './Potret.svelte';
 
@@ -66,6 +67,10 @@
 					<li class="clue awal"><span class="tag">Awal {i + 1}</span><p>{c.teks}</p></li>
 				{/each}
 			</ul>
+			{#if kasus.pengakuan.length}
+				<h3 class="sub">Pengakuan</h3>
+				<DaftarPengakuan {kasus} kecil />
+			{/if}
 			<h3 class="sub">Bukti TKP</h3>
 			{#if bukti.length === 0}
 				<p class="kosong-teks">Belum ada bukti. Klik benda di ruangan untuk memeriksanya.</p>
@@ -104,14 +109,17 @@
 			</ul>
 		{:else}
 			<p class="kosong-teks">Tandai pilihan sebagai gugur, ragu, atau yakin. Kartu yang gugur tampil redup di papan tuduhan.</p>
-			{#each Object.entries(KATEGORI_LABEL) as [kat, label] (kat)}
-				<h3 class="sub">{label}</h3>
+			{#each kasus.kategori as kat (kat)}
+				<h3 class="sub">{KATEGORI_LABEL[kat]}</h3>
 				<ul class="coret">
-					{#each kasus.pilihan[kat as Kategori] as p (p.id)}
+					{#each kasus.pilihan[kat] ?? [] as p (p.id)}
 						{@const t = coret[`${kat}:${p.id}`]}
 						<li class:gugur={t === 'x'}>
 							<span class="gambar">
-								{#if kat === 'siapa'}<Potret id={p.id} ukuran={30} />{:else}<Ikon id={p.id} ukuran={26} />{/if}
+								{#if kat === 'siapa'}<Potret id={p.id} ukuran={30} />{:else if kat === 'kenapa'}<span class="tanya">?</span>{:else}<Ikon
+										id={p.id}
+										ukuran={26}
+									/>{/if}
 							</span>
 							<span class="nama-pilihan">{p.nama}</span>
 							<span class="tanda">
@@ -120,7 +128,7 @@
 										class="t-{d.t === '?' ? 'q' : d.t}"
 										aria-pressed={t === d.t}
 										aria-label="{p.nama}: {d.label}"
-										onclick={() => tandai(kat as Kategori, p.id, d.t)}
+										onclick={() => tandai(kat, p.id, d.t)}
 									>
 										<svg viewBox="0 0 20 20" width="14" height="14" aria-hidden="true">
 											{#if d.t === 'x'}
@@ -324,6 +332,16 @@
 		display: grid;
 		place-items: center;
 		width: 30px;
+	}
+	.tanya {
+		display: grid;
+		place-items: center;
+		width: 26px;
+		height: 26px;
+		border: 2px solid var(--tinta);
+		border-radius: 50%;
+		background: var(--mustard);
+		font-family: var(--font-judul);
 	}
 	.nama-pilihan {
 		flex: 1;

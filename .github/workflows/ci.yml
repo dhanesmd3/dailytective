@@ -1,0 +1,26 @@
+# Dokumen 06 bagian 7: pull request tidak boleh digabung kalau validator atau solver gagal.
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  cek:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Type check
+        run: npm run check
+      - name: Unit test
+        run: npm test
+      - name: Validator + solver kasus (S1–S6)
+        run: npm run cek-kasus
+      - name: Build
+        run: npm run build

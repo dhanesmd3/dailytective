@@ -6,7 +6,7 @@
 <script lang="ts">
 	import type { BuktiDitemukan, KasusPublik } from '$lib/engine/permainan';
 	import type { PosisiHotspot } from '$lib/engine/types';
-	import RuangTamu from './RuangTamu.svelte';
+	import Adegan from './ruang/Adegan.svelte';
 
 	let {
 		kasus,
@@ -27,10 +27,22 @@
 	let ruangAktif = $state('ruang_tamu');
 	let modeDaftar = $state(false);
 	let denyut = $state<{ x: number; y: number; k: number } | null>(null);
+	/** Perbesaran ruangan. Di layar sempit ruangan bisa digeser; tombol ini untuk memperbesar detail. */
+	let zoom = $state(1);
+	const ZOOM = [1, 1.5, 2];
 
 	const ruang = $derived(kasus.ruangan.find((r) => r.id === ruangAktif)!);
 	const benda = $derived(ruang.benda.filter((b) => b.posisi) as { id: string; nama: string; posisi: PosisiHotspot }[]);
 	const hasil = $derived(new Map(diperiksa.map((d) => [d.benda, d])));
+	const ruangDari = $derived(new Map(kasus.ruangan.flatMap((r) => r.benda.map((b) => [b.id, r.id] as const))));
+	/** Jumlah benda yang sudah diperiksa per ruangan, untuk chip. */
+	const hitungRuang = $derived(
+		diperiksa.reduce<Record<string, number>>((acc, d) => {
+			const r = ruangDari.get(d.benda);
+			if (r) acc[r] = (acc[r] ?? 0) + 1;
+			return acc;
+		}, {})
+	);
 
 	function klik(e: MouseEvent, id: string) {
 		const kotak = (e.currentTarget as HTMLElement).closest('.panggung')!.getBoundingClientRect();
@@ -51,10 +63,12 @@
 					role="tab"
 					aria-selected={r.id === ruangAktif}
 					disabled={!r.ilustrasi}
-					title={r.ilustrasi ? undefined : 'Belum tersedia di prototipe'}
+					title={r.ilustrasi ? undefined : 'Belum tersedia'}
 					onclick={() => (ruangAktif = r.id)}
 				>
-					{r.nama}{#if !r.ilustrasi}<span class="segera">segera</span>{/if}
+					{r.nama}{#if !r.ilustrasi}<span class="segera">segera</span>{:else if hitungRuang[r.id]}<span class="hitung"
+							>{hitungRuang[r.id]}<span class="sr-only"> diperiksa</span></span
+						>{/if}
 				</button>
 			{/each}
 		</div>
@@ -69,8 +83,9 @@
 		</div>
 	</div>
 
-	<div class="panggung">
-		<RuangTamu state={kasus.state_ruangan[ruangAktif]} />
+	<div class="bingkai">
+	<div class="panggung" style:width="{zoom * 100}%">
+		<Adegan id={ruangAktif} state={kasus.state_ruangan[ruangAktif]} />
 		{#each benda as b (b.id)}
 			{@const h = hasil.get(b.id)}
 			<button
@@ -100,8 +115,14 @@
 			<span class="pita">Jatah periksa habis. Kamu masih bisa membaca ulang bukti.</span>
 		{/if}
 	</div>
+	</div>
 
 	<div class="bawah">
+		<div class="zoom" role="group" aria-label="Perbesar ruangan">
+			{#each ZOOM as z (z)}
+				<button class:aktif={zoom === z} aria-pressed={zoom === z} onclick={() => (zoom = z)}>{z}×</button>
+			{/each}
+		</div>
 		<button class="tombol-teks" onclick={() => (modeDaftar = !modeDaftar)} aria-expanded={modeDaftar}>
 			{modeDaftar ? 'Sembunyikan daftar benda' : 'Tampilkan sebagai daftar'}
 		</button>
@@ -160,6 +181,36 @@
 		color: var(--krem-redup);
 		cursor: not-allowed;
 	}
+	.chip .hitung {
+		display: inline-block;
+		margin-left: 6px;
+		min-width: 18px;
+		font-size: 11px;
+		background: var(--tinta);
+		color: var(--krem);
+		border-radius: 999px;
+		padding: 0 5px;
+	}
+	.zoom {
+		display: inline-flex;
+		border: 2px solid var(--krem-redup);
+		border-radius: 999px;
+		overflow: hidden;
+	}
+	.zoom button {
+		background: transparent;
+		border: none;
+		color: var(--krem);
+		font-weight: 700;
+		font-size: 13px;
+		padding: 6px 10px;
+		min-height: 34px;
+		cursor: pointer;
+	}
+	.zoom button.aktif {
+		background: var(--krem);
+		color: var(--tinta);
+	}
 	.segera {
 		font-size: 11px;
 		margin-left: 6px;
@@ -194,14 +245,20 @@
 		box-shadow: none;
 	}
 
+	.bingkai {
+		border: 3px solid var(--tinta);
+		border-radius: 12px;
+		overflow: auto;
+		overscroll-behavior: contain;
+		box-shadow: 0 0 0 6px var(--mustard), 0 0 0 9px var(--tinta), 0 12px 0 6px var(--tinta);
+		margin: 9px;
+		background: var(--tinta);
+	}
 	.panggung {
 		position: relative;
 		aspect-ratio: 12 / 7;
-		border: 3px solid var(--tinta);
-		border-radius: 12px;
-		overflow: hidden;
-		box-shadow: 0 0 0 6px var(--mustard), 0 0 0 9px var(--tinta), 0 12px 0 6px var(--tinta);
-		margin: 9px;
+		/* di HP ruangan tetap cukup besar untuk diklik, lalu digeser ke samping */
+		min-width: 720px;
 		/* kursor kaca pembesar yang sama di seluruh ruangan */
 		cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Ccircle cx='13' cy='13' r='9' fill='rgba(244,231,201,0.35)' stroke='%231F1812' stroke-width='4'/%3E%3Ccircle cx='13' cy='13' r='9' fill='none' stroke='%23F4E7C9' stroke-width='1.5'/%3E%3Cpath d='M20 20l9 9' stroke='%231F1812' stroke-width='5' stroke-linecap='round'/%3E%3C/svg%3E") 13 13, zoom-in;
 	}

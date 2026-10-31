@@ -9,14 +9,15 @@ export const JENIS: Record<string, { label: string; pakai: string; dimana: strin
 	pembunuhan: { label: 'Pembunuhan', pakai: 'senjata', dimana: 'lokasi' }
 };
 
-/** Feedback tuduhan salah (GDD bagian 7). */
-export const UMPAN_BALIK: Record<number, string> = {
-	0: 'Meleset semua. Tidak ada satu pun yang tepat.',
-	1: 'Satu bagian tepat, dua lainnya salah.',
-	2: 'Hampir! Dua bagian tepat.'
-};
+/** Feedback tuduhan salah (GDD bagian 7). Hanya menyebut jumlah, tidak bagian mana. */
+export function umpanBalik(benar: number, dari: number): string {
+	const angka = ['Nol', 'Satu', 'Dua', 'Tiga'];
+	if (benar === 0) return 'Meleset semua. Tidak ada satu pun yang tepat.';
+	if (benar === dari - 1) return `Hampir! ${angka[benar]} bagian tepat.`;
+	return `${angka[benar]} bagian tepat, ${angka[dari - benar].toLowerCase()} lainnya salah.`;
+}
 
-export const KATEGORI_LABEL = { siapa: 'Siapa', pakai: 'Pakai apa', dimana: 'Di mana' } as const;
+export const KATEGORI_LABEL = { siapa: 'Siapa', pakai: 'Pakai apa', dimana: 'Di mana', kenapa: 'Kenapa' } as const;
 
 export const ONBOARDING = [
 	{ judul: 'Setiap hari ada satu kasus di rumah Nenek.', isi: 'Kasus baru terbit pukul 06.00 WIB. Semua pemain mendapat kasus yang sama.' },

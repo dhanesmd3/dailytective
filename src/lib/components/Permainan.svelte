@@ -20,6 +20,8 @@
 	import Logo from './Logo.svelte';
 	import Onboarding from './Onboarding.svelte';
 	import PapanTuduhan from './PapanTuduhan.svelte';
+	import PengaturanModal from './PengaturanModal.svelte';
+	import { bunyi } from '$lib/client/suara';
 	import Ruangan from './Ruangan.svelte';
 	import StatistikModal from './StatistikModal.svelte';
 
@@ -37,13 +39,15 @@
 	let statistik = $state<StatistikPribadi>(untrack(() => data.statistik));
 
 	let tampilan = $state<'tkp' | 'tuduhan' | 'hasil'>(awal?.akhir ? 'hasil' : 'tkp');
-	let modal = $state<null | 'context' | 'statistik' | 'onboarding'>(null);
+	let modal = $state<null | 'context' | 'statistik' | 'onboarding' | 'pengaturan'>(null);
 	let buktiAktif = $state<BuktiDitemukan | null>(null);
 	let sibukBenda = $state<string | null>(null);
 	let sibukTuduh = $state(false);
 	let sibukMulai = $state(false);
 	let pesan = $state('');
 	let coret = $state<Record<string, Tanda>>({});
+	/** Buku Catatan sebagai lembar dari bawah di layar < 1024 px. */
+	let lembarTerbuka = $state(false);
 
 	const q = page.url.search;
 	const namaBendaPeta = new Map(kasus.ruangan.flatMap((r) => r.benda.map((b) => [b.id, b.nama] as const)));
@@ -110,6 +114,7 @@
 			diperiksa = [...diperiksa, bukti];
 			sisaJatah = r.sisa_jatah;
 			buktiAktif = bukti;
+			bunyi(bukti.hasil === 'clue' ? 'bukti' : 'kosong');
 			status ??= 'berjalan';
 		} catch (e) {
 			if (e instanceof GalatApi && e.kode === 'jatah_habis') sisaJatah = 0;
@@ -125,6 +130,7 @@
 			const r = await api.tuduh(kasus.id, k);
 			tuduhan = r.tuduhan;
 			status ??= 'berjalan';
+			bunyi(r.benar === r.dari ? 'menang' : 'salah');
 			if (r.selesai && r.akhir) {
 				akhir = r.akhir;
 				status = r.akhir.menang ? 'menang' : 'kalah';
@@ -164,6 +170,7 @@
 			<button class="tombol-teks" onclick={() => (modal = 'context')}>Context card</button>
 			<button class="tombol-teks" onclick={() => (modal = 'onboarding')}>Cara main</button>
 			<button class="tombol-teks" onclick={() => (modal = 'statistik')}>Statistik</button>
+			<button class="tombol-teks" onclick={() => (modal = 'pengaturan')}>Pengaturan</button>
 		</nav>
 	</header>
 
@@ -219,7 +226,23 @@
 				{/if}
 			</section>
 
-			<BukuCatatan {kasus} {diperiksa} bind:coret {namaBenda} bukaContext={() => (modal = 'context')} />
+			<div class="lembar" class:terbuka={lembarTerbuka} id="buku-catatan">
+				<button class="tutup-lembar" onclick={() => (lembarTerbuka = false)} aria-label="Tutup Buku Catatan">
+					<span aria-hidden="true"></span>
+				</button>
+				<BukuCatatan {kasus} {diperiksa} bind:coret {namaBenda} bukaContext={() => (modal = 'context')} />
+			</div>
+			{#if lembarTerbuka}
+				<button class="tirai-lembar" aria-label="Tutup Buku Catatan" onclick={() => (lembarTerbuka = false)}></button>
+			{/if}
+			<button
+				class="tombol buka-lembar"
+				aria-expanded={lembarTerbuka}
+				aria-controls="buku-catatan"
+				onclick={() => (lembarTerbuka = !lembarTerbuka)}
+			>
+				Buku Catatan <span class="jumlah">{diperiksa.filter((d) => d.hasil === 'clue').length}</span>
+			</button>
 		</main>
 	{/if}
 </div>
@@ -235,6 +258,8 @@
 	/>
 {:else if modal === 'statistik'}
 	<StatistikModal {statistik} tutup={() => (modal = null)} />
+{:else if modal === 'pengaturan'}
+	<PengaturanModal tutup={() => (modal = null)} />
 {/if}
 
 {#if pesan}
@@ -303,13 +328,92 @@
 			grid-template-columns: minmax(0, 1fr) 300px;
 		}
 	}
+	.buka-lembar,
+	.tutup-lembar,
+	.tirai-lembar {
+		display: none;
+	}
 	@media (max-width: 1023px) {
 		.dua-kolom {
 			grid-template-columns: 1fr;
 		}
-		.dua-kolom :global(.buku) {
+		.lembar {
+			position: fixed;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			z-index: 40;
+			padding: 0 8px;
+			transform: translateY(calc(100% + 24px));
+			transition: transform 260ms cubic-bezier(0.2, 0.9, 0.3, 1);
+			visibility: hidden;
+		}
+		.lembar.terbuka {
+			transform: none;
+			visibility: visible;
+		}
+		.lembar :global(.buku) {
 			position: static;
-			max-height: none;
+			max-height: 78vh;
+			border-radius: 14px 14px 0 0;
+			border-bottom: none;
+		}
+		.tutup-lembar {
+			display: grid;
+			place-items: center;
+			width: 100%;
+			height: 22px;
+			background: none;
+			border: none;
+			cursor: pointer;
+		}
+		.tutup-lembar span {
+			width: 56px;
+			height: 6px;
+			border-radius: 3px;
+			background: var(--krem);
+		}
+		.tirai-lembar {
+			display: block;
+			position: fixed;
+			inset: 0;
+			z-index: 39;
+			background: rgba(20, 12, 8, 0.5);
+			border: none;
+		}
+		/* kartu bukti tidak boleh tertutup tombol Buku Catatan yang mengambang */
+		.panggung-utama .kartu-aktif {
+			position: fixed;
+			left: 12px;
+			right: 12px;
+			bottom: 72px;
+			z-index: 31;
+		}
+		.buka-lembar {
+			display: inline-flex;
+			position: fixed;
+			right: 14px;
+			bottom: 14px;
+			z-index: 30;
+		}
+		.jumlah {
+			background: var(--tinta);
+			color: var(--krem);
+			border-radius: 999px;
+			padding: 0 7px;
+			font-size: 12px;
+		}
+	}
+	@media (max-width: 640px) {
+		.halaman {
+			padding: 10px 12px 80px;
+		}
+		header {
+			gap: 10px;
+		}
+		.tab-tahap button {
+			padding: 6px 10px;
+			font-size: 13px;
 		}
 	}
 	.panggung-utama {

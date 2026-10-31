@@ -189,3 +189,26 @@ a {
 		transition-duration: 1ms !important;
 	}
 }
+html[data-kurangi-animasi] *,
+html[data-kurangi-animasi] *::before,
+html[data-kurangi-animasi] *::after {
+	animation-duration: 1ms !important;
+	animation-iteration-count: 1 !important;
+	transition-duration: 1ms !important;
+}
+
+/* Kontras tinggi: teks sekunder lebih terang, latar lebih gelap, garis lebih tebal */
+html[data-kontras-tinggi] {
+	--kayu-gelap: #140d08;
+	--kayu-garis: #140d08;
+	--krem-redup: #f1e3c6;
+	--coklat-teks: #3d2f22;
+	--garis: 3.5px solid var(--tinta);
+}
+html[data-kontras-tinggi] a {
+	text-decoration-thickness: 2px;
+}
+html[data-kontras-tinggi] .tombol-teks {
+	border-width: 3px;
+	border-color: var(--krem);
+}

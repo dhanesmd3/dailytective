@@ -1,0 +1,67 @@
+{
+  "versi_skema": 1,
+  "id": 7,
+  "tanggal": "2026-11-08",
+  "judul": "Kalung Emas Nenek Menghilang",
+  "jenis": "kehilangan",
+  "kesulitan": { "bintang": 3, "label": "Minggu" },
+  "jatah_periksa": 12,
+  "context_card": {
+    "cerita": "Pukul 15.00 Nenek masih memakai kalung emasnya untuk foto arisan. Pukul 20.00, saat bersiap ke kondangan, kalung itu tidak ada di kotak perhiasan. Seseorang membawanya, dan pasti punya alasan.",
+    "clue_awal": [
+      { "id": "A1", "teks": "Keranjang cucian hanya dibawa ke jemuran. Kalau kalungnya dibawa dengan keranjang cucian, pasti berakhir di Teras." }
+    ]
+  },
+  "pilihan": {
+    "siapa":  ["lia", "benny", "sekar", "hendra", "raka"],
+    "pakai":  ["kardus", "tas_belanja", "keranjang_cucian", "toples_kosong", "sarung"],
+    "dimana": ["kamar_nenek", "ruang_kerja", "teras", "dapur", "ruang_tamu"],
+    "kenapa": ["utang", "iri", "kejutan", "konten_viral", "salah_paham"]
+  },
+  "pengakuan": [],
+  "state_ruangan": {
+    "kamar_nenek": { "tambah": ["kotak_terbuka"], "belang": "ranjang", "waktu": "malam" },
+    "ruang_kerja": { "tambah": [], "waktu": "malam" },
+    "teras": { "tambah": [], "waktu": "malam" },
+    "dapur": { "tambah": [], "waktu": "malam" },
+    "ruang_tamu": { "tambah": [], "belang": "keset", "waktu": "malam" }
+  },
+  "benda": {
+    "kn_kotak":    { "hasil": "clue", "id_clue": "B1", "teks": "Tutup kotak perhiasan terbuka. Di kacanya menempel bekas lensa kacamata dan sidik jari kecil." },
+    "kn_sandal":   { "hasil": "clue", "id_clue": "B2", "teks": "Di samping sandal Nenek ada jejak kaki kecil, kira-kira ukuran 37 atau 38, menuju kotak perhiasan." },
+    "rk_papan":    { "hasil": "clue", "id_clue": "B3", "teks": "Jadwal di papan tulis: \"Hendra: les sejarah di sekolah, 14.00–21.00.\" Ada tanda centang hari ini." },
+    "rk_arsip":    { "hasil": "clue", "id_clue": "B4", "teks": "Di laci arsip paling bawah, terbungkus koran: kalung emas Nenek! Sudah mengilap seperti baru." },
+    "tk_gudang":   { "hasil": "clue", "id_clue": "B5", "teks": "Kardus sepatu di gudang dipakai seseorang: tinggal bekas persegi di debu, potongan lakban, dan secarik kertas kado." },
+    "rt_telepon":  { "hasil": "clue", "id_clue": "B6", "teks": "Catatan di samping telepon: \"Kartu ucapan: Selamat ulang tahun ke-79, Nek! Kalungnya sudah dicuci.\"" },
+    "dp_kalender": { "hasil": "clue", "id_clue": "B7", "teks": "Tulisan Mbok Sri di kalender: \"Di rumah ini, cuma Om Benny yang lagi dikejar cicilan.\"" },
+    "rt_foto":     { "hasil": "clue", "id_clue": "B8", "teks": "Foto arisan tahun lalu: hanya Tante Lia yang menatap kalung Nenek dengan iri." },
+    "kn_lemari":   { "hasil": "pendukung", "id_clue": "B9", "teks": "Di lemari tergantung kebaya kondangan Nenek. Di sakunya ada kertas: \"Jangan curiga ya, Nek. –S\"" },
+    "kn_rias":     { "hasil": "kosong", "teks": "Meja rias rapi. Bedak Nenek wangi melati, sama dengan parfum Tante Lia." },
+    "kn_kolong":   { "hasil": "kosong", "teks": "Kolong ranjang: koper tua dan Si Belang yang tidak suka diganggu." },
+    "rk_brankas":  { "hasil": "kosong", "teks": "Brankas terkunci rapat. Kodenya tanggal lahir Kakek, kata semua orang." },
+    "dp_kulkas":   { "hasil": "kosong", "teks": "Ada kue ulang tahun kecil di rak paling belakang, ditutup rapat-rapat." },
+    "tk_jemuran":  { "hasil": "kosong", "teks": "Jemuran kosong. Semua cucian sudah diangkat sebelum magrib." },
+    "rt_sofa":     { "hasil": "kosong", "teks": "Bantal sofa sudah ditepuk-tepuk rapi untuk tamu kondangan." },
+    "tk_kotaksurat": { "hasil": "kosong", "teks": "Kotak surat berisi undangan kondangan dan brosur kredit motor." }
+  },
+  "teks_kosong_bawaan": "Kamu memeriksanya dengan teliti, tapi tidak ada yang mencurigakan.",
+  "solusi": { "siapa": "sekar", "pakai": "kardus", "dimana": "ruang_kerja", "kenapa": "kejutan" },
+  "logika": {
+    "A1": { "tipe": "jika_maka", "jika": { "pakai": "keranjang_cucian" }, "maka": { "dimana": "teras" } },
+    "B1": { "tipe": "atribut", "atribut": "kacamata", "nilai": true },
+    "B2": { "tipe": "atribut", "atribut": "sepatu", "nilai": 40, "op": "<" },
+    "B3": { "tipe": "bukan", "siapa": "hendra" },
+    "B4": { "tipe": "fakta", "dimana": "ruang_kerja" },
+    "B5": { "tipe": "fakta", "pakai": "kardus" },
+    "B6": { "tipe": "fakta", "kenapa": "kejutan" },
+    "B7": { "tipe": "jika_maka", "jika": { "kenapa": "utang" }, "maka": { "siapa": "benny" } },
+    "B8": { "tipe": "jika_maka", "jika": { "kenapa": "iri" }, "maka": { "siapa": "lia" } }
+  },
+  "penjelasan": [
+    { "teks": "Bekas lensa kacamata di kotak perhiasan: pelakunya Om Hendra atau Sekar.", "bukti": ["B1"] },
+    { "teks": "Jejak kaki kecil ukuran 37–38, dan Om Hendra mengajar les sampai 21.00. Pelakunya Sekar.", "bukti": ["B2", "B3"] },
+    { "teks": "Kalung ditemukan di laci arsip Ruang Kerja, dibawa dengan kardus sepatu dari gudang.", "bukti": ["B4", "B5"] },
+    { "teks": "Kartu ucapan ulang tahun: Sekar diam-diam mencuci kalung itu untuk kejutan.", "bukti": ["B6"] }
+  ],
+  "komentar_nenek": "Sekar… Nenek hampir lapor Pak RT. Tapi kalungnya jadi kinclong. Terima kasih, Cu."
+}

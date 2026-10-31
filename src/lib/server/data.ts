@@ -18,6 +18,7 @@ export function muatDunia(akar = AKAR): DataDunia {
 		karakter: bacaJson<{ tersangka: DataDunia['karakter'] }>(join(d, 'karakter.json')).tersangka,
 		barang: bacaJson<{ barang: DataDunia['barang'] }>(join(d, 'barang.json')).barang,
 		lokasi: bacaJson<{ lokasi: DataDunia['lokasi'] }>(join(d, 'lokasi.json')).lokasi,
+		motif: bacaJson<{ motif: DataDunia['motif'] }>(join(d, 'motif.json')).motif,
 		ruangan: bacaJson<{ ruangan: DataDunia['ruangan'] }>(join(d, 'ruangan.json')).ruangan
 	};
 }

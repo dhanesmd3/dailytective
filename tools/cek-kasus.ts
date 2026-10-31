@@ -10,6 +10,7 @@ import { muatDunia, muatSemuaKasus } from '../src/lib/server/data';
 const filter = process.argv[2];
 const dunia = muatDunia();
 const kar = petaKarakter(dunia.karakter);
+const bendaKeRuangan = new Map(dunia.ruangan.flatMap((r) => r.benda.map((b) => [b.id, r.id] as const)));
 const semua = muatSemuaKasus();
 const dipilih = filter ? semua.filter((k) => k.file.startsWith(filter)) : semua;
 
@@ -30,14 +31,15 @@ for (const { file, kasus } of dipilih) {
 		gagal++;
 		continue;
 	}
-	const lap = analisis(kasus, kar);
+	const lap = analisis(kasus, kar, bendaKeRuangan);
 	for (const [kode, c] of Object.entries(lap.cek)) console.log(`  ${c.lolos ? '✓' : '✗'} ${kode} ${c.pesan}`);
 	for (const t of lap.catatanTarget) console.log(`  ~ target: ${t}`);
 	if (filter || !lap.lolos) {
 		console.log(`  jalur bukti minimal:`);
 		for (const j of lap.jalur) console.log(`    · ${j.join(' + ')}`);
 		if (lap.sisaSetelahSemua.length > 1)
-			for (const k of lap.sisaSetelahSemua) console.log(`    sisa: ${k.siapa} + ${k.pakai} + ${k.dimana}`);
+			for (const k of lap.sisaSetelahSemua) console.log(`    sisa: ${Object.values(k).join(' + ')}`);
+		console.log(`  ruangan berisi clue: ${lap.sebaranRuangan.join(', ')}`);
 	}
 	if (!lap.lolos) gagal++;
 }

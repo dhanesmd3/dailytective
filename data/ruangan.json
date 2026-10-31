@@ -1,65 +1,89 @@
 {
-  "kanvas": { "lebar": 1200, "tinggi": 700 },
+  "kanvas": {"lebar": 1200, "tinggi": 700},
   "ruangan": [
     {
       "id": "ruang_tamu", "nama": "Ruang Tamu", "ilustrasi": true,
       "benda": [
-        { "id": "rt_jam",      "nama": "Jam dinding",                  "posisi": { "x": 6.25,  "y": 4.29,  "w": 6.67,  "h": 11.43 } },
-        { "id": "rt_keset",    "nama": "Keset & rak sepatu",           "posisi": { "x": 3.17,  "y": 56.43, "w": 21.0,  "h": 18.29 } },
-        { "id": "rt_rak",      "nama": "Rak buku",                     "posisi": { "x": 25.0,  "y": 22.86, "w": 11.25, "h": 47.86 } },
-        { "id": "rt_foto",     "nama": "Foto keluarga",                "posisi": { "x": 37.33, "y": 18.86, "w": 12.08, "h": 16.57 } },
-        { "id": "rt_telepon",  "nama": "Telepon rumah",                "posisi": { "x": 39.17, "y": 43.14, "w": 8.33,  "h": 9.71 } },
-        { "id": "rt_lemari",   "nama": "Lemari kecil bawah telepon",   "posisi": { "x": 37.5,  "y": 53.14, "w": 11.67, "h": 17.86 } },
-        { "id": "rt_lukisan",  "nama": "Lukisan pemandangan",          "posisi": { "x": 54.0,  "y": 10.29, "w": 17.83, "h": 21.57 } },
-        { "id": "rt_sofa",     "nama": "Bantal sofa",                  "posisi": { "x": 53.33, "y": 43.57, "w": 19.17, "h": 12.14 } },
-        { "id": "rt_kolong",   "nama": "Kolong sofa",                  "posisi": { "x": 51.67, "y": 62.29, "w": 22.5,  "h": 10.0 } },
-        { "id": "rt_meja",     "nama": "Meja kopi",                    "posisi": { "x": 50.83, "y": 75.0,  "w": 23.33, "h": 15.0 } },
-        { "id": "rt_tirai",    "nama": "Tirai jendela",                "posisi": { "x": 75.83, "y": 8.86,  "w": 20.83, "h": 45.0 } },
-        { "id": "rt_kursi",    "nama": "Kursi mustard",                "posisi": { "x": 77.5,  "y": 56.43, "w": 15.42, "h": 34.29 } }
+        { "id": "rt_jam", "nama": "Jam dinding", "posisi": { "x": 6.25, "y": 4.29, "w": 6.67, "h": 11.43 } },
+        { "id": "rt_keset", "nama": "Keset & rak sepatu", "posisi": { "x": 3.17, "y": 56.43, "w": 21, "h": 18.29 } },
+        { "id": "rt_rak", "nama": "Rak buku", "posisi": { "x": 25, "y": 22.86, "w": 11.25, "h": 47.86 } },
+        { "id": "rt_foto", "nama": "Foto keluarga", "posisi": { "x": 37.33, "y": 18.86, "w": 12.08, "h": 16.57 } },
+        { "id": "rt_telepon", "nama": "Telepon rumah", "posisi": { "x": 39.17, "y": 43.14, "w": 8.33, "h": 9.71 } },
+        { "id": "rt_lemari", "nama": "Lemari kecil bawah telepon", "posisi": { "x": 37.5, "y": 53.14, "w": 11.67, "h": 17.86 } },
+        { "id": "rt_lukisan", "nama": "Lukisan pemandangan", "posisi": { "x": 54, "y": 10.29, "w": 17.83, "h": 21.57 } },
+        { "id": "rt_sofa", "nama": "Bantal sofa", "posisi": { "x": 53.33, "y": 43.57, "w": 19.17, "h": 12.14 } },
+        { "id": "rt_kolong", "nama": "Kolong sofa", "posisi": { "x": 51.67, "y": 62.29, "w": 22.5, "h": 10 } },
+        { "id": "rt_meja", "nama": "Meja kopi", "posisi": { "x": 50.83, "y": 75, "w": 23.33, "h": 15 } },
+        { "id": "rt_tirai", "nama": "Tirai jendela", "posisi": { "x": 75.83, "y": 8.86, "w": 20.83, "h": 45 } },
+        { "id": "rt_kursi", "nama": "Kursi mustard", "posisi": { "x": 77.5, "y": 56.43, "w": 15.42, "h": 34.29 } }
       ]
     },
     {
-      "id": "dapur", "nama": "Dapur", "ilustrasi": false,
+      "id": "dapur", "nama": "Dapur", "ilustrasi": true,
       "benda": [
-        { "id": "dp_kulkas", "nama": "Kulkas" }, { "id": "dp_kompor", "nama": "Kompor" },
-        { "id": "dp_rakpiring", "nama": "Rak piring" }, { "id": "dp_laci", "nama": "Laci sendok & pisau" },
-        { "id": "dp_sampah", "nama": "Tempat sampah" }, { "id": "dp_toples", "nama": "Toples kerupuk" },
-        { "id": "dp_kunci", "nama": "Gantungan kunci" }, { "id": "dp_magiccom", "nama": "Penanak nasi" },
-        { "id": "dp_meja", "nama": "Meja makan" }, { "id": "dp_wastafel", "nama": "Wastafel" },
-        { "id": "dp_kalender", "nama": "Kalender dinding" }, { "id": "dp_jendela", "nama": "Jendela belakang" }
+        { "id": "dp_kulkas", "nama": "Kulkas", "posisi": { "x": 3.83, "y": 20.71, "w": 13.17, "h": 50.71 } },
+        { "id": "dp_kompor", "nama": "Kompor", "posisi": { "x": 19.58, "y": 37.43, "w": 14.33, "h": 11.14 } },
+        { "id": "dp_rakpiring", "nama": "Rak piring", "posisi": { "x": 37.92, "y": 16.43, "w": 15.83, "h": 17.14 } },
+        { "id": "dp_laci", "nama": "Laci sendok & pisau", "posisi": { "x": 44.58, "y": 50, "w": 10, "h": 20 } },
+        { "id": "dp_sampah", "nama": "Tempat sampah", "posisi": { "x": 84.17, "y": 58.57, "w": 8.33, "h": 16.43 } },
+        { "id": "dp_toples", "nama": "Toples kerupuk", "posisi": { "x": 74.17, "y": 34.29, "w": 7.92, "h": 13.57 } },
+        { "id": "dp_kunci", "nama": "Gantungan kunci", "posisi": { "x": 27.5, "y": 14.29, "w": 8.75, "h": 15 } },
+        { "id": "dp_magiccom", "nama": "Penanak nasi", "posisi": { "x": 35.42, "y": 37.43, "w": 7.92, "h": 10.71 } },
+        { "id": "dp_meja", "nama": "Meja makan", "posisi": { "x": 26.67, "y": 70, "w": 37.5, "h": 23.57 } },
+        { "id": "dp_wastafel", "nama": "Wastafel", "posisi": { "x": 55.83, "y": 37.86, "w": 16.67, "h": 12.57 } },
+        { "id": "dp_kalender", "nama": "Kalender dinding", "posisi": { "x": 18.75, "y": 8.86, "w": 7.5, "h": 17.43 } },
+        { "id": "dp_jendela", "nama": "Jendela belakang", "posisi": { "x": 56.25, "y": 8.86, "w": 15.83, "h": 27.86 } }
       ]
     },
     {
-      "id": "kamar_nenek", "nama": "Kamar Nenek", "ilustrasi": false,
+      "id": "kamar_nenek", "nama": "Kamar Nenek", "ilustrasi": true,
       "benda": [
-        { "id": "kn_lemari", "nama": "Lemari pakaian" }, { "id": "kn_kotak", "nama": "Kotak perhiasan" },
-        { "id": "kn_ranjang", "nama": "Ranjang & bantal" }, { "id": "kn_kolong", "nama": "Kolong ranjang" },
-        { "id": "kn_rias", "nama": "Meja rias" }, { "id": "kn_obat", "nama": "Kotak obat" },
-        { "id": "kn_foto", "nama": "Foto Kakek" }, { "id": "kn_jendela", "nama": "Jendela" },
-        { "id": "kn_kipas", "nama": "Kipas angin" }, { "id": "kn_weker", "nama": "Jam weker" },
-        { "id": "kn_sandal", "nama": "Sandal di samping ranjang" }, { "id": "kn_rakdoa", "nama": "Rak sajadah & Al-Qur'an" }
+        { "id": "kn_lemari", "nama": "Lemari pakaian", "posisi": { "x": 3.33, "y": 13.14, "w": 16.67, "h": 56.29 } },
+        { "id": "kn_kotak", "nama": "Kotak perhiasan", "posisi": { "x": 23.5, "y": 37.43, "w": 8.17, "h": 9.43 } },
+        { "id": "kn_ranjang", "nama": "Ranjang & bantal", "posisi": { "x": 52.67, "y": 46.86, "w": 35.5, "h": 18.29 } },
+        { "id": "kn_kolong", "nama": "Kolong ranjang", "posisi": { "x": 53, "y": 66, "w": 35, "h": 10 } },
+        { "id": "kn_rias", "nama": "Meja rias", "posisi": { "x": 20.67, "y": 47.14, "w": 13.5, "h": 24 } },
+        { "id": "kn_obat", "nama": "Kotak obat", "posisi": { "x": 89.33, "y": 28, "w": 7.67, "h": 12.86 } },
+        { "id": "kn_foto", "nama": "Foto Kakek", "posisi": { "x": 65.17, "y": 10.29, "w": 9.67, "h": 18 } },
+        { "id": "kn_jendela", "nama": "Jendela", "posisi": { "x": 34.67, "y": 8.57, "w": 15.67, "h": 32.57 } },
+        { "id": "kn_kipas", "nama": "Kipas angin", "posisi": { "x": 9, "y": 70, "w": 8.67, "h": 26.29 } },
+        { "id": "kn_weker", "nama": "Jam weker", "posisi": { "x": 89.33, "y": 45.43, "w": 7.67, "h": 10.57 } },
+        { "id": "kn_sandal", "nama": "Sandal di samping ranjang", "posisi": { "x": 57.5, "y": 79.29, "w": 10.83, "h": 12.14 } },
+        { "id": "kn_rakdoa", "nama": "Rak sajadah & Al-Qur'an", "posisi": { "x": 35.5, "y": 50.29, "w": 14, "h": 21.14 } }
       ]
     },
     {
-      "id": "ruang_kerja", "nama": "Ruang Kerja", "ilustrasi": false,
+      "id": "ruang_kerja", "nama": "Ruang Kerja", "ilustrasi": true,
       "benda": [
-        { "id": "rk_meja", "nama": "Meja kerja" }, { "id": "rk_komputer", "nama": "Komputer" },
-        { "id": "rk_rak", "nama": "Rak buku & map" }, { "id": "rk_brankas", "nama": "Brankas kecil" },
-        { "id": "rk_sampah", "nama": "Tempat sampah kertas" }, { "id": "rk_laci", "nama": "Laci meja" },
-        { "id": "rk_asbak", "nama": "Asbak" }, { "id": "rk_printer", "nama": "Printer" },
-        { "id": "rk_papan", "nama": "Papan tulis kecil" }, { "id": "rk_arsip", "nama": "Lemari arsip" },
-        { "id": "rk_kursi", "nama": "Kursi putar" }, { "id": "rk_jendela", "nama": "Jendela" }
+        { "id": "rk_meja", "nama": "Meja kerja", "posisi": { "x": 24.67, "y": 53.14, "w": 25, "h": 18 } },
+        { "id": "rk_komputer", "nama": "Komputer", "posisi": { "x": 37, "y": 31.71, "w": 13.83, "h": 20 } },
+        { "id": "rk_rak", "nama": "Rak buku & map", "posisi": { "x": 3.33, "y": 13.57, "w": 16.67, "h": 57.86 } },
+        { "id": "rk_brankas", "nama": "Brankas kecil", "posisi": { "x": 74.33, "y": 76, "w": 12.17, "h": 18.29 } },
+        { "id": "rk_sampah", "nama": "Tempat sampah kertas", "posisi": { "x": 64.33, "y": 59.43, "w": 7.67, "h": 14.86 } },
+        { "id": "rk_laci", "nama": "Laci meja", "posisi": { "x": 50, "y": 55.43, "w": 12.67, "h": 15.71 } },
+        { "id": "rk_asbak", "nama": "Asbak", "posisi": { "x": 52.17, "y": 42.86, "w": 7.5, "h": 10 } },
+        { "id": "rk_printer", "nama": "Printer", "posisi": { "x": 25.17, "y": 40.86, "w": 10.67, "h": 10.86 } },
+        { "id": "rk_papan", "nama": "Papan tulis kecil", "posisi": { "x": 21.83, "y": 11.71, "w": 13.83, "h": 18 } },
+        { "id": "rk_arsip", "nama": "Lemari arsip", "posisi": { "x": 81, "y": 25.71, "w": 14.67, "h": 45.71 } },
+        { "id": "rk_kursi", "nama": "Kursi putar", "posisi": { "x": 21, "y": 71.71, "w": 11.5, "h": 23.43 } },
+        { "id": "rk_jendela", "nama": "Jendela", "posisi": { "x": 62.67, "y": 8.86, "w": 16.33, "h": 32.29 } }
       ]
     },
     {
-      "id": "teras", "nama": "Teras & Kebun", "ilustrasi": false,
+      "id": "teras", "nama": "Teras & Kebun", "ilustrasi": true,
       "benda": [
-        { "id": "tk_kursi", "nama": "Kursi rotan" }, { "id": "tk_meja", "nama": "Meja teras" },
-        { "id": "tk_pot", "nama": "Pot bunga" }, { "id": "tk_selang", "nama": "Selang air" },
-        { "id": "tk_bot", "nama": "Sepatu bot" }, { "id": "tk_gudang", "nama": "Gudang alat" },
-        { "id": "tk_kandang", "nama": "Kandang ayam" }, { "id": "tk_sampah", "nama": "Bak sampah" },
-        { "id": "tk_gerbang", "nama": "Gerbang belakang" }, { "id": "tk_kotaksurat", "nama": "Kotak surat" },
-        { "id": "tk_jemuran", "nama": "Jemuran" }, { "id": "tk_sangkar", "nama": "Sangkar burung" }
+        { "id": "tk_kursi", "nama": "Kursi rotan", "posisi": { "x": 9.33, "y": 71.43, "w": 18, "h": 24.29 } },
+        { "id": "tk_meja", "nama": "Meja teras", "posisi": { "x": 28, "y": 72.14, "w": 15.83, "h": 21.43 } },
+        { "id": "tk_pot", "nama": "Pot bunga", "posisi": { "x": 46.33, "y": 73.57, "w": 12.5, "h": 20.71 } },
+        { "id": "tk_selang", "nama": "Selang air", "posisi": { "x": 24.17, "y": 54.57, "w": 9.17, "h": 13.71 } },
+        { "id": "tk_bot", "nama": "Sepatu bot", "posisi": { "x": 62.67, "y": 80.71, "w": 10.67, "h": 13.57 } },
+        { "id": "tk_gudang", "nama": "Gudang alat", "posisi": { "x": 4, "y": 32.86, "w": 18.83, "h": 34.86 } },
+        { "id": "tk_kandang", "nama": "Kandang ayam", "posisi": { "x": 50.33, "y": 40.86, "w": 17.67, "h": 23.14 } },
+        { "id": "tk_sampah", "nama": "Bak sampah", "posisi": { "x": 77.33, "y": 70.29, "w": 10.33, "h": 23.71 } },
+        { "id": "tk_gerbang", "nama": "Gerbang belakang", "posisi": { "x": 74.33, "y": 22.86, "w": 14.67, "h": 38 } },
+        { "id": "tk_kotaksurat", "nama": "Kotak surat", "posisi": { "x": 89.5, "y": 34.29, "w": 7.17, "h": 27.43 } },
+        { "id": "tk_jemuran", "nama": "Jemuran", "posisi": { "x": 5.17, "y": 13.14, "w": 27.5, "h": 18.29 } },
+        { "id": "tk_sangkar", "nama": "Sangkar burung", "posisi": { "x": 36.67, "y": 10.86, "w": 9.17, "h": 19.14 } }
       ]
     }
   ]

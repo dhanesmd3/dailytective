@@ -1,9 +1,17 @@
 // Tipe data bersama untuk mesin kasus, server, dan UI. Lihat dokumen 04 (Spesifikasi Kasus).
 
-export type Kategori = 'siapa' | 'pakai' | 'dimana';
-export const KATEGORI: readonly Kategori[] = ['siapa', 'pakai', 'dimana'];
+/** 'kenapa' (motif) hanya dipakai di kasus besar hari Minggu (GDD bagian 10). */
+export type Kategori = 'siapa' | 'pakai' | 'dimana' | 'kenapa';
+export const KATEGORI: readonly Kategori[] = ['siapa', 'pakai', 'dimana', 'kenapa'];
 
-export type Kombinasi = Record<Kategori, string>;
+export interface Kombinasi {
+	siapa: string;
+	pakai: string;
+	dimana: string;
+	kenapa?: string;
+}
+
+export type PilihanKasus = { siapa: string[]; pakai: string[]; dimana: string[]; kenapa?: string[] };
 
 export type JenisKasus =
 	| 'pencurian'
@@ -21,6 +29,7 @@ export interface Kondisi {
 	siapa?: string;
 	pakai?: string;
 	dimana?: string;
+	kenapa?: string;
 	/** Atribut pelaku, mis. { "tangan": "kidal" }. Atribut "ciri" berarti "punya ciri ini". */
 	atribut?: Record<string, NilaiAtribut>;
 	/** Negasi: kondisi di dalamnya TIDAK terpenuhi. */
@@ -30,12 +39,22 @@ export interface Kondisi {
 export type Logika =
 	| { tipe: 'atribut'; atribut: string; nilai: NilaiAtribut; op?: Operator }
 	| { tipe: 'atribut_bukan'; atribut: string; nilai: NilaiAtribut; op?: Operator }
-	| { tipe: 'fakta'; siapa?: string; pakai?: string; dimana?: string }
-	| { tipe: 'bukan'; siapa?: string; pakai?: string; dimana?: string }
+	| { tipe: 'fakta'; siapa?: string; pakai?: string; dimana?: string; kenapa?: string }
+	| { tipe: 'bukan'; siapa?: string; pakai?: string; dimana?: string; kenapa?: string }
 	| { tipe: 'jika_maka'; jika: Kondisi; maka: Kondisi | Kondisi[] };
 
 export interface ClueAwal {
 	id: string;
+	teks: string;
+}
+
+/**
+ * Pernyataan tersangka di hari berbohong (GDD bagian 10). Logikanya ada di `logika[id]`.
+ * Tepat satu pengakuan bohong, dan pembohongnya selalu pelaku.
+ */
+export interface Pengakuan {
+	id: string;
+	oleh: string;
 	teks: string;
 }
 
@@ -72,8 +91,8 @@ export interface KasusFile {
 	kesulitan: { bintang: 1 | 2 | 3; label: string };
 	jatah_periksa: number;
 	context_card: { cerita: string; clue_awal: ClueAwal[] };
-	pilihan: Record<Kategori, string[]>;
-	pengakuan: unknown[];
+	pilihan: PilihanKasus;
+	pengakuan: Pengakuan[];
 	state_ruangan: Record<string, StateRuangan>;
 	benda: Record<string, IsiBenda>;
 	teks_kosong_bawaan: string;
@@ -113,6 +132,11 @@ export interface Barang {
 	kelompok: string;
 }
 
+export interface Motif {
+	id: string;
+	nama: string;
+}
+
 export interface Lokasi {
 	id: string;
 	nama: string;
@@ -144,6 +168,7 @@ export interface DataDunia {
 	karakter: Karakter[];
 	barang: Barang[];
 	lokasi: Lokasi[];
+	motif: Motif[];
 	ruangan: Ruangan[];
 }
 

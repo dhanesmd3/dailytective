@@ -1,4 +1,4 @@
-# Dailytective · Prototipe (Fase 1)
+# Dailytective · Fase 2 (produksi, sebagian)
 
 Satu kasus detektif setiap hari dari rumah Nenek. Dokumen desain ada di [dailytective-docs/](dailytective-docs/README.md).
 
@@ -9,52 +9,61 @@ npm install
 npm run dev          # http://localhost:5173
 ```
 
-Kasus prototipe terjadwal **2–6 November 2026**. Sebelum tanggal itu, beranda menampilkan "Belum ada kasus hari ini".
-Saat `npm run dev`, **mode pratinjau** aktif otomatis: beranda menampilkan daftar semua kasus, dan `?tanggal=2026-11-02`
+Kasus terjadwal **2–8 November 2026** (satu minggu penuh). Sebelum tanggal itu, beranda menampilkan "Belum ada kasus hari ini".
+Saat `npm run dev`, **mode pratinjau** aktif otomatis: beranda menampilkan daftar semua kasus, dan `?tanggal=2026-11-07`
 bisa dipakai untuk melompat tanggal. Tombol **Ulangi** di halaman kasus menghapus progres supaya kasus bisa dimainkan lagi.
 
 | Perintah | Fungsi |
 |---|---|
 | `npm run dev` | Server pengembangan (mode pratinjau aktif) |
-| `npm test` | Unit test solver, aturan main, streak, waktu rilis, teks share |
-| `npm run cek-kasus` | Validator skema + solver S1–S6 untuk semua kasus di `kasus/` (keluar dengan kode 1 kalau gagal, siap untuk CI) |
-| `npm run cek-kasus -- 2026-11-04` | Cek satu kasus, lengkap dengan daftar jalur bukti minimal |
+| `npm test` | Unit test: solver, pengakuan, motif, aturan main, streak, waktu rilis, hotspot ruangan, generator, rate limit |
+| `npm run cek-kasus` | Validator skema + solver S1–S6 untuk semua kasus di `kasus/` (kode keluar 1 kalau gagal; dipakai CI) |
+| `npm run cek-kasus -- 2026-11-07` | Cek satu kasus, lengkap dengan jalur bukti minimal dan sebaran ruangan |
+| `npm run buat-draf -- 2026-11-14 pencurian 7` | Generator: draf kasus yang lolos solver ke `draf/`, teksnya bertanda `[DRAF]` |
 | `npm run check` | Type check (svelte-check) |
 | `npm run build && npm start` | Build produksi (adapter-node) |
 
-Variabel lingkungan: lihat [.env.example](.env.example). `DT_SECRET` **wajib** diisi di luar lokal.
+Variabel lingkungan: lihat [.env.example](.env.example). Di luar `npm run dev`, server **menolak jalan** tanpa `DT_SECRET` (≥ 32 karakter).
+
+## Alur penulis kasus
+
+1. `npm run buat-draf -- <tanggal> <jenis> [seed]` membuat draf yang sudah lolos solver, sesuai jadwal mingguan
+   (Jumat–Sabtu dengan pengakuan, Minggu dengan motif dan jatah 12).
+2. Tulis ulang semua teks `[DRAF]`: cerita, bukti (tulis yang *terlihat*), teks kosong, penjelasan, komentar Nenek.
+3. Pindahkan ke `kasus/`, jalankan `npm run cek-kasus`. Validator menolak file yang masih berisi `[DRAF]`.
+4. Buka PR. CI ([.github/workflows/ci.yml](.github/workflows/ci.yml)) menjalankan type check, test, validator + solver, dan build.
+5. Playtest lewat mode pratinjau.
 
 ## Struktur
 
 ```
-data/               karakter, barang, lokasi, ruangan (+ posisi hotspot dalam persen)
-kasus/YYYY-MM-DD.json  satu file per kasus: bagian publik + isi benda + solusi (hanya dibaca server)
-tools/cek-kasus.ts  CLI validator + solver untuk penulis kasus
-tests/fixtures/     contoh "Bolu Pandan yang Dicuil" dari dokumen 04
-src/lib/engine/     logika murni: solver, validator, aturan main, waktu WIB (bisa di-unit-test)
-src/lib/server/     muat data, token pemain anonim, penyimpanan sesi, layanan API
-src/lib/components/ UI: ruangan, Buku Catatan, papan tuduhan, hasil, potret & ikon sementara
-src/routes/api/     GET kasus/hari-ini · POST kasus/{id}/mulai|periksa|tuduh · GET saya · (pratinjau) GET pratinjau, DELETE kasus/{id}/sesi
+data/                  karakter, barang, lokasi, motif, ruangan (+ hotspot 5 ruangan dalam persen)
+kasus/YYYY-MM-DD.json  satu file per kasus: publik + isi benda + solusi (hanya dibaca server)
+tools/                 cek-kasus (validator + solver), buat-draf (generator)
+src/lib/engine/        logika murni: solver (bitset), validator, generator, aturan main, waktu WIB
+src/lib/server/        muat data, token pemain, penyimpanan sesi, rate limit, layanan API
+src/lib/components/    UI; ruang/ berisi ilustrasi 5 ruangan + Si Belang + pencahayaan
+src/service-worker.ts  PWA: cache aset, API selalu lewat jaringan, halaman offline
+src/routes/            beranda, kasus, statistik, cara-main, tentang, privasi, api/
 ```
 
 ## Keamanan jawaban (dokumen 06 bagian 4)
 
-- Data awal hanya berisi context card, pilihan, dan state ruangan. Isi benda dikirim **satu per satu** saat diperiksa.
+- Data awal hanya berisi context card, pilihan, pengakuan (teksnya saja), dan state ruangan. Isi benda dikirim **satu per satu**.
 - Tuduhan divalidasi di server; solusi dan penjelasan hanya ikut di respons saat kasus selesai.
-- Kasus yang tanggalnya belum tiba dijawab 404, dan folder `kasus/` tidak pernah disajikan sebagai file statis.
-- ID pemain anonim adalah token HMAC di cookie `httpOnly` (bukan `localStorage`, supaya tidak bisa dibaca script).
+- Kasus yang belum terbit dijawab 404; `?tanggal=` dan endpoint pratinjau mati di produksi.
+- ID pemain anonim: token HMAC di cookie `httpOnly`. Aksi API dibatasi 30 beruntun / 1 per detik per IP.
+- Service worker tidak pernah meng-cache `/api/*`.
 
-## Penyesuaian khusus prototipe
+## Catatan desain
 
-- **Jatah periksa 6 (★) dan 7 (★★)**, bukan 10. Dengan satu ruangan berisi 12 benda, jatah 10 berarti hampir semua benda bisa
-  diperiksa dan pilihan jadi tidak bermakna. Aturan S3 (bukti minimum ≤ jatah − 4) tetap dipenuhi.
-- Pilihan "Di mana" memakai titik di dalam Ruang Tamu (kolong sofa, rak buku, dst.) atau ruangan lain yang ditunjuk
-  oleh bukti di Ruang Tamu.
-- Penyimpanan sesi memakai file `.data/sesi.json` lewat antarmuka `PenyimpananSesi`, supaya bisa diganti Postgres/Supabase.
-- Ilustrasi ruangan, potret, dan ikon adalah vektor sementara buatan kode, bukan aset final.
+- **Hari berbohong menyisakan lebih sedikit kombinasi** daripada target kasar dokumen 04 (kasus #5: 8, kasus #6: 19, target 15–35 / 40+),
+  karena pengakuan pelaku dipaksa salah. Tingkat kesulitannya datang dari mencari bukti di 60 benda. Target perlu dikalibrasi saat beta.
+- Kasus #1–#5 dibuat saat prototipe dengan semua clue di Ruang Tamu; `cek-kasus` memberi catatan "disarankan minimal 3 ruangan".
+- Ilustrasi ruangan, potret, dan ikon masih vektor sementara buatan kode, menunggu aset ilustrator.
+- Penyimpanan sesi masih file `.data/sesi.json`; rate limit masih di memori. Keduanya cukup untuk satu instance server.
 
-## Belum ada (sesuai roadmap fase 2+)
+## Belum ada
 
-Ruangan selain Ruang Tamu · tersangka berbohong (Jumat–Sabtu) dan kategori motif (Minggu) · login & sinkron ·
-statistik global · gambar kartu hasil · PWA (manifest, service worker) · rate limit · analitik · grid deduksi ·
-pengaturan (suara, kontras tinggi) · kasus latihan · generator kasus.
+Database + job impor kasus · login & sinkron · analitik · Sentry · peringatan stok kasus · statistik global ·
+gambar kartu hasil & OG image · grid deduksi · kasus latihan · aset final ilustrator · 23 kasus lagi untuk target 30.

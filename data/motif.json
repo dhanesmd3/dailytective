@@ -1,0 +1,14 @@
+{
+  "motif": [
+    { "id": "utang",          "nama": "Utang" },
+    { "id": "iri",            "nama": "Iri hati" },
+    { "id": "warisan",        "nama": "Warisan" },
+    { "id": "iseng",          "nama": "Iseng" },
+    { "id": "salah_paham",    "nama": "Salah paham" },
+    { "id": "balas_dendam",   "nama": "Balas dendam" },
+    { "id": "cari_perhatian", "nama": "Cari perhatian" },
+    { "id": "konten_viral",   "nama": "Konten viral" },
+    { "id": "kejutan",        "nama": "Menyiapkan kejutan" },
+    { "id": "melindungi",     "nama": "Melindungi seseorang" }
+  ]
+}

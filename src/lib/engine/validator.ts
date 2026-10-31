@@ -1,6 +1,7 @@
 // Validator skema kasus (dokumen 04, bagian 3.4). Galat = wajib diperbaiki; peringatan = perlu dicek penulis.
 
-import type { DataDunia, KasusFile, Kondisi, Logika } from './types';
+import { PENANDA_DRAF } from './generator';
+import type { DataDunia, KasusFile, Kategori, Kondisi, Logika } from './types';
 import { KATEGORI } from './types';
 import { apakahTanggalValid, indeksHari, namaHari } from './waktu';
 
@@ -45,8 +46,9 @@ export function validasiKasus(kasus: KasusFile, dunia: DataDunia): HasilValidasi
 		return { galat, peringatan };
 	}
 	const ukuran = UKURAN_PER_BINTANG[bintang];
-	const kenal = { siapa: idKarakter, pakai: idBarang, dimana: idLokasi };
-	for (const kat of KATEGORI) {
+	const kenal = { siapa: idKarakter, pakai: idBarang, dimana: idLokasi, kenapa: new Set(dunia.motif.map((m) => m.id)) };
+	const kategori = KATEGORI.filter((k) => k !== 'kenapa' || kasus.pilihan?.kenapa !== undefined);
+	for (const kat of kategori) {
 		const daftar = kasus.pilihan?.[kat] ?? [];
 		if (daftar.length !== ukuran)
 			galat.push(`pilihan.${kat} berisi ${daftar.length}, seharusnya ${ukuran} untuk bintang ${bintang}`);
@@ -56,10 +58,25 @@ export function validasiKasus(kasus: KasusFile, dunia: DataDunia): HasilValidasi
 	if (kasus.pilihan?.siapa?.includes('nenek')) galat.push('Nenek tidak boleh jadi tersangka');
 
 	// Solusi
-	for (const kat of KATEGORI) {
-		if (!kasus.solusi?.[kat]) galat.push(`solusi.${kat} kosong`);
-		else if (!kasus.pilihan[kat]?.includes(kasus.solusi[kat]))
-			galat.push(`solusi.${kat} "${kasus.solusi[kat]}" tidak ada di pilihan`);
+	for (const kat of kategori) {
+		const s = kasus.solusi?.[kat];
+		if (!s) galat.push(`solusi.${kat} kosong`);
+		else if (!kasus.pilihan[kat]?.includes(s)) galat.push(`solusi.${kat} "${s}" tidak ada di pilihan`);
+	}
+	if (kasus.solusi?.kenapa && !kasus.pilihan.kenapa) galat.push('solusi.kenapa diisi tapi pilihan.kenapa tidak ada');
+
+	// Pengakuan (hari berbohong): satu per tersangka, masing-masing punya logika
+	const pengakuan = kasus.pengakuan ?? [];
+	if (pengakuan.length) {
+		const oleh = pengakuan.map((p) => p.oleh);
+		const tersangka = kasus.pilihan.siapa ?? [];
+		if (new Set(oleh).size !== oleh.length) galat.push('pengakuan: satu tersangka hanya boleh memberi satu pengakuan');
+		for (const s of tersangka) if (!oleh.includes(s)) galat.push(`pengakuan: ${s} belum memberi pengakuan`);
+		for (const p of pengakuan) {
+			if (!tersangka.includes(p.oleh)) galat.push(`pengakuan ${p.id}: "${p.oleh}" bukan tersangka kasus ini`);
+			if (!p.teks?.trim()) galat.push(`pengakuan ${p.id}: teks kosong`);
+			if (!kasus.logika?.[p.id]) galat.push(`pengakuan ${p.id} tidak punya logika`);
+		}
 	}
 
 	// Clue awal
@@ -77,6 +94,7 @@ export function validasiKasus(kasus: KasusFile, dunia: DataDunia): HasilValidasi
 		tambahId(c.id, 'clue awal');
 		if (!kasus.logika?.[c.id]) galat.push(`clue awal ${c.id} tidak punya logika`);
 	}
+	for (const p of pengakuan) tambahId(p.id, 'pengakuan');
 
 	// Benda TKP
 	let jumlahPendukung = 0;
@@ -137,18 +155,27 @@ export function validasiKasus(kasus: KasusFile, dunia: DataDunia): HasilValidasi
 			peringatan.push(`${namaHari(kasus.tanggal)} seharusnya bintang ${BINTANG_PER_HARI[hari]}, kasus ini bintang ${bintang}`);
 		if (kasus.kesulitan.label !== namaHari(kasus.tanggal))
 			peringatan.push(`kesulitan.label "${kasus.kesulitan.label}" tidak sama dengan hari "${namaHari(kasus.tanggal)}"`);
-		if (hari === 5 || hari === 6)
-			peringatan.push('Jadwal hari ini memakai tersangka berbohong; mekanik pengakuan belum ada di prototipe');
-		if (hari === 0) peringatan.push('Jadwal Minggu memakai kategori motif; belum ada di prototipe');
+		const hariBohong = hari === 5 || hari === 6;
+		if (hariBohong && !pengakuan.length) peringatan.push(`${namaHari(kasus.tanggal)} seharusnya memakai tersangka berbohong (pengakuan)`);
+		if (!hariBohong && pengakuan.length) peringatan.push(`pengakuan dipakai di hari ${namaHari(kasus.tanggal)}; jadwalnya hanya Jumat–Sabtu`);
+		if (hari === 0 && !kasus.pilihan.kenapa) peringatan.push('Minggu seharusnya memakai kategori motif (pilihan.kenapa)');
+		if (hari !== 0 && kasus.pilihan.kenapa) peringatan.push(`motif dipakai di hari ${namaHari(kasus.tanggal)}; jadwalnya hanya Minggu`);
+		const jatah = hari === 0 ? 12 : 10;
+		if (kasus.jatah_periksa !== jatah) peringatan.push(`jatah periksa ${kasus.jatah_periksa}, jadwal ${namaHari(kasus.tanggal)} memakai ${jatah}`);
 	}
-	if (kasus.pengakuan?.length) galat.push('pengakuan belum didukung di prototipe (fase 2)');
+	// Draf dari generator tidak boleh terbit sebelum ditulis ulang
+	const semuaTeks = JSON.stringify([kasus.judul, kasus.context_card, kasus.benda, kasus.pengakuan, kasus.penjelasan, kasus.komentar_nenek]);
+	if (semuaTeks.includes(PENANDA_DRAF)) galat.push(`masih ada teks ${PENANDA_DRAF} dari generator; tulis ulang sebelum terbit`);
+
+	if (pengakuan.length && !(kasus.context_card?.cerita ?? '').toLowerCase().includes('berbohong'))
+		peringatan.push('kasus memakai pengakuan; context card sebaiknya menyebut "Salah satu tersangka berbohong."');
 
 	return { galat, peringatan };
 }
 
 function periksaLogika(l: Logika, kasus: KasusFile): string[] {
 	const masalah: string[] = [];
-	const cekId = (kat: 'siapa' | 'pakai' | 'dimana', id: string | undefined) => {
+	const cekId = (kat: Kategori, id: string | undefined) => {
 		if (id !== undefined && !kasus.pilihan[kat]?.includes(id)) masalah.push(`${kat} "${id}" tidak ada di pilihan`);
 	};
 	const cekKondisi = (k: Kondisi) => {

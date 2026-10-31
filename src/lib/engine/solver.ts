@@ -1,4 +1,4 @@
-// Solver kasus (dokumen 04, bagian 4). Kombinasi maksimal 5 x 5 x 5 = 125, jadi cukup dicoba semua.
+// Solver kasus (dokumen 04, bagian 4). Kombinasi maksimal 5^4 = 625 (dengan motif), jadi cukup dicoba semua.
 
 import type {
 	Karakter,
@@ -8,7 +8,8 @@ import type {
 	Kondisi,
 	Logika,
 	NilaiAtribut,
-	Operator
+	Operator,
+	PilihanKasus
 } from './types';
 import { KATEGORI } from './types';
 
@@ -18,12 +19,17 @@ export function petaKarakter(karakter: Karakter[]): PetaKarakter {
 	return new Map(karakter.map((k) => [k.id, k]));
 }
 
-export function semuaKombinasi(pilihan: Record<Kategori, string[]>): Kombinasi[] {
-	const hasil: Kombinasi[] = [];
-	for (const siapa of pilihan.siapa)
-		for (const pakai of pilihan.pakai)
-			for (const dimana of pilihan.dimana) hasil.push({ siapa, pakai, dimana });
-	return hasil;
+/** Kategori yang dipakai kasus ini: selalu siapa/pakai/dimana, ditambah kenapa kalau ada motif. */
+export function kategoriDari(pilihan: PilihanKasus): Kategori[] {
+	return KATEGORI.filter((k) => (pilihan[k]?.length ?? 0) > 0);
+}
+
+export function semuaKombinasi(pilihan: PilihanKasus): Kombinasi[] {
+	let hasil: Partial<Kombinasi>[] = [{}];
+	for (const kat of kategoriDari(pilihan)) {
+		hasil = hasil.flatMap((k) => pilihan[kat]!.map((id) => ({ ...k, [kat]: id })));
+	}
+	return hasil as Kombinasi[];
 }
 
 function bandingkan(kiri: NilaiAtribut, op: Operator, kanan: NilaiAtribut): boolean {
@@ -95,17 +101,43 @@ export function evaluasi(logika: Logika, k: Kombinasi, kar: PetaKarakter): boole
 	}
 }
 
-export function saring(kombinasi: Kombinasi[], logika: Logika[], kar: PetaKarakter): Kombinasi[] {
-	return kombinasi.filter((k) => logika.every((l) => evaluasi(l, k, kar)));
+/** Satu syarat yang harus dipenuhi kombinasi. Clue biasa dan aturan pengakuan sama-sama berbentuk ini. */
+export type Syarat = (k: Kombinasi) => boolean;
+
+export function syaratClue(logika: Logika, kar: PetaKarakter): Syarat {
+	return (k) => evaluasi(logika, k, kar);
+}
+
+/**
+ * Aturan hari berbohong: pengakuan pelaku SALAH, pengakuan tersangka lain BENAR.
+ * Pelaku yang tidak memberi pengakuan tidak mungkin (setiap tersangka memberi satu).
+ */
+export function syaratPengakuan(kasus: KasusFile, kar: PetaKarakter): Syarat | null {
+	if (!kasus.pengakuan?.length) return null;
+	return (k) =>
+		kasus.pengakuan.some((p) => p.oleh === k.siapa) &&
+		kasus.pengakuan.every((p) => {
+			const benar = evaluasi(kasus.logika[p.id], k, kar);
+			return p.oleh === k.siapa ? !benar : benar;
+		});
+}
+
+export function saring(kombinasi: Kombinasi[], syarat: Syarat[]): Kombinasi[] {
+	return kombinasi.filter((k) => syarat.every((s) => s(k)));
+}
+
+/** Versi lama yang menerima logika langsung; dipakai test dan alat bantu. */
+export function saringLogika(kombinasi: Kombinasi[], logika: Logika[], kar: PetaKarakter): Kombinasi[] {
+	return saring(kombinasi, logika.map((l) => syaratClue(l, kar)));
 }
 
 export function samaKombinasi(a: Kombinasi, b: Kombinasi): boolean {
 	return KATEGORI.every((kat) => a[kat] === b[kat]);
 }
 
-/** Jumlah bagian tuduhan yang tepat (feedback "X dari 3 benar"). */
+/** Jumlah bagian tuduhan yang tepat (feedback "X dari 3/4 benar"). */
 export function hitungBenar(tuduhan: Kombinasi, solusi: Kombinasi): number {
-	return KATEGORI.filter((kat) => tuduhan[kat] === solusi[kat]).length;
+	return KATEGORI.filter((kat) => solusi[kat] !== undefined && tuduhan[kat] === solusi[kat]).length;
 }
 
 // --- Analisis lengkap S1–S6 ---
@@ -114,6 +146,8 @@ export interface HasilCek {
 	lolos: boolean;
 	pesan: string;
 }
+
+export type KodeCek = 'S1' | 'S2' | 'S3' | 'S4' | 'S5' | 'S6';
 
 export interface LaporanSolver {
 	idKasus: number;
@@ -125,13 +159,15 @@ export interface LaporanSolver {
 	buktiMinimum: number | null;
 	clueTunggalMenjawab: string[];
 	clueSalahUntukSolusi: string[];
-	cek: Record<'S1' | 'S2' | 'S3' | 'S4' | 'S5' | 'S6', HasilCek>;
+	/** Ruangan tempat clue TKP berada (dokumen 04: sebar di minimal 3 ruangan). */
+	sebaranRuangan: string[];
+	cek: Record<KodeCek, HasilCek>;
 	/** Target kasar dari dokumen 04 bagian 4.3. Bukan syarat lolos. */
 	catatanTarget: string[];
 	lolos: boolean;
 }
 
-const BATAS_SUBSET = 16; // 2^16 subset masih cepat; kasus normal punya <= 12 clue TKP
+const BATAS_SUBSET = 16; // 2^16 subset masih cepat; kasus normal punya <= 14 clue TKP
 
 /** Id clue TKP yang punya logika (benda berhasil "clue"). Clue "pendukung" tidak dipakai solver. */
 export function idClueTkp(kasus: KasusFile): string[] {
@@ -140,13 +176,13 @@ export function idClueTkp(kasus: KasusFile): string[] {
 		.map((b) => b.id_clue as string);
 }
 
-export function analisis(kasus: KasusFile, kar: PetaKarakter): LaporanSolver {
+export function analisis(kasus: KasusFile, kar: PetaKarakter, bendaKeRuangan?: Map<string, string>): LaporanSolver {
 	const semua = semuaKombinasi(kasus.pilihan);
-	const logikaDari = (ids: string[]) =>
+	const syaratDari = (ids: string[]) =>
 		ids.map((id) => {
 			const l = kasus.logika[id];
 			if (!l) throw new Error(`Clue ${id} tidak punya logika`);
-			return l;
+			return syaratClue(l, kar);
 		});
 
 	const idAwal = kasus.context_card.clue_awal.map((c) => c.id);
@@ -155,32 +191,69 @@ export function analisis(kasus: KasusFile, kar: PetaKarakter): LaporanSolver {
 		throw new Error(`Terlalu banyak clue TKP (${idTkp.length}) untuk dianalisis; maksimal ${BATAS_SUBSET}`);
 	}
 
-	const sisaAwal = saring(semua, logikaDari(idAwal), kar);
-	const sisaSemua = saring(sisaAwal, logikaDari(idTkp), kar);
+	// Pengakuan adalah informasi gratis seperti clue awal.
+	const syaratAwal = syaratDari(idAwal);
+	const pengakuan = syaratPengakuan(kasus, kar);
+	if (pengakuan) syaratAwal.push(pengakuan);
 
-	const unik = (ids: string[]) => {
-		const sisa = saring(sisaAwal, logikaDari(ids), kar);
-		return sisa.length === 1 && samaKombinasi(sisa[0], kasus.solusi);
+	const sisaAwal = saring(semua, syaratAwal);
+	const sisaSemua = saring(sisaAwal, syaratDari(idTkp));
+
+	// Setiap clue TKP diubah sekali jadi bitset kombinasi (dari sisaAwal) yang lolos; sebuah subset clue
+	// cukup di-AND. Hasil per subset dimemo, jadi pencarian semua subset tetap cepat untuk 5x5x5(x5).
+	const n = idTkp.length;
+	const kata = Math.max(1, Math.ceil(sisaAwal.length / 32));
+	const bitClue = syaratDari(idTkp).map((s) => {
+		const b = new Uint32Array(kata);
+		sisaAwal.forEach((k, i) => {
+			if (s(k)) b[i >> 5] |= 1 << (i & 31);
+		});
+		return b;
+	});
+	const idxSolusi = sisaAwal.findIndex((k) => samaKombinasi(k, kasus.solusi));
+	const memo = new Int8Array(1 << n).fill(-1);
+	const jumlahSisa = (mask: number): number => {
+		if (sisaAwal.length === 0) return 0;
+		let total = 0;
+		for (let w = 0; w < kata; w++) {
+			let v = w === kata - 1 && sisaAwal.length % 32 ? (1 << sisaAwal.length % 32) - 1 : 0xffffffff;
+			for (let i = 0; i < n; i++) if (mask & (1 << i)) v &= bitClue[i][w];
+			v = v - ((v >>> 1) & 0x55555555);
+			v = (v & 0x33333333) + ((v >>> 2) & 0x33333333);
+			total += (((v + (v >>> 4)) & 0x0f0f0f0f) * 0x01010101) >>> 24;
+		}
+		return total;
+	};
+	const unikMask = (mask: number): boolean => {
+		if (memo[mask] === -1) {
+			const lolosSolusi = idxSolusi >= 0 && Array.from({ length: n }).every((_, i) => !(mask & (1 << i)) || (bitClue[i][idxSolusi >> 5] >>> (idxSolusi & 31)) & 1);
+			memo[mask] = lolosSolusi && jumlahSisa(mask) === 1 ? 1 : 0;
+		}
+		return memo[mask] === 1;
 	};
 
 	// Cari semua himpunan clue TKP yang menghasilkan solusi tunggal, lalu ambil yang minimal.
 	// Menambah clue hanya bisa mempersempit, jadi cukup cek dengan membuang satu clue.
 	const jalur: string[][] = [];
-	const n = idTkp.length;
 	for (let mask = 1; mask < 1 << n; mask++) {
-		const ids = idTkp.filter((_, i) => mask & (1 << i));
-		if (!unik(ids)) continue;
-		const minimal = ids.every((buang) => !unik(ids.filter((x) => x !== buang)));
-		if (minimal) jalur.push(ids);
+		if (!unikMask(mask)) continue;
+		let minimal = true;
+		for (let i = 0; i < n && minimal; i++) if (mask & (1 << i) && unikMask(mask & ~(1 << i))) minimal = false;
+		if (minimal) jalur.push(idTkp.filter((_, i) => mask & (1 << i)));
 	}
 	jalur.sort((a, b) => a.length - b.length || a.join().localeCompare(b.join()));
 	const buktiMinimum = jalur.length ? jalur[0].length : null;
 
-	const clueTunggalMenjawab = idTkp.filter((id) => saring(sisaAwal, logikaDari([id]), kar).length === 1);
+	const clueTunggalMenjawab = idTkp.filter((_, i) => jumlahSisa(1 << i) === 1);
 
 	const clueSalahUntukSolusi = [...idAwal, ...idTkp].filter(
 		(id) => !evaluasi(kasus.logika[id], kasus.solusi, kar)
 	);
+	if (pengakuan && !pengakuan(kasus.solusi)) clueSalahUntukSolusi.push('pengakuan (pelaku harus satu-satunya pembohong)');
+
+	const sebaranRuangan = bendaKeRuangan
+		? [...new Set(Object.entries(kasus.benda).filter(([, b]) => b.hasil === 'clue').map(([id]) => bendaKeRuangan.get(id) ?? '?'))]
+		: [];
 
 	const bintang = kasus.kesulitan.bintang;
 	const minSisaAwal = bintang === 1 ? 3 : 6;
@@ -198,7 +271,7 @@ export function analisis(kasus: KasusFile, kar: PetaKarakter): LaporanSolver {
 		},
 		S2: {
 			lolos: sisaAwal.length >= minSisaAwal,
-			pesan: `${sisaAwal.length} kombinasi tersisa setelah clue awal (minimal ${minSisaAwal})`
+			pesan: `${sisaAwal.length} kombinasi tersisa setelah clue awal${pengakuan ? ' dan pengakuan' : ''} (minimal ${minSisaAwal})`
 		},
 		S3: {
 			lolos: buktiMinimum !== null && buktiMinimum <= batasBukti,
@@ -240,6 +313,8 @@ export function analisis(kasus: KasusFile, kar: PetaKarakter): LaporanSolver {
 		catatanTarget.push(
 			`Jalur ${jalur.length}, target ${target.jalur[0]}–${target.jalur[1] === Infinity ? '∞' : target.jalur[1]}`
 		);
+	if (bendaKeRuangan && sebaranRuangan.length < 3)
+		catatanTarget.push(`Clue TKP hanya di ${sebaranRuangan.length} ruangan (${sebaranRuangan.join(', ')}); disarankan minimal 3`);
 
 	return {
 		idKasus: kasus.id,
@@ -250,6 +325,7 @@ export function analisis(kasus: KasusFile, kar: PetaKarakter): LaporanSolver {
 		buktiMinimum,
 		clueTunggalMenjawab,
 		clueSalahUntukSolusi,
+		sebaranRuangan,
 		cek,
 		catatanTarget,
 		lolos: Object.values(cek).every((c) => c.lolos)
@@ -263,5 +339,5 @@ const TARGET: Record<1 | 2 | 3, { sisaAwal: [number, number]; bukti: [number, nu
 };
 
 function fmt(k: Kombinasi): string {
-	return `${k.siapa} + ${k.pakai} + ${k.dimana}`;
+	return KATEGORI.filter((kat) => k[kat]).map((kat) => k[kat]).join(' + ');
 }

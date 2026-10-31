@@ -3,6 +3,7 @@
 	import { namaHari } from '$lib/engine/waktu';
 	import { JENIS } from '$lib/teks';
 	import Bintang from './Bintang.svelte';
+	import DaftarPengakuan from './DaftarPengakuan.svelte';
 	import Ikon from './Ikon.svelte';
 	import Modal from './Modal.svelte';
 	import Potret from './Potret.svelte';
@@ -55,7 +56,25 @@
 				{/each}
 			</ul>
 		</section>
+		{#if kasus.pilihan.kenapa}
+			<section>
+				<h3 class="label">Kenapa</h3>
+				<p class="arti">motif pelaku</p>
+				<ul>
+					{#each kasus.pilihan.kenapa as p (p.id)}
+						<li><span class="ikon tanya">?</span><span>{p.nama}</span></li>
+					{/each}
+				</ul>
+			</section>
+		{/if}
 	</div>
+
+	{#if kasus.pengakuan.length}
+		<div class="blok-pengakuan">
+			<h3 class="label">Pengakuan</h3>
+			<DaftarPengakuan {kasus} />
+		</div>
+	{/if}
 
 	<div class="clue">
 		<h3 class="label">Clue awal</h3>
@@ -96,14 +115,16 @@
 	}
 	.pilihan {
 		display: grid;
-		grid-template-columns: repeat(3, 1fr);
+		grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
 		gap: 12px;
 		margin: 16px 0;
 	}
-	@media (max-width: 640px) {
-		.pilihan {
-			grid-template-columns: 1fr;
-		}
+	.tanya {
+		font-family: var(--font-judul);
+		background: var(--mustard);
+	}
+	.blok-pengakuan {
+		margin-bottom: 16px;
 	}
 	section {
 		background: var(--krem);

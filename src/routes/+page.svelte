@@ -8,13 +8,14 @@
 	import Logo from '$lib/components/Logo.svelte';
 	import Onboarding from '$lib/components/Onboarding.svelte';
 	import Potret from '$lib/components/Potret.svelte';
+	import PengaturanModal from '$lib/components/PengaturanModal.svelte';
 	import StatistikModal from '$lib/components/StatistikModal.svelte';
 	import { formatTanggal, namaHari } from '$lib/engine/waktu';
 	import { JENIS } from '$lib/teks';
 
 	let { data } = $props();
 
-	let modal = $state<null | 'onboarding' | 'statistik'>(null);
+	let modal = $state<null | 'onboarding' | 'statistik' | 'pengaturan'>(null);
 	let daftarPratinjau = $state<Awaited<ReturnType<typeof api.pratinjau>>['kasus']>([]);
 
 	const q = $derived(page.url.search);
@@ -93,6 +94,7 @@
 			<div class="tombol-baris">
 				<button class="tombol-teks" onclick={() => (modal = 'statistik')}>Statistik</button>
 				<button class="tombol-teks" onclick={() => (modal = 'onboarding')}>Cara main</button>
+				<button class="tombol-teks" onclick={() => (modal = 'pengaturan')}>Pengaturan</button>
 			</div>
 		</aside>
 	</div>
@@ -105,6 +107,13 @@
 			{/each}
 		</div>
 	</section>
+
+	<footer>
+		<a href="/cara-main">Cara main</a>
+		<a href="/statistik">Statistik</a>
+		<a href="/tentang">Tentang</a>
+		<a href="/privasi">Privasi</a>
+	</footer>
 
 	{#if data.pratinjau}
 		<section class="pratinjau">
@@ -132,6 +141,8 @@
 	<Onboarding selesai={selesaiOnboarding} />
 {:else if modal === 'statistik'}
 	<StatistikModal statistik={st} tutup={() => (modal = null)} />
+{:else if modal === 'pengaturan'}
+	<PengaturanModal tutup={() => (modal = null)} />
 {/if}
 
 <style>
@@ -234,7 +245,15 @@
 	}
 	.tombol-baris {
 		display: flex;
+		flex-wrap: wrap;
 		gap: 8px;
+	}
+	footer {
+		display: flex;
+		gap: 18px;
+		flex-wrap: wrap;
+		font-weight: 600;
+		font-size: 14px;
 	}
 	.pemeran {
 		display: grid;
