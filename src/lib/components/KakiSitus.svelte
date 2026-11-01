@@ -30,10 +30,9 @@
 			<a href="/privasi">{t('nav.privasi')}</a>
 		</nav>
 
-		<div class="sapa" aria-hidden="true">
-			<span class="gelembung">{t('kaki.sapa')}</span>
-			<svg viewBox="-48 -50 100 54" width="110" height="60"><Belang x={0} y={0} s={0.9} tidur /></svg>
-		</div>
+		<svg class="kucing" viewBox="-60 -68 112 82" width="112" height="82" aria-hidden="true"
+			><Belang x={0} y={0} s={0.9} hidup /></svg
+		>
 	</div>
 	<p class="hak">{t('kaki.hak', { tahun })}</p>
 </footer>
@@ -62,16 +61,20 @@
 		gap: 24px 32px;
 		align-items: start;
 	}
+	/* Si Belang di pojok, duduk di garis bawah baris */
+	.kucing {
+		align-self: end;
+	}
 	@media (max-width: 760px) {
 		.dalam {
 			grid-template-columns: 1fr 1fr;
 		}
-		.merek,
-		.sapa {
+		.merek {
 			grid-column: 1 / -1;
 		}
-		.sapa {
-			justify-self: start;
+		.kucing {
+			grid-column: 1 / -1;
+			justify-self: end;
 		}
 	}
 	.merek {
@@ -117,36 +120,6 @@
 		text-decoration-color: var(--merah-bata);
 		text-decoration-thickness: 2px;
 		text-underline-offset: 3px;
-	}
-	.sapa {
-		display: grid;
-		justify-items: end;
-		gap: 4px;
-	}
-	.gelembung {
-		position: relative;
-		background: #fff8e6;
-		color: var(--tinta);
-		border: 2.5px solid var(--tinta);
-		border-radius: 12px;
-		padding: 6px 12px;
-		font-weight: 700;
-		font-size: 13px;
-		white-space: nowrap;
-		box-shadow: var(--bayangan-kecil);
-	}
-	/* ekor balon mengarah ke kepala Si Belang */
-	.gelembung::after {
-		content: '';
-		position: absolute;
-		right: 70px;
-		bottom: -9px;
-		width: 12px;
-		height: 12px;
-		background: #fff8e6;
-		border-right: 2.5px solid var(--tinta);
-		border-bottom: 2.5px solid var(--tinta);
-		transform: rotate(45deg);
 	}
 	.hak {
 		max-width: 1040px;

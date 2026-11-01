@@ -187,7 +187,6 @@ const id = {
 	'kaki.info': 'Info',
 	'kaki.kasus_hari_ini': 'Kasus hari ini',
 	'kaki.jadwal': 'Kasus baru setiap hari pukul 06.00 WIB.',
-	'kaki.sapa': 'Sampai besok, Detektif!',
 	'kaki.hak': '© {tahun} Dailytective',
 
 	// statistik
@@ -451,7 +450,6 @@ const en: Record<KunciTeks, string> = {
 	'kaki.info': 'Info',
 	'kaki.kasus_hari_ini': "Today's case",
 	'kaki.jadwal': 'A new case every day at 06:00 Jakarta time (UTC+7).',
-	'kaki.sapa': 'See you tomorrow, Detective!',
 	'kaki.hak': '© {tahun} Dailytective',
 
 	'stat.judul': 'Your stats',
