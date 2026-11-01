@@ -59,7 +59,30 @@ describe('konfigRedis', () => {
 	it('membaca variabel dari integrasi Vercel maupun Upstash langsung', () => {
 		expect(konfigRedis({})).toBeNull();
 		expect(konfigRedis({ KV_REST_API_URL: 'u' })).toBeNull();
-		expect(konfigRedis({ KV_REST_API_URL: 'u', KV_REST_API_TOKEN: 't' })).toEqual({ url: 'u', token: 't' });
-		expect(konfigRedis({ UPSTASH_REDIS_REST_URL: 'u2', UPSTASH_REDIS_REST_TOKEN: 't2' })).toEqual({ url: 'u2', token: 't2' });
+		expect(konfigRedis({ KV_REST_API_URL: 'u', KV_REST_API_TOKEN: 't' })).toEqual({ jenis: 'rest', url: 'u', token: 't' });
+		expect(konfigRedis({ UPSTASH_REDIS_REST_URL: 'u2', UPSTASH_REDIS_REST_TOKEN: 't2' })).toEqual({
+			jenis: 'rest',
+			url: 'u2',
+			token: 't2'
+		});
+	});
+
+	it('menerima awalan bebas dan tidak memakai token read-only', () => {
+		expect(
+			konfigRedis({
+				STORAGE_KV_REST_API_URL: 'u',
+				STORAGE_KV_REST_API_READ_ONLY_TOKEN: 'ro',
+				STORAGE_KV_REST_API_TOKEN: 't'
+			})
+		).toEqual({ jenis: 'rest', url: 'u', token: 't' });
+	});
+
+	it('memakai REDIS_URL kalau hanya itu yang ada, dan REST kalau keduanya ada', () => {
+		expect(konfigRedis({ REDIS_URL: 'rediss://default:x@host:6379' })).toEqual({
+			jenis: 'tcp',
+			url: 'rediss://default:x@host:6379'
+		});
+		expect(konfigRedis({ REDIS_URL: 'rediss://h', KV_URL: 'rediss://h', KV_REST_API_URL: 'u', KV_REST_API_TOKEN: 't' })?.jenis).toBe('rest');
+		expect(konfigRedis({ REDIS_URL: 'https://bukan-redis' })).toBeNull();
 	});
 });

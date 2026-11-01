@@ -26,5 +26,8 @@
     "typescript": "^5.9.3",
     "vite": "^7.3.7",
     "vitest": "^4.1.12"
+  },
+  "dependencies": {
+    "redis": "^5.12.1"
   }
 }
