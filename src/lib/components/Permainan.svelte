@@ -40,6 +40,8 @@
 	let status = $state<StatusSesi | null>(awal?.status ?? null);
 	let akhir = $state<HasilAkhir | null>(awal?.akhir ?? null);
 	let statistik = $state<StatistikPribadi>(untrack(() => data.statistik));
+	let percobaan = $state(awal?.percobaan ?? 1);
+	let sibukHasil = $state(false);
 
 	let tampilan = $state<'tkp' | 'tuduhan' | 'hasil'>(awal?.akhir ? 'hasil' : 'tkp');
 	let modal = $state<null | 'context' | 'statistik' | 'onboarding' | 'pengaturan'>(null);
@@ -148,6 +150,39 @@
 		}
 	}
 
+	/** Setelah gagal: mulai lagi dari TKP dengan jatah & tuduhan penuh. Catatan coretan pemain tetap disimpan. */
+	async function ulangiKasus() {
+		sibukHasil = true;
+		try {
+			const r = await api.ulangi(kasus.id);
+			diperiksa = r.sesi.periksa;
+			sisaJatah = r.sesi.sisa_jatah;
+			tuduhan = r.sesi.tuduhan;
+			status = r.sesi.status;
+			percobaan = r.sesi.percobaan;
+			akhir = null;
+			buktiAktif = null;
+			tampilan = 'tkp';
+			window.scrollTo({ top: 0 });
+		} catch (e) {
+			tampilkanPesan(pesanGalat(t, e));
+		} finally {
+			sibukHasil = false;
+		}
+	}
+
+	async function bukaJawabanKasus() {
+		sibukHasil = true;
+		try {
+			const r = await api.bukaJawaban(kasus.id);
+			akhir = r.sesi.akhir;
+		} catch (e) {
+			tampilkanPesan(pesanGalat(t, e));
+		} finally {
+			sibukHasil = false;
+		}
+	}
+
 	async function resetSesi() {
 		if (!confirm(t('main.ulangi_konfirmasi'))) return;
 		await api.resetSesi(kasus.id);
@@ -164,6 +199,7 @@
 			<Bintang jumlah={kasus.kesulitan.bintang} />
 			<span class="redup">{jenis}</span>
 			<strong class="judul">{kasus.judul}</strong>
+			{#if percobaan > 1}<span class="percobaan">{t('hasil.percobaan_ke', { n: percobaan })}</span>{/if}
 		</div>
 		<nav>
 			{#if data.pratinjau}
@@ -189,6 +225,9 @@
 				serverTime={data.server_time}
 				{namaBenda}
 				bukaStatistik={() => (modal = 'statistik')}
+				ulangi={ulangiKasus}
+				bukaJawaban={bukaJawabanKasus}
+				sibuk={sibukHasil}
 			/>
 		</main>
 	{:else}
@@ -305,6 +344,14 @@
 		font-family: var(--font-judul);
 		font-weight: 400;
 		font-size: 17px;
+	}
+	.percobaan {
+		font-size: 12px;
+		font-weight: 700;
+		color: var(--tinta);
+		background: var(--mustard);
+		border-radius: 999px;
+		padding: 2px 9px;
 	}
 	nav {
 		display: flex;

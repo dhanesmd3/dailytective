@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 	import { pakaiT } from '$lib/i18n';
+	import KakiSitus from './KakiSitus.svelte';
 	import Logo from './Logo.svelte';
 
 	let { judul, children }: { judul: string; children: Snippet } = $props();
@@ -15,13 +16,9 @@
 		<h1>{judul}</h1>
 		{@render children()}
 	</article>
-	<nav aria-label={t('nav.lain')}>
-		<a href="/cara-main">{t('nav.cara_main')}</a>
-		<a href="/statistik">{t('nav.statistik')}</a>
-		<a href="/tentang">{t('nav.tentang')}</a>
-		<a href="/privasi">{t('nav.privasi')}</a>
-	</nav>
 </main>
+
+<KakiSitus />
 
 <style>
 	main {
@@ -63,11 +60,5 @@
 	}
 	article :global(a) {
 		color: var(--merah-bata);
-	}
-	nav {
-		display: flex;
-		gap: 16px;
-		flex-wrap: wrap;
-		font-weight: 600;
 	}
 </style>

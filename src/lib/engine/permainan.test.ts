@@ -2,15 +2,19 @@ import { describe, expect, it } from 'vitest';
 import bolu from '../../../tests/fixtures/bolu-pandan.json';
 import { muatDunia } from '../server/data';
 import {
+	bukaJawaban,
 	GalatPermainan,
 	gelar,
+	hasilAkhir,
+	type HasilAkhir,
 	hitungStatistik,
 	kasusPublik,
 	periksa,
 	semuaBendaIds,
 	sesiBaru,
 	teksShare,
-	tuduh
+	tuduh,
+	ulangi
 } from './permainan';
 import type { KasusFile, Sesi } from './types';
 import { rilisBerikutnya, tanggalKasusAktif } from './waktu';
@@ -110,6 +114,71 @@ describe('tuduh', () => {
 		let s = sesiBaru('p1', kasus, t0);
 		for (const dimana of ['dapur', 'teras', 'ruang_kerja']) s = tuduh(kasus, s, { ...salah, dimana }, t0).sesi;
 		expect(s.status).toBe('kalah');
+	});
+});
+
+describe('mengulang kasus', () => {
+	const salah = { siapa: 'dimas', pakai: 'sendok', dimana: 'teras' };
+	const benar = { siapa: 'wati', pakai: 'pisau_roti', dimana: 'teras' };
+	const t1 = new Date(t0.getTime() + 600_000);
+
+	function gagal(): { sesi: Sesi; akhir: HasilAkhir } {
+		let s = periksa(kasus, sesiBaru('p1', kasus, t0), [...benda][0], benda).sesi;
+		let r;
+		for (const dimana of ['dapur', 'teras', 'ruang_kerja']) {
+			r = tuduh(kasus, s, { ...salah, dimana }, t0);
+			s = r.sesi;
+		}
+		return { sesi: s, akhir: r!.hasil.akhir! };
+	}
+
+	it('gagal tidak mengirim jawaban, dan menawarkan ulang', () => {
+		const { akhir } = gagal();
+		expect(akhir.menang).toBe(false);
+		expect(akhir.jawaban).toBeNull();
+		expect(akhir.bisa_ulang).toBe(true);
+		expect(JSON.stringify(akhir)).not.toContain('wati');
+		expect(JSON.stringify(akhir)).not.toContain(kasus.komentar_nenek);
+	});
+
+	it('ulangi mengosongkan jatah & tuduhan, menyimpan percobaan pertama', () => {
+		const s = ulangi(gagal().sesi, t1);
+		expect(s).toMatchObject({ status: 'berjalan', periksa: [], tuduhan: [], percobaan: 2, selesai_at: null });
+		expect(s.pertama?.status).toBe('kalah');
+		expect(s.pertama?.tuduhan).toHaveLength(3);
+		expect(kodeGalat(() => ulangi(s, t1))).toBe('tidak_bisa_ulang');
+
+		const r = tuduh(kasus, s, benar, new Date(t1.getTime() + 90_000));
+		const akhir = r.hasil.akhir!;
+		expect(akhir.menang).toBe(true);
+		expect(akhir.jawaban?.solusi).toEqual(kasus.solusi);
+		expect(akhir.kode_gelar).toBe('pantang_menyerah');
+		expect(akhir.durasi_detik).toBe(90);
+		expect(akhir.pertama).toMatchObject({ menang: false, tuduhan_benar: [false, false, false] });
+		expect(akhir.pertama?.periksa).toHaveLength(1);
+		// percobaan pertama yang ulang kedua kalinya tetap disimpan apa adanya
+		let s2 = s;
+		for (const dimana of ['dapur', 'teras', 'ruang_kerja']) s2 = tuduh(kasus, s2, { ...salah, dimana }, t1).sesi;
+		expect(ulangi(s2, t1)).toMatchObject({ percobaan: 3, pertama: s.pertama });
+	});
+
+	it('membuka jawaban menutup kesempatan mengulang', () => {
+		const s = bukaJawaban(gagal().sesi);
+		const akhir = hasilAkhir(kasus, s);
+		expect(akhir.jawaban?.solusi).toEqual(kasus.solusi);
+		expect(akhir.bisa_ulang).toBe(false);
+		expect(kodeGalat(() => ulangi(s, t1))).toBe('tidak_bisa_ulang');
+		expect(kodeGalat(() => bukaJawaban(sesiBaru('p1', kasus, t0)))).toBe('kasus_selesai');
+	});
+
+	it('statistik memakai percobaan pertama, termasuk saat ulangan sedang berjalan atau menang', () => {
+		const ulang = ulangi(gagal().sesi, t1);
+		const menangUlang = tuduh(kasus, ulang, benar, t1).sesi;
+		for (const s of [ulang, menangUlang]) {
+			const st = hitungStatistik([s], [kasus.tanggal], kasus.tanggal);
+			expect(st).toMatchObject({ dimainkan: 1, menang: 0, streak: 0 });
+			expect(st.distribusi.gagal).toBe(1);
+		}
 	});
 });
 

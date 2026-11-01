@@ -17,7 +17,10 @@
 		berikutnya,
 		serverTime,
 		namaBenda,
-		bukaStatistik
+		bukaStatistik,
+		ulangi,
+		bukaJawaban,
+		sibuk = false
 	}: {
 		kasus: KasusPublik;
 		akhir: HasilAkhir;
@@ -28,44 +31,56 @@
 		serverTime: string;
 		namaBenda: (id: string) => string;
 		bukaStatistik: () => void;
+		ulangi: () => void;
+		bukaJawaban: () => void;
+		sibuk?: boolean;
 	} = $props();
 
 	const t = pakaiT();
 	const nama = (kat: Kategori, id: string) => kasus.pilihan[kat]?.find((p) => p.id === id)?.nama ?? id;
 	const ditemukan = $derived(new Map(diperiksa.filter((d) => d.hasil === 'clue').map((d) => [d.benda, d.nomor])));
-	const bagian = $derived(kasus.kategori.filter((k) => akhir.solusi[k]));
+	/** null kalau pemain gagal dan belum memilih membuka jawaban (server memang tidak mengirimnya). */
+	const jawaban = $derived(akhir.jawaban);
+	const bagian = $derived(jawaban ? kasus.kategori.filter((k) => jawaban.solusi[k]) : []);
 
 	function labelBukti(idClue: string): { teks: string; ketemu: boolean } {
 		const awal = kasus.context_card.clue_awal.findIndex((c) => c.id === idClue);
 		if (awal >= 0) return { teks: t('hasil.clue_awal_n', { n: awal + 1 }), ketemu: true };
 		const p = kasus.pengakuan.find((x) => x.id === idClue);
 		if (p) return { teks: t('hasil.pengakuan_dari', { nama: nama('siapa', p.oleh) }), ketemu: true };
-		const b = akhir.semua_bukti[idClue]?.benda;
+		const b = jawaban?.semua_bukti[idClue]?.benda;
 		if (b && ditemukan.has(b)) return { teks: t('tkp.bukti_n', { n: ditemukan.get(b) ?? '' }), ketemu: true };
 		return { teks: t('hasil.tak_ditemukan', { benda: b ? namaBenda(b) : idClue }), ketemu: false };
 	}
 
 	const terlewat = $derived(
-		Object.entries(akhir.semua_bukti).filter(([, v]) => v.benda && !ditemukan.has(v.benda))
+		Object.entries(jawaban?.semua_bukti ?? {}).filter(([, v]) => v.benda && !ditemukan.has(v.benda))
 	);
 
+	function konfirmasiBuka() {
+		if (confirm(t('hasil.buka_konfirmasi'))) bukaJawaban();
+	}
+
 	let pesanSalin = $state('');
+	// Teks share selalu menceritakan percobaan pertama; menang di percobaan ulang jadi baris tambahan.
 	const teks = $derived(
 		teksShare({
 			id: kasus.id,
 			bintang: kasus.kesulitan.bintang,
 			jatah: kasus.jatah_periksa,
-			periksa: diperiksa.map((d) => d.hasil === 'clue'),
-			tuduhanBenar: tuduhan.map((tu) => tu.benar === kasus.kategori.length),
+			periksa: akhir.pertama?.periksa ?? diperiksa.map((d) => d.hasil === 'clue'),
+			tuduhanBenar: akhir.pertama?.tuduhan_benar ?? tuduhan.map((tu) => tu.benar === kasus.kategori.length),
 			maksTuduhan: kasus.maks_tuduhan,
-			menang: akhir.menang,
-			durasiDetik: akhir.durasi_detik,
+			menang: akhir.pertama?.menang ?? akhir.menang,
+			durasiDetik: akhir.pertama?.durasi_detik ?? akhir.durasi_detik,
 			streak: statistik.streak,
 			situs: typeof location === 'undefined' ? 'dailytective.com' : location.host,
+			terpecahkanUlang: akhir.pertama && akhir.menang ? akhir.percobaan : undefined,
 			label: {
 				periksa: (n) => (n === 1 ? t('share.periksa_satu') : t('share.periksa', { n })),
 				tebakan: (n) => t('share.tebakan', { n }),
-				ditutup: t('share.ditutup')
+				ditutup: t('share.ditutup'),
+				ulang: (n) => t('share.ulang', { n })
 			}
 		})
 	);
@@ -83,15 +98,41 @@
 <div class="hasil">
 	<div class="kiri">
 		<div class="status" class:menang={akhir.menang}>
-			<span class="stempel">{akhir.menang ? t('hasil.terpecahkan') : t('hasil.ditutup')}</span>
-			<p class="gelar">{t(`gelar.${akhir.kode_gelar}` as KunciTeks)}</p>
+			<span class="stempel">
+				{akhir.menang ? t('hasil.terpecahkan') : jawaban ? t('hasil.ditutup') : t('hasil.belum_terpecahkan')}
+			</span>
+			<p class="gelar">
+				{#if akhir.menang || jawaban}{t(`gelar.${akhir.kode_gelar}` as KunciTeks)}{/if}
+				{#if akhir.percobaan > 1}<span class="percobaan">{t('hasil.percobaan_ke', { n: akhir.percobaan })}</span>{/if}
+			</p>
 		</div>
 
+		{#if !jawaban}
+			<div class="gagal kartu">
+				<h2>{t('hasil.gagal_judul')}</h2>
+				<p>{t('hasil.gagal_ket')}</p>
+				<h3>{t('hasil.tuduhanmu')}</h3>
+				<ol class="tuduhanmu">
+					{#each tuduhan as tu, i (i)}
+						<li>
+							<span class="isi-tuduhan">{kasus.kategori.map((k) => nama(k, tu[k] ?? '')).join(' · ')}</span>
+							<span class="chip">{t('tuduh.x_dari_y_benar', { benar: tu.benar, dari: kasus.kategori.length })}</span>
+						</li>
+					{/each}
+				</ol>
+				<div class="aksi-gagal">
+					{#if akhir.bisa_ulang}
+						<button class="tombol merah besar" onclick={ulangi} disabled={sibuk}>{t('hasil.ulangi')}</button>
+					{/if}
+					<button class="tombol krem kecil" onclick={konfirmasiBuka} disabled={sibuk}>{t('hasil.buka_jawaban')}</button>
+				</div>
+			</div>
+		{:else}
 		<div class="jawaban kartu">
 			<h2>{t('hasil.jawaban')}</h2>
 			<div class="tiga" style:grid-template-columns="repeat({bagian.length}, 1fr)">
 				{#each bagian as k (k)}
-					{@const id = akhir.solusi[k]!}
+					{@const id = jawaban.solusi[k]!}
 					<div class="bagian">
 						{#if k === 'siapa'}
 							<Potret {id} ukuran={96} ekspresi="tertangkap" />
@@ -107,14 +148,14 @@
 			</div>
 			<blockquote>
 				<Potret id="nenek" ukuran={52} />
-				<p>"{akhir.komentar_nenek}"</p>
+				<p>"{jawaban.komentar_nenek}"</p>
 			</blockquote>
 		</div>
 
 		<div class="penjelasan kartu">
 			<h2>{t('hasil.alur')}</h2>
 			<ol>
-				{#each akhir.penjelasan as l, i (i)}
+				{#each jawaban.penjelasan as l, i (i)}
 					<li>
 						<p>{l.teks}</p>
 						<span class="bukti">
@@ -137,6 +178,7 @@
 				</details>
 			{/if}
 		</div>
+		{/if}
 	</div>
 
 	<div class="kanan">
@@ -222,6 +264,56 @@
 		font-family: var(--font-judul);
 		font-size: 22px;
 		color: var(--krem);
+		display: flex;
+		align-items: center;
+		gap: 12px;
+		flex-wrap: wrap;
+	}
+	.percobaan {
+		font-family: var(--font-isi);
+		font-size: 13px;
+		font-weight: 700;
+		color: var(--tinta);
+		background: var(--mustard);
+		border: 2px solid var(--tinta);
+		border-radius: 999px;
+		padding: 2px 10px;
+	}
+	.gagal {
+		display: grid;
+		gap: 10px;
+	}
+	.gagal h2 {
+		margin-bottom: 0;
+	}
+	.gagal h3 {
+		font-size: 15px;
+		margin-top: 4px;
+	}
+	.tuduhanmu {
+		margin: 0;
+		padding-left: 22px;
+		display: grid;
+		gap: 6px;
+	}
+	.tuduhanmu li {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: 6px 10px;
+		font-weight: 600;
+	}
+	.aksi-gagal {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 12px;
+		margin-top: 6px;
+	}
+	.tombol.besar {
+		font-size: 18px;
+		padding: 12px 26px;
 	}
 	.tiga {
 		display: grid;

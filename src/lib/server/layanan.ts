@@ -77,6 +77,7 @@ export function sesiTampil(kasus: KasusFile, sesi: Sesi) {
 	return {
 		status: sesi.status,
 		mulai_at: sesi.mulai_at,
+		percobaan: sesi.percobaan ?? 1,
 		periksa: sesi.periksa.map((b) => lihatBenda(kasus, sesi, b)),
 		sisa_jatah: kasus.jatah_periksa - sesi.periksa.length,
 		tuduhan: sesi.tuduhan,
@@ -126,7 +127,8 @@ const STATUS_GALAT: Record<GalatMain, number> = {
 	tuduhan_habis: 409,
 	tuduhan_ganda: 409,
 	benda_tidak_dikenal: 400,
-	pilihan_tidak_valid: 400
+	pilihan_tidak_valid: 400,
+	tidak_bisa_ulang: 409
 };
 
 export function tanganiGalat(e: unknown): Response {

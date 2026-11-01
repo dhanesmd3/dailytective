@@ -5,6 +5,7 @@
 	import { baca, KUNCI, tulis } from '$lib/client/lokal';
 	import Bintang from '$lib/components/Bintang.svelte';
 	import HitungMundur from '$lib/components/HitungMundur.svelte';
+	import KakiSitus from '$lib/components/KakiSitus.svelte';
 	import Logo from '$lib/components/Logo.svelte';
 	import Onboarding from '$lib/components/Onboarding.svelte';
 	import Potret from '$lib/components/Potret.svelte';
@@ -76,10 +77,18 @@
 					<a class="tombol merah besar" href="/kasus{q}">{t('beranda.lanjutkan')}</a>
 				{:else}
 					<p class="selesai" class:menang={sesi.status === 'menang'}>
-						<span class="stempel">{sesi.status === 'menang' ? t('hasil.terpecahkan') : t('hasil.ditutup')}</span>
-						{sesi.akhir ? t(`gelar.${sesi.akhir.kode_gelar}` as KunciTeks) : ''}
+						{#if sesi.akhir?.jawaban || sesi.status === 'menang'}
+							<span class="stempel">{sesi.status === 'menang' ? t('hasil.terpecahkan') : t('hasil.ditutup')}</span>
+							{sesi.akhir ? t(`gelar.${sesi.akhir.kode_gelar}` as KunciTeks) : ''}
+						{:else}
+							<span class="stempel">{t('hasil.belum_terpecahkan')}</span>
+						{/if}
 					</p>
-					<a class="tombol besar" href="/kasus{q}">{t('beranda.lihat_hasil')}</a>
+					{#if sesi.akhir?.bisa_ulang}
+						<a class="tombol merah besar" href="/kasus{q}">{t('hasil.ulangi')}</a>
+					{:else}
+						<a class="tombol besar" href="/kasus{q}">{t('beranda.lihat_hasil')}</a>
+					{/if}
 				{/if}
 			</article>
 		{:else}
@@ -117,13 +126,6 @@
 		</div>
 	</section>
 
-	<footer>
-		<a href="/cara-main">{t('nav.cara_main')}</a>
-		<a href="/statistik">{t('nav.statistik')}</a>
-		<a href="/tentang">{t('nav.tentang')}</a>
-		<a href="/privasi">{t('nav.privasi')}</a>
-	</footer>
-
 	{#if data.pratinjau}
 		<section class="pratinjau">
 			<h2>{t('beranda.pratinjau')}</h2>
@@ -143,6 +145,8 @@
 		</section>
 	{/if}
 </main>
+
+<KakiSitus />
 
 {#if modal === 'onboarding'}
 	<Onboarding selesai={selesaiOnboarding} />
@@ -249,6 +253,7 @@
 		display: flex;
 		align-items: center;
 		gap: 16px;
+		margin: 4px 0 10px;
 		font-family: var(--font-judul);
 		font-size: 18px;
 	}
@@ -281,13 +286,6 @@
 		display: flex;
 		flex-wrap: wrap;
 		gap: 8px;
-	}
-	footer {
-		display: flex;
-		gap: 18px;
-		flex-wrap: wrap;
-		font-weight: 600;
-		font-size: 14px;
 	}
 	.pemeran {
 		display: grid;

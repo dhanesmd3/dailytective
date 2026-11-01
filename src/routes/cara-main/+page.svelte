@@ -7,7 +7,7 @@
 
 <HalamanStatis judul={t('nav.cara_main')}>
 	{#if t.bahasa === 'en'}
-		<p>Every day at <strong>06:00 Jakarta time (UTC+7)</strong> there's a new case at Grandma's house. Every player gets the same case, and each case can only be played once.</p>
+		<p>Every day at <strong>06:00 Jakarta time (UTC+7)</strong> there's a new case at Grandma's house. Every player gets the same case, and only your first attempt counts toward your stats.</p>
 
 		<h2>1. Read the case card</h2>
 		<p>The case card tells you what happened, lists the options for <strong>Who</strong>, <strong>With what</strong>, and <strong>Where</strong>, and gives you a few free starting clues. You can reopen it any time from the Notebook.</p>
@@ -28,6 +28,7 @@
 			<li>Pick one card in each row, then press <strong>ACCUSE</strong>. You can accuse at any time.</li>
 			<li>You get <strong>3 tries</strong>. If you're wrong, you learn how many parts were right, but not which ones.</li>
 			<li>You can't make the exact same accusation twice.</li>
+			<li>Missed all 3? The answer stays secret. <strong>Retry the case</strong> from scratch, or <strong>show the answer</strong> if you give up (after that, no more retries). Retries don't change your stats or streak.</li>
 		</ul>
 
 		<h2>Difficulty schedule</h2>
@@ -44,10 +45,11 @@
 			<li><strong>Ace Detective</strong>: right on the first guess.</li>
 			<li><strong>Diligent Detective</strong>: right on the second guess.</li>
 			<li><strong>Lucky Detective</strong>: right on the third guess.</li>
+			<li><strong>Never-Give-Up Detective</strong>: solved after retrying the case.</li>
 		</ul>
 		<p>Your streak grows every day you solve the case, and resets if you fail or skip a day.</p>
 	{:else}
-		<p>Setiap hari pukul <strong>06.00 WIB</strong> ada satu kasus baru di rumah Nenek. Semua pemain mendapat kasus yang sama, dan setiap kasus hanya bisa dimainkan sekali.</p>
+		<p>Setiap hari pukul <strong>06.00 WIB</strong> ada satu kasus baru di rumah Nenek. Semua pemain mendapat kasus yang sama, dan hanya percobaan pertamamu yang dihitung di statistik.</p>
 
 		<h2>1. Baca context card</h2>
 		<p>Context card berisi cerita kejadian, daftar <strong>Siapa</strong>, <strong>Pakai apa</strong>, dan <strong>Di mana</strong>, serta beberapa clue awal gratis. Kamu bisa membukanya lagi kapan saja dari Buku Catatan.</p>
@@ -68,6 +70,7 @@
 			<li>Pilih satu kartu di setiap baris, lalu tekan <strong>TUDUH</strong>. Kamu boleh menuduh kapan saja.</li>
 			<li>Kamu punya <strong>3 kesempatan</strong>. Kalau salah, kamu diberi tahu berapa bagian yang tepat, tapi tidak bagian yang mana.</li>
 			<li>Kombinasi yang sama tidak bisa dituduhkan dua kali.</li>
+			<li>Meleset tiga kali? Jawabannya tetap dirahasiakan. <strong>Ulangi kasus</strong> dari awal, atau <strong>tampilkan jawaban</strong> kalau sudah menyerah (setelah itu tidak bisa diulang lagi). Mengulang tidak mengubah statistik maupun streak.</li>
 		</ul>
 
 		<h2>Jadwal kesulitan</h2>
@@ -84,6 +87,7 @@
 			<li><strong>Detektif Ulung</strong>: benar di tebakan pertama.</li>
 			<li><strong>Detektif Tekun</strong>: benar di tebakan kedua.</li>
 			<li><strong>Detektif Beruntung</strong>: benar di tebakan ketiga.</li>
+			<li><strong>Detektif Pantang Menyerah</strong>: terpecahkan setelah mengulang kasus.</li>
 		</ul>
 		<p>Streak bertambah setiap hari kamu memecahkan kasus, dan terputus kalau gagal atau tidak bermain.</p>
 	{/if}

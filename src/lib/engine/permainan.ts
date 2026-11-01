@@ -107,7 +107,8 @@ export type GalatMain =
 	| 'kasus_selesai'
 	| 'tuduhan_habis'
 	| 'tuduhan_ganda'
-	| 'pilihan_tidak_valid';
+	| 'pilihan_tidak_valid'
+	| 'tidak_bisa_ulang';
 
 export class GalatPermainan extends Error {
 	constructor(public kode: GalatMain) {
@@ -140,16 +141,27 @@ export function periksa(
 	};
 }
 
-export interface HasilAkhir {
-	menang: boolean;
+/** Bagian layar hasil yang membocorkan jawaban. */
+export interface JawabanKasus {
 	solusi: Kombinasi;
 	penjelasan: Penjelasan[];
 	komentar_nenek: string;
-	gelar: string;
-	kode_gelar: KodeGelar;
 	/** Semua clue di kasus ini, termasuk yang tidak ditemukan, untuk penjelasan di layar hasil. */
 	semua_bukti: Record<string, { benda: string | null; teks: string }>;
+}
+
+export interface HasilAkhir {
+	menang: boolean;
+	gelar: string;
+	kode_gelar: KodeGelar;
 	durasi_detik: number;
+	percobaan: number;
+	/** null selama pemain yang gagal belum memilih membuka jawaban: jawabannya tidak dikirim sama sekali. */
+	jawaban: JawabanKasus | null;
+	/** Boleh mengulang: gagal dan jawaban belum dibuka. */
+	bisa_ulang: boolean;
+	/** Ringkasan percobaan pertama untuk teks share, kalau sesi ini sudah pernah diulang. */
+	pertama: { periksa: boolean[]; tuduhan_benar: boolean[]; menang: boolean; durasi_detik: number } | null;
 }
 
 export interface HasilTuduh {
@@ -197,37 +209,83 @@ export function tuduh(kasus: KasusFile, sesi: Sesi, k: Kombinasi, sekarang: Date
 	};
 }
 
-/** Isi layar hasil. Hanya boleh dipanggil untuk sesi yang sudah selesai. */
+/**
+ * Isi layar hasil. Hanya boleh dipanggil untuk sesi yang sudah selesai.
+ * Kalau gagal, jawaban baru ikut setelah pemain memilih membukanya (bukaJawaban), supaya bisa mengulang.
+ */
 export function hasilAkhir(kasus: KasusFile, sesi: Sesi): HasilAkhir {
 	if (sesi.status === 'berjalan') throw new Error('Sesi belum selesai');
-	const semua_bukti: HasilAkhir['semua_bukti'] = {};
+	const menang = sesi.status === 'menang';
+	const percobaan = sesi.percobaan ?? 1;
+	const p = sesi.pertama;
+	const kategori = kategoriDari(kasus.pilihan).length;
+	return {
+		menang,
+		gelar: gelar(menang, sesi.tuduhan.length, sesi.periksa.length, percobaan),
+		kode_gelar: kodeGelar(menang, sesi.tuduhan.length, sesi.periksa.length, percobaan),
+		durasi_detik: durasiDetik(sesi),
+		percobaan,
+		jawaban: menang || sesi.jawaban_dibuka ? jawabanKasus(kasus) : null,
+		bisa_ulang: bisaUlang(sesi),
+		pertama: p
+			? {
+					periksa: p.periksa.map((b) => (kasus.benda[b]?.hasil ?? 'kosong') !== 'kosong'),
+					tuduhan_benar: p.tuduhan.map((tu) => tu.benar === kategori),
+					menang: p.status === 'menang',
+					durasi_detik: durasiDetik(p)
+				}
+			: null
+	};
+}
+
+function jawabanKasus(kasus: KasusFile): JawabanKasus {
+	const semua_bukti: JawabanKasus['semua_bukti'] = {};
 	for (const c of kasus.context_card.clue_awal) semua_bukti[c.id] = { benda: null, teks: c.teks };
 	for (const p of kasus.pengakuan ?? []) semua_bukti[p.id] = { benda: null, teks: p.teks };
 	for (const [benda, isi] of Object.entries(kasus.benda))
 		if (isi.id_clue) semua_bukti[isi.id_clue] = { benda, teks: isi.teks };
-	const menang = sesi.status === 'menang';
+	return { solusi: kasus.solusi, penjelasan: kasus.penjelasan, komentar_nenek: kasus.komentar_nenek, semua_bukti };
+}
+
+// --- Mengulang kasus setelah gagal ---
+
+export function bisaUlang(sesi: Sesi): boolean {
+	return sesi.status === 'kalah' && !sesi.jawaban_dibuka;
+}
+
+/** Mulai lagi dari nol (jatah dan tuduhan penuh). Hasil percobaan pertama disimpan untuk statistik. */
+export function ulangi(sesi: Sesi, sekarang: Date): Sesi {
+	if (!bisaUlang(sesi)) throw new GalatPermainan('tidak_bisa_ulang');
+	const { periksa, tuduhan, status, mulai_at, selesai_at } = sesi;
 	return {
-		menang,
-		solusi: kasus.solusi,
-		penjelasan: kasus.penjelasan,
-		komentar_nenek: kasus.komentar_nenek,
-		gelar: gelar(menang, sesi.tuduhan.length, sesi.periksa.length),
-		kode_gelar: kodeGelar(menang, sesi.tuduhan.length, sesi.periksa.length),
-		semua_bukti,
-		durasi_detik: durasiDetik(sesi)
+		...sesi,
+		pertama: sesi.pertama ?? { periksa, tuduhan, status, mulai_at, selesai_at },
+		percobaan: (sesi.percobaan ?? 1) + 1,
+		periksa: [],
+		tuduhan: [],
+		status: 'berjalan',
+		mulai_at: sekarang.toISOString(),
+		selesai_at: null
 	};
 }
 
-export function durasiDetik(sesi: Sesi): number {
+/** Menyerah dan lihat jawaban. Sesudahnya kasus tidak bisa diulang. */
+export function bukaJawaban(sesi: Sesi): Sesi {
+	if (sesi.status !== 'kalah') throw new GalatPermainan('kasus_selesai');
+	return { ...sesi, jawaban_dibuka: true };
+}
+
+export function durasiDetik(sesi: Pick<Sesi, 'mulai_at' | 'selesai_at'>): number {
 	if (!sesi.selesai_at) return 0;
 	return Math.max(0, Math.round((Date.parse(sesi.selesai_at) - Date.parse(sesi.mulai_at)) / 1000));
 }
 
-export type KodeGelar = 'legendaris' | 'ulung' | 'tekun' | 'beruntung' | 'ditutup';
+export type KodeGelar = 'legendaris' | 'ulung' | 'tekun' | 'beruntung' | 'pantang_menyerah' | 'ditutup';
 
 /** Gelar (GDD bagian 9) sebagai kode; UI menerjemahkannya lewat kamus `gelar.<kode>`. */
-export function kodeGelar(menang: boolean, tebakanKe: number, jumlahPeriksa: number): KodeGelar {
+export function kodeGelar(menang: boolean, tebakanKe: number, jumlahPeriksa: number, percobaan = 1): KodeGelar {
 	if (!menang) return 'ditutup';
+	if (percobaan > 1) return 'pantang_menyerah';
 	if (tebakanKe === 1) return jumlahPeriksa <= 5 ? 'legendaris' : 'ulung';
 	if (tebakanKe === 2) return 'tekun';
 	return 'beruntung';
@@ -238,12 +296,13 @@ const NAMA_GELAR: Record<KodeGelar, string> = {
 	ulung: 'Detektif Ulung',
 	tekun: 'Detektif Tekun',
 	beruntung: 'Detektif Beruntung',
+	pantang_menyerah: 'Detektif Pantang Menyerah',
 	ditutup: 'Kasus Ditutup'
 };
 
 /** Nama gelar dalam bahasa Indonesia (dipakai alat bantu dan test). */
-export function gelar(menang: boolean, tebakanKe: number, jumlahPeriksa: number): string {
-	return NAMA_GELAR[kodeGelar(menang, tebakanKe, jumlahPeriksa)];
+export function gelar(menang: boolean, tebakanKe: number, jumlahPeriksa: number, percobaan = 1): string {
+	return NAMA_GELAR[kodeGelar(menang, tebakanKe, jumlahPeriksa, percobaan)];
 }
 
 // --- Statistik pribadi (GDD bagian 11) ---
@@ -258,11 +317,17 @@ export interface StatistikPribadi {
 	rata_periksa: number;
 }
 
+/** Hasil yang dihitung untuk statistik: percobaan pertama, kalau kasusnya pernah diulang. */
+function resmi(s: Sesi): Sesi {
+	return s.pertama ? { ...s, ...s.pertama } : s;
+}
+
 /**
  * Streak dihitung atas tanggal-tanggal yang punya kasus (hari tanpa kasus tidak memutus streak).
- * Kasus hari ini yang belum selesai juga tidak memutus streak.
+ * Kasus hari ini yang belum selesai juga tidak memutus streak. Mengulang kasus tidak mengubah statistik.
  */
-export function hitungStatistik(sesiPemain: Sesi[], tanggalKasus: string[], hariIni: string): StatistikPribadi {
+export function hitungStatistik(semuaSesi: Sesi[], tanggalKasus: string[], hariIni: string): StatistikPribadi {
+	const sesiPemain = semuaSesi.map(resmi);
 	const perTanggal = new Map(sesiPemain.map((s) => [s.tanggal, s]));
 	const selesai = sesiPemain.filter((s) => s.status !== 'berjalan' && s.tanggal <= hariIni);
 	const menang = selesai.filter((s) => s.status === 'menang');
@@ -315,7 +380,9 @@ export function teksShare(p: {
 	streak: number;
 	situs: string;
 	/** Label dalam bahasa pemain. Bawaan: bahasa Indonesia. */
-	label?: { periksa: (n: number) => string; tebakan: (n: number) => string; ditutup: string };
+	label?: { periksa: (n: number) => string; tebakan: (n: number) => string; ditutup: string; ulang?: (n: number) => string };
+	/** Terpecahkan di percobaan ulang ke-n: baris tambahan. Kotak-kotaknya tetap percobaan pertama. */
+	terpecahkanUlang?: number;
 }): string {
 	const label = p.label ?? {
 		periksa: (n: number) => `${n} periksa`,
@@ -331,10 +398,12 @@ export function teksShare(p: {
 	const ket = p.menang ? label.tebakan(p.tuduhanBenar.length) : label.ditutup;
 	const m = Math.floor(p.durasiDetik / 60);
 	const s = String(p.durasiDetik % 60).padStart(2, '0');
+	const ulang = label.ulang ?? ((n: number) => `terpecahkan di percobaan ke-${n}`);
 	return [
 		`Dailytective #${p.id} 🔎 ${bintang}`,
 		`${kotak}  ${label.periksa(p.periksa.length)}`,
 		`${tuduhan}  ${ket}`,
+		...(p.terpecahkanUlang ? [`🔁 ${ulang(p.terpecahkanUlang)}`] : []),
 		`⏱ ${m}:${s} · 🔥 ${p.streak}`,
 		p.situs
 	].join('\n');

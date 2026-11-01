@@ -42,6 +42,8 @@ export const api = {
 			'GET',
 			'/api/pratinjau'
 		),
+	ulangi: (id: number) => panggil<{ sesi: SesiTampil }>('POST', `/api/kasus/${id}/ulangi`),
+	bukaJawaban: (id: number) => panggil<{ sesi: SesiTampil }>('POST', `/api/kasus/${id}/jawaban`),
 	resetSesi: (id: number) => panggil<{ ok: true }>('DELETE', `/api/kasus/${id}/sesi`)
 };
 
@@ -52,7 +54,8 @@ const KODE_GALAT = [
 	'tuduhan_ganda',
 	'pilihan_tidak_valid',
 	'benda_tidak_dikenal',
-	'terlalu_banyak'
+	'terlalu_banyak',
+	'tidak_bisa_ulang'
 ];
 
 export function pesanGalat(t: FungsiT, e: unknown): string {

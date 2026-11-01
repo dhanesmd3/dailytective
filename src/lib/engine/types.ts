@@ -209,4 +209,12 @@ export interface Sesi {
 	status: StatusSesi;
 	mulai_at: string;
 	selesai_at: string | null;
+	/** Percobaan ke berapa. Tidak ada = 1 (belum pernah mengulang). */
+	percobaan?: number;
+	/** Hasil percobaan pertama. Statistik, streak, dan teks share memakai ini, bukan percobaan ulang. */
+	pertama?: RingkasanPercobaan;
+	/** Pemain yang gagal memilih melihat jawaban. Sesudahnya kasus tidak bisa diulang. */
+	jawaban_dibuka?: boolean;
 }
+
+export type RingkasanPercobaan = Pick<Sesi, 'periksa' | 'tuduhan' | 'status' | 'mulai_at' | 'selesai_at'>;
