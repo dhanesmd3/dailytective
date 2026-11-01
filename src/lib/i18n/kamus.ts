@@ -192,6 +192,17 @@ const id = {
 	'kaki.jadwal': 'Kasus baru setiap hari pukul 06.00 WIB.',
 	'kaki.hak': '© {tahun} Dailytective',
 
+	// mesin pencari & pratinjau link
+	'seo.beranda.judul': 'Dailytective · Game Detektif Harian dari Rumah Nenek',
+	'seo.beranda.desk':
+		'Dailytective adalah game detektif harian gratis. Setiap pukul 06.00 WIB ada satu kasus baru di rumah Nenek: periksa bukti, lalu tebak siapa pelakunya, pakai apa, dan di mana. Main langsung di browser.',
+	'seo.cara.desk': 'Cara main Dailytective: baca kasusnya, periksa benda untuk mencari bukti, lalu tuduh pelakunya dalam 3 kesempatan.',
+	'seo.tentang.desk': 'Tentang Dailytective, game detektif harian dengan kasus-kasus kecil di rumah Nenek dan para tetangganya.',
+	'seo.privasi.desk': 'Kebijakan privasi Dailytective: tanpa akun, tanpa iklan, hanya ID pemain anonim untuk menyimpan progres.',
+	'seo.statistik.desk': 'Statistik permainan Dailytective kamu: kasus terpecahkan, streak, dan sebaran tebakan.',
+	'seo.kasus.desk': 'Kasus Dailytective hari ini. Periksa bukti dan temukan pelakunya.',
+	'seo.og_alt': 'Dailytective, game detektif harian dari rumah Nenek',
+
 	// statistik
 	'stat.judul': 'Statistik kamu',
 	'stat.dimainkan': 'Dimainkan',
@@ -244,10 +255,10 @@ const id = {
 	'galat.tidak_bisa_ulang': 'Kasus ini tidak bisa diulang lagi.',
 	'galat.terlalu_banyak': 'Pelan-pelan, Detektif. Coba lagi beberapa detik lagi.',
 	'galat.umum': 'Ada masalah. Coba lagi sebentar.',
+	'galat.tidak_ditemukan': 'Halaman ini tidak ada. Mungkin Si Belang yang menyembunyikannya.',
 	'galat.koneksi': 'Butuh koneksi untuk menyelidiki. Coba lagi.',
 
 	// beranda
-	'beranda.judul_tab': 'Dailytective · Satu kasus detektif setiap hari',
 	'beranda.buka': 'Buka kasus',
 	'beranda.menunggu': 'Nenek menunggumu. Kamu punya {jatah} jatah periksa dan {maks} kesempatan menuduh.',
 	'beranda.berjalan': 'Penyelidikan berjalan: {p} benda diperiksa, {t} tuduhan.',
@@ -458,6 +469,16 @@ const en: Record<KunciTeks, string> = {
 	'kaki.jadwal': 'A new case every day at 06:00 Jakarta time (UTC+7).',
 	'kaki.hak': '© {tahun} Dailytective',
 
+	'seo.beranda.judul': 'Dailytective · A Daily Detective Puzzle Game',
+	'seo.beranda.desk':
+		"Dailytective is a free daily detective puzzle game. Every day there's a new case at Grandma's house: check the evidence, then figure out who did it, with what, and where. Play right in your browser.",
+	'seo.cara.desk': 'How to play Dailytective: read the case, check items for evidence, then accuse the culprit within 3 tries.',
+	'seo.tentang.desk': "About Dailytective, a daily detective game with small mysteries at Grandma's house and the neighborhood.",
+	'seo.privasi.desk': 'Dailytective privacy policy: no accounts, no ads, just an anonymous player ID to save your progress.',
+	'seo.statistik.desk': 'Your Dailytective stats: cases solved, streaks, and guess distribution.',
+	'seo.kasus.desk': "Today's Dailytective case. Check the evidence and find the culprit.",
+	'seo.og_alt': "Dailytective, a daily detective game from Grandma's house",
+
 	'stat.judul': 'Your stats',
 	'stat.dimainkan': 'Played',
 	'stat.terpecahkan': 'Solved',
@@ -506,9 +527,9 @@ const en: Record<KunciTeks, string> = {
 	'galat.tidak_bisa_ulang': "This case can't be retried anymore.",
 	'galat.terlalu_banyak': 'Easy there, Detective. Try again in a few seconds.',
 	'galat.umum': 'Something went wrong. Try again in a moment.',
+	'galat.tidak_ditemukan': "This page doesn't exist. Maybe Belang the cat hid it.",
 	'galat.koneksi': 'You need a connection to investigate. Try again.',
 
-	'beranda.judul_tab': 'Dailytective · One detective case every day',
 	'beranda.buka': 'Open the case',
 	'beranda.menunggu': 'Grandma is waiting for you. You have {jatah} checks and {maks} accusations.',
 	'beranda.berjalan': 'Investigation in progress: {p} items checked, {t} accusations.',

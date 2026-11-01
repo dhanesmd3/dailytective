@@ -14,7 +14,7 @@
 	const maks = $derived(Math.max(1, ...baris.map((b) => b.nilai)));
 </script>
 
-<HalamanStatis judul={t('stat.judul')}>
+<HalamanStatis judul={t('stat.judul')} deskripsi={t('seo.statistik.desk')} indeks={false}>
 	<dl>
 		<div><dt>{t('stat.dimainkan')}</dt><dd>{st.dimainkan}</dd></div>
 		<div><dt>{t('stat.terpecahkan')}</dt><dd>{st.persen_menang}%</dd></div>

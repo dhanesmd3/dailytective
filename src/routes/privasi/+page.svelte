@@ -6,7 +6,7 @@
 </script>
 
 <!-- Draf. Wajib ditinjau sebelum launch (TODO fase 3: kebijakan privasi final, UU PDP). -->
-<HalamanStatis judul={t('nav.privasi')}>
+<HalamanStatis judul={t('nav.privasi')} deskripsi={t('seo.privasi.desk')}>
 	{#if t.bahasa === 'en'}
 		<p><em>Draft, not final.</em></p>
 

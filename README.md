@@ -39,6 +39,9 @@ Karena serverless tidak punya disk yang bertahan, sesi pemain disimpan di **Upst
 5. Domain: **Settings → Domains**, tambahkan misalnya `dailytective.dhanesworo.site`, lalu buat record DNS yang
    diminta Vercel (subdomain: `CNAME` ke alamat yang ditampilkan Vercel) di panel tempat domain dibeli.
 
+6. Isi `DT_SITUS` dengan alamat domain (mis. `https://dailytective.dhanesworo.site`) untuk canonical, sitemap, dan
+   gambar pratinjau link, lalu Redeploy.
+
 Tanpa Redis, server di Vercel sengaja menolak permintaan dengan galat yang jelas, bukan diam-diam kehilangan progres.
 Rate limit masih di memori per instance: di Vercel perlindungannya lebih longgar, cukup untuk playtest.
 
@@ -62,6 +65,14 @@ Rate limit masih di memori per instance: di Vercel perlindungannya lebih longgar
 - Nama tokoh, barang, lokasi, motif, dan benda: field `en` / `nama_en` di `data/`.
 - Isi kasus: blok `terjemahan.en` di setiap file kasus. Server mengirim teks sesuai bahasa pemain;
   logika, solusi, dan sesi tidak berubah, jadi pemain bisa ganti bahasa di tengah kasus.
+
+## SEO
+
+- Setiap halaman memakai [Seo.svelte](src/lib/components/Seo.svelte): judul, deskripsi, canonical, Open Graph
+  ([static/og.png](static/og.png), 1200×630), dan hreflang. Beranda juga memuat JSON-LD (WebSite + VideoGame).
+- Satu URL, dua bahasa: tanpa parameter = Indonesia, `?lang=en` = Inggris (sekaligus disimpan ke cookie).
+- `/robots.txt` dan `/sitemap.xml` dibuat server dari `DT_SITUS`. `/kasus`, `/statistik`, dan halaman error
+  diberi `noindex` supaya yang muncul di pencarian adalah beranda.
 
 ## Struktur
 

@@ -5,7 +5,7 @@
 	const t = pakaiT();
 </script>
 
-<HalamanStatis judul={t('nav.cara_main')}>
+<HalamanStatis judul={t('nav.cara_main')} deskripsi={t('seo.cara.desk')}>
 	{#if t.bahasa === 'en'}
 		<p>Every day at <strong>06:00 Jakarta time (UTC+7)</strong> there's a new case at Grandma's house. Every player gets the same case, and only your first attempt counts toward your stats.</p>
 

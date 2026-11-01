@@ -10,6 +10,7 @@
 	import Onboarding from '$lib/components/Onboarding.svelte';
 	import Potret from '$lib/components/Potret.svelte';
 	import PengaturanModal from '$lib/components/PengaturanModal.svelte';
+	import Seo from '$lib/components/Seo.svelte';
 	import StatistikModal from '$lib/components/StatistikModal.svelte';
 	import { formatTanggal, namaHari } from '$lib/engine/waktu';
 	import { gantiBahasa, pakaiT, type KunciTeks } from '$lib/i18n';
@@ -35,12 +36,37 @@
 		modal = null;
 	}
 
+	// Data terstruktur untuk mesin pencari: situs + game gratis yang dimainkan di browser
+	const jsonld = $derived([
+		{
+			'@context': 'https://schema.org',
+			'@type': 'WebSite',
+			name: 'Dailytective',
+			url: `${data.situs}/`,
+			inLanguage: ['id', 'en'],
+			description: t('seo.beranda.desk')
+		},
+		{
+			'@context': 'https://schema.org',
+			'@type': 'VideoGame',
+			name: 'Dailytective',
+			url: `${data.situs}/`,
+			image: `${data.situs}/og.png`,
+			description: t('seo.beranda.desk'),
+			genre: ['Puzzle', 'Detective', 'Mystery'],
+			gamePlatform: 'Web browser',
+			applicationCategory: 'Game',
+			operatingSystem: 'Any',
+			inLanguage: ['id', 'en'],
+			isAccessibleForFree: true,
+			offers: { '@type': 'Offer', price: '0', priceCurrency: 'IDR' }
+		}
+	]);
+
 	const TOKOH = ['benny', 'lia', 'hendra', 'dimas', 'sekar', 'sri', 'tono', 'joko', 'wati', 'raka'];
 </script>
 
-<svelte:head>
-	<title>{t('beranda.judul_tab')}</title>
-</svelte:head>
+<Seo judul={t('seo.beranda.judul')} deskripsi={t('seo.beranda.desk')} {jsonld} />
 
 <main>
 	<header>

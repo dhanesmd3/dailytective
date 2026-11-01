@@ -7,7 +7,7 @@
 	const TOKOH = ['nenek', 'benny', 'lia', 'hendra', 'dimas', 'sekar', 'sri', 'tono', 'joko', 'wati', 'raka'];
 </script>
 
-<HalamanStatis judul={t.bahasa === 'en' ? 'About Dailytective' : 'Tentang Dailytective'}>
+<HalamanStatis judul={t.bahasa === 'en' ? 'About Dailytective' : 'Tentang Dailytective'} deskripsi={t('seo.tentang.desk')}>
 	{#if t.bahasa === 'en'}
 		<p><strong>Dailytective</strong> is a daily detective game. Every day something happens at Grandma Sumarni's house in Indonesia: a nibbled cake, missing savings-club money, a broken heirloom vase. Search the rooms, collect evidence, then work out who did it, with what, and where.</p>
 		<p>Every case is checked by an automatic solver so it has exactly one answer you can deduce, and is played by humans before it goes out.</p>

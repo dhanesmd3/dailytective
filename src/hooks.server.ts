@@ -49,7 +49,12 @@ export const handle: Handle = async ({ event, resolve }) => {
 	}
 	event.locals.pemainId = id;
 
-	const pilihan = event.cookies.get(COOKIE_BAHASA);
+	// ?lang=en|id (dari hasil pencarian atau link hreflang) mengalahkan cookie, lalu diingat sebagai pilihan.
+	const diminta = event.url.searchParams.get('lang');
+	if (apakahBahasa(diminta)) {
+		event.cookies.set(COOKIE_BAHASA, diminta, { path: '/', httpOnly: false, sameSite: 'lax', maxAge: 60 * 60 * 24 * 365 });
+	}
+	const pilihan = apakahBahasa(diminta) ? diminta : event.cookies.get(COOKIE_BAHASA);
 	const bahasa = apakahBahasa(pilihan) ? pilihan : bahasaDariHeader(event.request.headers.get('accept-language'));
 	event.locals.bahasa = bahasa;
 

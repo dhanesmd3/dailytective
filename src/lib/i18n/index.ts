@@ -48,6 +48,13 @@ export function pakaiT(): FungsiT {
 /** Mengganti bahasa: simpan di cookie, lalu muat ulang data dari server. */
 export async function gantiBahasa(bahasa: Bahasa): Promise<void> {
 	document.cookie = `${COOKIE_BAHASA}=${bahasa}; path=/; max-age=${60 * 60 * 24 * 365}; samesite=lax`;
-	const { invalidateAll } = await import('$app/navigation');
+	const { goto, invalidateAll } = await import('$app/navigation');
+	// ?lang= di URL akan mengalahkan cookie di server, jadi dibuang dulu
+	const url = new URL(location.href);
+	if (url.searchParams.has('lang')) {
+		url.searchParams.delete('lang');
+		await goto(url, { replaceState: true, invalidateAll: true });
+		return;
+	}
 	await invalidateAll();
 }

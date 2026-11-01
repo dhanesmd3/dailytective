@@ -2,15 +2,19 @@
 	import Permainan from '$lib/components/Permainan.svelte';
 	import HitungMundur from '$lib/components/HitungMundur.svelte';
 	import Logo from '$lib/components/Logo.svelte';
+	import Seo from '$lib/components/Seo.svelte';
 	import { pakaiT } from '$lib/i18n';
 
 	let { data } = $props();
 	const t = pakaiT();
 </script>
 
-<svelte:head>
-	<title>{data.kasus ? `${t('umum.kasus_no', { id: data.kasus.id })} · ${data.kasus.judul}` : 'Dailytective'}</title>
-</svelte:head>
+<!-- Isi berubah tiap hari dan bergantung sesi pemain: tidak untuk diindeks, beranda yang muncul di pencarian. -->
+<Seo
+	judul={data.kasus ? `${t('umum.kasus_no', { id: data.kasus.id })} · ${data.kasus.judul} · Dailytective` : 'Dailytective'}
+	deskripsi={t('seo.kasus.desk')}
+	indeks={false}
+/>
 
 {#if data.kasus}
 	{#key `${data.hari_ini}:${data.kasus.id}:${data.bahasa}`}

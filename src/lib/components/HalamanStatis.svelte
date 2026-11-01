@@ -3,12 +3,18 @@
 	import { pakaiT } from '$lib/i18n';
 	import KakiSitus from './KakiSitus.svelte';
 	import Logo from './Logo.svelte';
+	import Seo from './Seo.svelte';
 
-	let { judul, children }: { judul: string; children: Snippet } = $props();
+	let {
+		judul,
+		deskripsi,
+		indeks = true,
+		children
+	}: { judul: string; deskripsi: string; indeks?: boolean; children: Snippet } = $props();
 	const t = pakaiT();
 </script>
 
-<svelte:head><title>{judul} · Dailytective</title></svelte:head>
+<Seo judul={judul.includes('Dailytective') ? judul : `${judul} · Dailytective`} {deskripsi} {indeks} />
 
 <main>
 	<a href="/" class="kembali" aria-label={t('beranda.kembali')}><Logo ukuran={24} /></a>
