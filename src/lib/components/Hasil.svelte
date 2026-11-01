@@ -6,6 +6,7 @@
 	import { labelKategori } from '$lib/teks';
 	import HitungMundur from './HitungMundur.svelte';
 	import Ikon from './Ikon.svelte';
+	import Konfirmasi from './Konfirmasi.svelte';
 	import Potret from './Potret.svelte';
 
 	let {
@@ -57,9 +58,7 @@
 		Object.entries(jawaban?.semua_bukti ?? {}).filter(([, v]) => v.benda && !ditemukan.has(v.benda))
 	);
 
-	function konfirmasiBuka() {
-		if (confirm(t('hasil.buka_konfirmasi'))) bukaJawaban();
-	}
+	let tanyaBuka = $state(false);
 
 	let pesanSalin = $state('');
 	// Teks share selalu menceritakan percobaan pertama; menang di percobaan ulang jadi baris tambahan.
@@ -124,7 +123,7 @@
 					{#if akhir.bisa_ulang}
 						<button class="tombol merah besar" onclick={ulangi} disabled={sibuk}>{t('hasil.ulangi')}</button>
 					{/if}
-					<button class="tombol krem kecil" onclick={konfirmasiBuka} disabled={sibuk}>{t('hasil.buka_jawaban')}</button>
+					<button class="tombol krem kecil" onclick={() => (tanyaBuka = true)} disabled={sibuk}>{t('hasil.buka_jawaban')}</button>
 				</div>
 			</div>
 		{:else}
@@ -220,6 +219,19 @@
 		</div>
 	</div>
 </div>
+
+{#if tanyaBuka}
+	<Konfirmasi
+		judul={t('hasil.buka_judul')}
+		pesan={t('hasil.buka_konfirmasi')}
+		labelYa={t('hasil.buka_ya')}
+		batal={() => (tanyaBuka = false)}
+		ya={() => {
+			tanyaBuka = false;
+			bukaJawaban();
+		}}
+	/>
+{/if}
 
 <style>
 	.hasil {

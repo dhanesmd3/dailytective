@@ -7,6 +7,7 @@ export const BAHASA: readonly Bahasa[] = ['id', 'en'];
 const id = {
 	// umum
 	'umum.tutup': 'Tutup',
+	'umum.batal': 'Batal',
 	'umum.lanjut': 'Lanjut',
 	'umum.kembali': 'Kembali',
 	'umum.kasus_no': 'Kasus #{id}',
@@ -147,7 +148,9 @@ const id = {
 	'hasil.gagal_ket': 'Jawabannya masih dirahasiakan. Coba lagi dari awal dengan jatah dan kesempatan penuh. Statistikmu tetap mencatat percobaan pertama.',
 	'hasil.ulangi': 'Ulangi kasus',
 	'hasil.buka_jawaban': 'Tampilkan jawaban',
-	'hasil.buka_konfirmasi': 'Buka jawabannya? Setelah itu kasus ini tidak bisa diulang lagi.',
+	'hasil.buka_judul': 'Tampilkan jawaban?',
+	'hasil.buka_konfirmasi': 'Setelah jawabannya dibuka, kasus ini tidak bisa diulang lagi. Kalau masih penasaran, coba Ulangi kasus dulu.',
+	'hasil.buka_ya': 'Ya, tampilkan',
 	'hasil.tuduhanmu': 'Tuduhanmu',
 	'hasil.percobaan_ke': 'Percobaan ke-{n}',
 	'gelar.legendaris': 'Detektif Legendaris',
@@ -279,6 +282,7 @@ export type KunciTeks = keyof typeof id;
 
 const en: Record<KunciTeks, string> = {
 	'umum.tutup': 'Close',
+	'umum.batal': 'Cancel',
 	'umum.lanjut': 'Next',
 	'umum.kembali': 'Back',
 	'umum.kasus_no': 'Case #{id}',
@@ -412,7 +416,9 @@ const en: Record<KunciTeks, string> = {
 	'hasil.gagal_ket': "The answer is still a secret. Try again from the start with full checks and accusations. Your stats keep your first attempt.",
 	'hasil.ulangi': 'Retry the case',
 	'hasil.buka_jawaban': 'Show the answer',
-	'hasil.buka_konfirmasi': "Show the answer? After that you can't retry this case.",
+	'hasil.buka_judul': 'Show the answer?',
+	'hasil.buka_konfirmasi': "Once the answer is shown, you can't retry this case. If you're still curious, try Retry the case first.",
+	'hasil.buka_ya': 'Yes, show it',
 	'hasil.tuduhanmu': 'Your accusations',
 	'hasil.percobaan_ke': 'Attempt {n}',
 	'gelar.legendaris': 'Legendary Detective',

@@ -18,6 +18,7 @@
 	import ContextCard from './ContextCard.svelte';
 	import Hasil from './Hasil.svelte';
 	import KartuBukti from './KartuBukti.svelte';
+	import Konfirmasi from './Konfirmasi.svelte';
 	import Logo from './Logo.svelte';
 	import Onboarding from './Onboarding.svelte';
 	import PapanTuduhan from './PapanTuduhan.svelte';
@@ -44,7 +45,7 @@
 	let sibukHasil = $state(false);
 
 	let tampilan = $state<'tkp' | 'tuduhan' | 'hasil'>(awal?.akhir ? 'hasil' : 'tkp');
-	let modal = $state<null | 'context' | 'statistik' | 'onboarding' | 'pengaturan'>(null);
+	let modal = $state<null | 'context' | 'statistik' | 'onboarding' | 'pengaturan' | 'reset'>(null);
 	let buktiAktif = $state<BuktiDitemukan | null>(null);
 	let sibukBenda = $state<string | null>(null);
 	let sibukTuduh = $state(false);
@@ -184,7 +185,7 @@
 	}
 
 	async function resetSesi() {
-		if (!confirm(t('main.ulangi_konfirmasi'))) return;
+		modal = null;
 		await api.resetSesi(kasus.id);
 		location.reload();
 	}
@@ -204,7 +205,7 @@
 		<nav>
 			{#if data.pratinjau}
 				<span class="pratinjau" title={t('main.pratinjau_ket')}>{t('main.pratinjau', { tanggal: kasus.tanggal })}</span>
-				<button class="tombol-teks" onclick={resetSesi}>{t('main.ulangi')}</button>
+				<button class="tombol-teks" onclick={() => (modal = 'reset')}>{t('main.ulangi')}</button>
 			{/if}
 			<button class="tombol-teks" onclick={() => (modal = 'context')}>{t('buku.context')}</button>
 			<button class="tombol-teks" onclick={() => (modal = 'onboarding')}>{t('main.cara_main')}</button>
@@ -302,6 +303,14 @@
 	<StatistikModal {statistik} tutup={() => (modal = null)} />
 {:else if modal === 'pengaturan'}
 	<PengaturanModal tutup={() => (modal = null)} />
+{:else if modal === 'reset'}
+	<Konfirmasi
+		judul={t('main.ulangi')}
+		pesan={t('main.ulangi_konfirmasi')}
+		labelYa={t('main.ulangi')}
+		ya={resetSesi}
+		batal={() => (modal = null)}
+	/>
 {/if}
 
 {#if pesan}
